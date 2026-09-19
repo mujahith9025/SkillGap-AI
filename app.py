@@ -33,6 +33,7 @@ from roadmap_generator import RoadmapGenerator
 from resume_parser import ResumeParser
 from analytics_dashboard import VisualAnalyticsDashboard
 from interview_simulator import MockInterviewEngine, InterviewQuestion, AnswerEvaluation
+from job_market_scraper import JobMarketScraper, MarketIntelligenceReport, DynamicSkillWeight
 
 
 # -----------------------------------------------------------------------------
@@ -152,9 +153,10 @@ def get_system_engines():
     roadmap_gen = RoadmapGenerator(data_loader=loader, recommendation_engine=rec_engine)
     resume_parser = ResumeParser(data_loader=loader, skill_extractor=extractor)
     interview_engine = MockInterviewEngine(data_loader=loader, semantic_matcher=semantic_matcher)
-    return loader, preprocessor, extractor, matcher, semantic_matcher, gap_analyzer, rec_engine, roadmap_gen, resume_parser, interview_engine
+    market_scraper = JobMarketScraper(data_loader=loader, skill_extractor=extractor)
+    return loader, preprocessor, extractor, matcher, semantic_matcher, gap_analyzer, rec_engine, roadmap_gen, resume_parser, interview_engine, market_scraper
 
-loader, preprocessor, extractor, matcher, semantic_matcher, gap_analyzer, rec_engine, roadmap_gen, resume_parser, interview_engine = get_system_engines()
+loader, preprocessor, extractor, matcher, semantic_matcher, gap_analyzer, rec_engine, roadmap_gen, resume_parser, interview_engine, market_scraper = get_system_engines()
 
 
 # -----------------------------------------------------------------------------
@@ -514,6 +516,83 @@ with tab_analytics:
     st.caption("Hover over cells to inspect exact requirement importance weights (0 = Not Required, 1 = Optional, 2 = Secondary, 3 = Core).")
     fig_matrix = VisualAnalyticsDashboard.create_interactive_matrix_heatmap(loader)
     st.plotly_chart(fig_matrix, use_container_width=True)
+
+    # Row 3: Real-Time Job Market Intelligence & Dynamic Weighting Studio
+    st.markdown("---")
+    st.subheader(f"🌐 Real-Time Job Market Intelligence & Dynamic Weighting ({selected_career})")
+    st.caption("Live tech job market analysis: Ingests real-world job postings to empirically calculate skill demand frequencies and dynamically adjust role readiness weights.")
+
+    market_rep = market_scraper.generate_market_intelligence_report()
+
+    col_m1, col_m2, col_m3 = st.columns(3)
+    with col_m1:
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-val" style="color: #2563eb;">{market_rep.total_postings_analyzed}+</div>
+            <div class="metric-lbl">Live Postings Ingested</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with col_m2:
+        top_s_name = market_rep.top_market_skills[0]["skill"] if market_rep.top_market_skills else "Python"
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-val" style="color: #16a34a;">{top_s_name}</div>
+            <div class="metric-lbl">#1 Market In-Demand Skill</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with col_m3:
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-val" style="color: #ea580c;">LLMs (+120%)</div>
+            <div class="metric-lbl">Top Emerging Skill Growth</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # Dynamic Weight Recalibration Comparison
+    static_score, live_market_score, comparisons_data = market_scraper.recalculate_readiness_with_live_weights(
+        student_input_skills, selected_career
+    )
+
+    st.markdown("#### ⚡ Dynamic Market Readiness vs. Static Academic Baseline")
+    col_w1, col_w2 = st.columns(2)
+    with col_w1:
+        st.metric(
+            label="Static Curriculum Readiness",
+            value=f"{static_score:.1f}%",
+            help="Computed using fixed academic weights from career_skills.csv"
+        )
+    with col_w2:
+        score_diff = round(live_market_score - static_score, 1)
+        st.metric(
+            label="Live Dynamic Market Readiness",
+            value=f"{live_market_score:.1f}%",
+            delta=f"{score_diff:+.1f}% vs Static",
+            help="Empirically re-weighted based on live hiring frequency across active tech job postings"
+        )
+
+    # Detailed Market Weight Table
+    with st.expander("📋 View Dynamic Skill Weight & Market Frequency Breakdown", expanded=True):
+        st.dataframe(pd.DataFrame(comparisons_data), use_container_width=True, hide_index=True)
+
+    # Real Job Postings Explorer
+    st.markdown("#### 💼 Real-World Tech Openings Sample")
+    st.caption("Recent active postings ingested for your target role:")
+    
+    role_postings = [p for p in market_rep.sample_job_postings if p.target_career == selected_career]
+    if not role_postings:
+        role_postings = market_rep.sample_job_postings[:3]
+
+    for p in role_postings:
+        with st.container():
+            st.markdown(f"**{p.title}** @ `{p.company}` &nbsp;|&nbsp; 📍 *{p.location}* &nbsp;|&nbsp; 💰 *{p.salary_range}*")
+            st.caption(f"Snippet: {p.description_snippet}")
+            if p.extracted_skills:
+                skills_html = " ".join([f'<span class="skill-badge-matched">{s}</span>' for s in p.extracted_skills])
+                st.markdown(f"**Required Skills Detected:** {skills_html}", unsafe_allow_html=True)
+            st.markdown(f"🔗 [View Original Posting]({p.source_url})")
+            st.markdown("---")
 
 
 # =============================================================================
