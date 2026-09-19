@@ -1,0 +1,8 @@
+career_id,career_title,category,experience_level,description
+CAR_01,Data Scientist,Data & AI,Entry-Level / Graduate,"Analyzes complex data to extract actionable insights, builds predictive machine learning models, and communicates findings to stakeholders."
+CAR_02,Machine Learning Engineer,Data & AI,Entry-Level / Graduate,"Designs, builds, and deploys scalable machine learning algorithms and pipelines into production systems."
+CAR_03,Data Analyst,Analytics,Entry-Level / Graduate,"Collects, cleans, analyzes, and visualizes structured data to help organizations make data-driven business decisions."
+CAR_04,AI Engineer,Data & AI,Entry-Level / Graduate,"Specializes in building AI-powered applications utilizing deep learning, NLP, computer vision, and modern neural architectures."
+CAR_05,Python Developer,Software Engineering,Entry-Level / Graduate,"Develops robust Python scripts, automation tools, web backends, and data processing pipelines."
+CAR_06,Business Analyst,Analytics,Entry-Level / Graduate,"Bridges the gap between business needs and IT solutions through data analysis, requirement gathering, and process modeling."
+CAR_07,Backend Developer,Software Engineering,Entry-Level / Graduate,"Builds server-side logic, RESTful APIs, database architectures, and integrates external services for scalable web applications."

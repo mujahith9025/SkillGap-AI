@@ -1,0 +1,27 @@
+resource_id,skill_id,title,resource_type,platform,cost,url_or_ref,estimated_hours
+RES_001,SKL_01,Python for Everybody (Specialization),Course,Coursera,Free Audit,https://www.py4e.com/,30
+RES_002,SKL_01,Official Python Tutorial & Documentation,Documentation,Python.org,Free,https://docs.python.org/3/tutorial/,15
+RES_003,SKL_02,Mode Analytics SQL Tutorial,Interactive Tutorial,Mode,Free,https://mode.com/sql-tutorial/,15
+RES_004,SKL_02,SQL for Data Science,Course,Coursera,Free Audit,https://www.coursera.org/learn/sql-for-data-science,20
+RES_005,SKL_03,Khan Academy: Statistics and Probability,Interactive Tutorial,Khan Academy,Free,https://www.khanacademy.org/math/statistics-probability,25
+RES_006,SKL_03,StatQuest with Josh Starmer: Statistics Fundamentals,Video Series,YouTube,Free,https://statquest.org/,20
+RES_007,SKL_04,Essence of Linear Algebra by 3Blue1Brown,Video Series,YouTube,Free,https://www.3blue1brown.com/topics/linear-algebra,15
+RES_008,SKL_05,Pandas Official User Guide & Cookbook,Documentation,PyData / Pandas,Free,https://pandas.pydata.org/docs/user_guide/,15
+RES_009,SKL_06,NumPy Quickstart & Array Programming,Documentation,NumPy.org,Free,https://numpy.org/doc/stable/user/quickstart.html,10
+RES_010,SKL_07,Data Visualization with Matplotlib and Seaborn,Interactive Tutorial,Kaggle Learn,Free,https://www.kaggle.com/learn/data-visualization,8
+RES_011,SKL_08,Storytelling with Data: A Data Visualization Guide,Book,Wiley Publishing,Book Reference,ISBN: 978-1119002253,20
+RES_012,SKL_09,Tableau Essential Training & Free Student License,Course,Tableau for Students,Free,https://www.tableau.com/academic/students,20
+RES_013,SKL_10,Microsoft Power BI Guided Learning,Documentation,Microsoft Learn,Free,https://learn.microsoft.com/en-us/training/powerplatform/power-bi,20
+RES_014,SKL_11,Excel Skills for Business (Macquarie University),Course,Coursera,Free Audit,https://www.coursera.org/specializations/excel,25
+RES_015,SKL_12,Scikit-Learn Official User Guide and API Reference,Documentation,Scikit-Learn,Free,https://scikit-learn.org/stable/user_guide.html,25
+RES_016,SKL_13,Machine Learning Specialization by Andrew Ng,Course,Coursera / DeepLearning.AI,Free Audit,https://www.deeplearning.ai/program/machine-learning-specialization/,50
+RES_017,SKL_14,Deep Learning Specialization by Andrew Ng,Course,Coursera / DeepLearning.AI,Free Audit,https://www.deeplearning.ai/program/deep-learning-specialization/,60
+RES_018,SKL_15,Deep Learning with PyTorch: A 60 Minute Blitz,Documentation,PyTorch.org,Free,https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html,10
+RES_019,SKL_17,Hugging Face NLP Course,Interactive Tutorial,Hugging Face,Free,https://huggingface.co/learn/nlp-course,35
+RES_020,SKL_19,Generative AI & LLM Fundamentals,Course,DeepLearning.AI,Free,https://www.deeplearning.ai/short-courses/,15
+RES_021,SKL_20,Made With ML: Production MLOps Course,Interactive Tutorial,MadeWithML,Free,https://madewithml.com/,30
+RES_022,SKL_21,FastAPI Official Tutorial and API Building Guide,Documentation,FastAPI,Free,https://fastapi.tiangolo.com/tutorial/,12
+RES_023,SKL_24,Pro Git Book by Scott Chacon,Book / Documentation,Git-SCM,Free,https://git-scm.com/book/en/v2,15
+RES_024,SKL_25,Docker for Beginners & Containerization Guide,Interactive Tutorial,Docker Docs,Free,https://docs.docker.com/get-started/,12
+RES_025,SKL_28,Data Cleaning and Feature Engineering with Pandas,Interactive Tutorial,Kaggle Learn,Free,https://www.kaggle.com/learn/data-cleaning,10
+RES_026,SKL_30,Distributed Computing with PySpark Tutorial,Documentation,Apache Spark,Free,https://spark.apache.org/docs/latest/api/python/,20

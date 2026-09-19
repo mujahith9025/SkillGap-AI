@@ -1,0 +1,579 @@
+{
+  "extraction_evaluation": {
+    "total_samples": 12,
+    "total_ground_truth_entities": 39,
+    "total_predicted_entities": 36,
+    "TP": 36,
+    "FP": 0,
+    "FN": 3,
+    "precision": 100.0,
+    "recall": 92.3,
+    "f1_score": 96.0,
+    "sample_details": [
+      {
+        "text": "I am proficient in Python, Pandas, NumPy, and basic machine ...",
+        "ground_truth_count": 5,
+        "predicted_count": 5,
+        "tp": 5,
+        "fp": 0,
+        "fn": 0,
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0
+      },
+      {
+        "text": "Experience building dashboards in Tableau and Power BI using...",
+        "ground_truth_count": 3,
+        "predicted_count": 3,
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0
+      },
+      {
+        "text": "Strong foundation in Statistics & Probability and Linear Alg...",
+        "ground_truth_count": 4,
+        "predicted_count": 4,
+        "tp": 4,
+        "fp": 0,
+        "fn": 0,
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0
+      },
+      {
+        "text": "Developed REST APIs using FastAPI and containerized microser...",
+        "ground_truth_count": 4,
+        "predicted_count": 4,
+        "tp": 4,
+        "fp": 0,
+        "fn": 0,
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0
+      },
+      {
+        "text": "Hands-on data preprocessing & cleaning, feature engineering,...",
+        "ground_truth_count": 4,
+        "predicted_count": 4,
+        "tp": 4,
+        "fp": 0,
+        "fn": 0,
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0
+      },
+      {
+        "text": "Deployed classical ML models using Git/GitHub CI/CD and clou...",
+        "ground_truth_count": 3,
+        "predicted_count": 3,
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0
+      },
+      {
+        "text": "Working knowledge of big data processing using PySpark and r...",
+        "ground_truth_count": 2,
+        "predicted_count": 2,
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0
+      },
+      {
+        "text": "Specialized in Computer Vision with OpenCV and Natural Langu...",
+        "ground_truth_count": 3,
+        "predicted_count": 3,
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0
+      },
+      {
+        "text": "I know Python and SQL, but I have no experience with Docker ...",
+        "ground_truth_count": 2,
+        "predicted_count": 2,
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0
+      },
+      {
+        "text": "Currently mastering MLOps & model deployment with FastAPI an...",
+        "ground_truth_count": 3,
+        "predicted_count": 3,
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0
+      },
+      {
+        "text": "Skilled in Django backend web framework, relational database...",
+        "ground_truth_count": 3,
+        "predicted_count": 3,
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0
+      },
+      {
+        "text": "I do not know PyTorch, but I am experienced in Scikit-Learn ...",
+        "ground_truth_count": 3,
+        "predicted_count": 0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 3,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      }
+    ]
+  },
+  "normalization_evaluation": {
+    "total_benchmark_queries": 41,
+    "correct_canonical_mappings": 39,
+    "accuracy": 95.1,
+    "precision": 100.0,
+    "recall": 97.3,
+    "f1_score": 98.6,
+    "detailed_records": [
+      {
+        "raw_input": "Python",
+        "expected": "Python",
+        "predicted": "Python",
+        "resolution_tier": "exact_canonical",
+        "is_correct": true
+      },
+      {
+        "raw_input": "SQL",
+        "expected": "SQL",
+        "predicted": "SQL",
+        "resolution_tier": "exact_canonical",
+        "is_correct": true
+      },
+      {
+        "raw_input": "Docker",
+        "expected": "Docker",
+        "predicted": "Docker",
+        "resolution_tier": "exact_canonical",
+        "is_correct": true
+      },
+      {
+        "raw_input": "Pandas",
+        "expected": "Pandas",
+        "predicted": "Pandas",
+        "resolution_tier": "exact_canonical",
+        "is_correct": true
+      },
+      {
+        "raw_input": "python",
+        "expected": "Python",
+        "predicted": "Python",
+        "resolution_tier": "exact_canonical",
+        "is_correct": true
+      },
+      {
+        "raw_input": "scikit-learn",
+        "expected": "Scikit-Learn",
+        "predicted": "Scikit-Learn",
+        "resolution_tier": "exact_canonical",
+        "is_correct": true
+      },
+      {
+        "raw_input": "power bi",
+        "expected": "Power BI",
+        "predicted": "Power BI",
+        "resolution_tier": "exact_canonical",
+        "is_correct": true
+      },
+      {
+        "raw_input": "git & github",
+        "expected": "Git & GitHub",
+        "predicted": "Git & GitHub",
+        "resolution_tier": "exact_canonical",
+        "is_correct": true
+      },
+      {
+        "raw_input": "postgres",
+        "expected": "SQL",
+        "predicted": "SQL",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "mysql",
+        "expected": "SQL",
+        "predicted": "SQL",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "py",
+        "expected": "Python",
+        "predicted": "Python",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "stats",
+        "expected": "Statistics & Probability",
+        "predicted": "Statistics & Probability",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "hypothesis testing",
+        "expected": "Statistics & Probability",
+        "predicted": "Statistics & Probability",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "matrix algebra",
+        "expected": "Linear Algebra",
+        "predicted": "Linear Algebra",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "data cleaning",
+        "expected": "Data Preprocessing & Cleaning",
+        "predicted": "Data Preprocessing & Cleaning",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "data wrangling",
+        "expected": "Data Preprocessing & Cleaning",
+        "predicted": "Data Preprocessing & Cleaning",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "data viz",
+        "expected": "Data Visualization",
+        "predicted": "Data Visualization",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "tablo",
+        "expected": "Tableau",
+        "predicted": "Tableau",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "powerbi",
+        "expected": "Power BI",
+        "predicted": "Power BI",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "ms excel",
+        "expected": "Excel",
+        "predicted": "Excel",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "deep nets",
+        "expected": "Deep Learning",
+        "predicted": null,
+        "resolution_tier": "unrecognized",
+        "is_correct": false
+      },
+      {
+        "raw_input": "neural networks",
+        "expected": "Deep Learning",
+        "predicted": "Deep Learning",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "opencv",
+        "expected": "Computer Vision (CV)",
+        "predicted": "Computer Vision (CV)",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "computer vision",
+        "expected": "Computer Vision (CV)",
+        "predicted": "Computer Vision (CV)",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "llm",
+        "expected": "Large Language Models (LLMs)",
+        "predicted": "Large Language Models (LLMs)",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "chatgpt",
+        "expected": "Large Language Models (LLMs)",
+        "predicted": "Large Language Models (LLMs)",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "pyspark",
+        "expected": "Big Data Fundamentals (Spark)",
+        "predicted": "Big Data Fundamentals (Spark)",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "spark",
+        "expected": "Big Data Fundamentals (Spark)",
+        "predicted": "Big Data Fundamentals (Spark)",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "aws",
+        "expected": "Cloud Fundamentals (AWS/GCP)",
+        "predicted": "Cloud Fundamentals (AWS/GCP)",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "gcp",
+        "expected": "Cloud Fundamentals (AWS/GCP)",
+        "predicted": "Cloud Fundamentals (AWS/GCP)",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "linux",
+        "expected": "Linux & Bash Scripting",
+        "predicted": "Linux & Bash Scripting",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "bash",
+        "expected": "Linux & Bash Scripting",
+        "predicted": "Linux & Bash Scripting",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "rest api",
+        "expected": "RESTful APIs",
+        "predicted": "RESTful APIs",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "mlops",
+        "expected": "MLOps & Model Deployment",
+        "predicted": "MLOps & Model Deployment",
+        "resolution_tier": "alias_lookup",
+        "is_correct": true
+      },
+      {
+        "raw_input": "pythn",
+        "expected": "Python",
+        "predicted": "Python",
+        "resolution_tier": "fuzzy_canonical (score=90.9)",
+        "is_correct": true
+      },
+      {
+        "raw_input": "pndas",
+        "expected": "Pandas",
+        "predicted": "Pandas",
+        "resolution_tier": "fuzzy_canonical (score=90.9)",
+        "is_correct": true
+      },
+      {
+        "raw_input": "tensrflow",
+        "expected": "Deep Learning",
+        "predicted": "TensorFlow",
+        "resolution_tier": "fuzzy_canonical (score=94.7)",
+        "is_correct": false
+      },
+      {
+        "raw_input": "quantum computing",
+        "expected": null,
+        "predicted": null,
+        "resolution_tier": "unrecognized",
+        "is_correct": true
+      },
+      {
+        "raw_input": "blockchain solidity",
+        "expected": null,
+        "predicted": null,
+        "resolution_tier": "unrecognized",
+        "is_correct": true
+      },
+      {
+        "raw_input": "cooking recipe",
+        "expected": null,
+        "predicted": null,
+        "resolution_tier": "unrecognized",
+        "is_correct": true
+      },
+      {
+        "raw_input": "carpentry woodworking",
+        "expected": null,
+        "predicted": null,
+        "resolution_tier": "unrecognized",
+        "is_correct": true
+      }
+    ]
+  },
+  "semantic_threshold_evaluation": {
+    "threshold_sweep_table": [
+      {
+        "threshold": 0.4,
+        "TP": 10,
+        "FP": 0,
+        "TN": 14,
+        "FN": 10,
+        "precision": 100.0,
+        "recall": 50.0,
+        "f1_score": 66.7,
+        "accuracy": 70.6
+      },
+      {
+        "threshold": 0.45,
+        "TP": 10,
+        "FP": 0,
+        "TN": 14,
+        "FN": 10,
+        "precision": 100.0,
+        "recall": 50.0,
+        "f1_score": 66.7,
+        "accuracy": 70.6
+      },
+      {
+        "threshold": 0.5,
+        "TP": 9,
+        "FP": 0,
+        "TN": 14,
+        "FN": 11,
+        "precision": 100.0,
+        "recall": 45.0,
+        "f1_score": 62.1,
+        "accuracy": 67.6
+      },
+      {
+        "threshold": 0.55,
+        "TP": 5,
+        "FP": 0,
+        "TN": 14,
+        "FN": 15,
+        "precision": 100.0,
+        "recall": 25.0,
+        "f1_score": 40.0,
+        "accuracy": 55.9
+      },
+      {
+        "threshold": 0.6,
+        "TP": 4,
+        "FP": 0,
+        "TN": 14,
+        "FN": 16,
+        "precision": 100.0,
+        "recall": 20.0,
+        "f1_score": 33.3,
+        "accuracy": 52.9
+      },
+      {
+        "threshold": 0.65,
+        "TP": 3,
+        "FP": 0,
+        "TN": 14,
+        "FN": 17,
+        "precision": 100.0,
+        "recall": 15.0,
+        "f1_score": 26.1,
+        "accuracy": 50.0
+      },
+      {
+        "threshold": 0.7,
+        "TP": 1,
+        "FP": 0,
+        "TN": 14,
+        "FN": 19,
+        "precision": 100.0,
+        "recall": 5.0,
+        "f1_score": 9.5,
+        "accuracy": 44.1
+      },
+      {
+        "threshold": 0.75,
+        "TP": 1,
+        "FP": 0,
+        "TN": 14,
+        "FN": 19,
+        "precision": 100.0,
+        "recall": 5.0,
+        "f1_score": 9.5,
+        "accuracy": 44.1
+      },
+      {
+        "threshold": 0.8,
+        "TP": 0,
+        "FP": 0,
+        "TN": 14,
+        "FN": 20,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0,
+        "accuracy": 41.2
+      },
+      {
+        "threshold": 0.85,
+        "TP": 0,
+        "FP": 0,
+        "TN": 14,
+        "FN": 20,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0,
+        "accuracy": 41.2
+      }
+    ],
+    "optimal_threshold": {
+      "threshold": 0.4,
+      "TP": 10.0,
+      "FP": 0.0,
+      "TN": 14.0,
+      "FN": 10.0,
+      "precision": 100.0,
+      "recall": 50.0,
+      "f1_score": 66.7,
+      "accuracy": 70.6
+    }
+  },
+  "topological_invariant_audit": {
+    "total_roadmaps_tested": 49,
+    "total_steps_audited": 500,
+    "prerequisite_violations": 0,
+    "topological_consistency_pct": 100.0,
+    "total_resources_recommended": 453,
+    "resource_relevance_pct": 100.0,
+    "total_projects_evaluated": 70,
+    "project_validity_pct": 100.0
+  }
+}

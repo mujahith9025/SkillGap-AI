@@ -1,0 +1,35 @@
+query_skill,target_skill,is_match,relationship_type
+Tableau,Data Visualization,1,Tool-to-Discipline
+Power BI,Data Visualization,1,Tool-to-Discipline
+Keras,Deep Learning,1,Framework-to-Field
+PyTorch Lightning,Deep Learning,1,Framework-to-Field
+BERT,Natural Language Processing (NLP),1,Model-to-Field
+CNN,Computer Vision (CV),1,Architecture-to-Field
+Object Detection,Computer Vision (CV),1,Subdomain-to-Field
+ChatGPT,Large Language Models (LLMs),1,Tool-to-Discipline
+Prompt Engineering,Large Language Models (LLMs),1,Skill-to-Field
+PostgreSQL,SQL,1,Dialect-to-Language
+MySQL,SQL,1,Dialect-to-Language
+PySpark,Big Data Fundamentals (Spark),1,Tool-to-Field
+Data Cleansing,Data Preprocessing & Cleaning,1,Synonym
+Hypothesis Testing,Statistics & Probability,1,Subdomain-to-Field
+Matrix Multiplication,Linear Algebra,1,Subdomain-to-Field
+Continuous Integration,Git & GitHub,1,Workflow-to-Tool
+Kubernetes,Docker,1,Ecosystem-to-Tool
+API Design,RESTful APIs,1,Concept-to-Field
+Feature Scaling,Feature Engineering,1,Subdomain-to-Field
+Model Monitoring,MLOps & Model Deployment,1,Subdomain-to-Field
+Python,Excel,0,Unrelated Distractor
+SQL,Deep Learning,0,Unrelated Distractor
+Docker,Statistics & Probability,0,Unrelated Distractor
+Tableau,FastAPI,0,Unrelated Distractor
+Git & GitHub,Machine Learning,0,Unrelated Distractor
+Linux & Bash Scripting,Scikit-Learn,0,Unrelated Distractor
+Excel,PyTorch,0,Unrelated Distractor
+HTML/CSS,Deep Learning,0,Unrelated Distractor
+JavaScript,Statistics & Probability,0,Unrelated Distractor
+Power BI,Django,0,Unrelated Distractor
+Pandas,Docker,0,Unrelated Distractor
+FastAPI,Linear Algebra,0,Unrelated Distractor
+Natural Language Processing (NLP),Excel,0,Unrelated Distractor
+Big Data Fundamentals (Spark),Business Metrics & KPI Modeling,0,Unrelated Distractor
