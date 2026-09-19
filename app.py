@@ -12,6 +12,8 @@ from pathlib import Path
 import streamlit as st
 import pandas as pd
 import numpy as np
+import plotly.express as px
+import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -24,11 +26,13 @@ from data_loader import DataLoader
 from preprocessing import SkillPreprocessor
 from skill_extractor import NLPSkillExtractor
 from skill_matcher import SkillMatcher
+from semantic_matcher import SemanticSkillMatcher
 from gap_analyzer import SkillGapAnalyzer
 from recommendation_engine import RecommendationEngine
 from roadmap_generator import RoadmapGenerator
 from resume_parser import ResumeParser
 from analytics_dashboard import VisualAnalyticsDashboard
+from interview_simulator import MockInterviewEngine, InterviewQuestion, AnswerEvaluation
 
 
 # -----------------------------------------------------------------------------
@@ -142,13 +146,15 @@ def get_system_engines():
     preprocessor = SkillPreprocessor(data_loader=loader)
     extractor = NLPSkillExtractor(data_loader=loader, preprocessor=preprocessor)
     matcher = SkillMatcher(data_loader=loader, preprocessor=preprocessor)
+    semantic_matcher = SemanticSkillMatcher(data_loader=loader)
     gap_analyzer = SkillGapAnalyzer(data_loader=loader, skill_matcher=matcher)
     rec_engine = RecommendationEngine(data_loader=loader, gap_analyzer=gap_analyzer)
     roadmap_gen = RoadmapGenerator(data_loader=loader, recommendation_engine=rec_engine)
     resume_parser = ResumeParser(data_loader=loader, skill_extractor=extractor)
-    return loader, preprocessor, extractor, matcher, gap_analyzer, rec_engine, roadmap_gen, resume_parser
+    interview_engine = MockInterviewEngine(data_loader=loader, semantic_matcher=semantic_matcher)
+    return loader, preprocessor, extractor, matcher, semantic_matcher, gap_analyzer, rec_engine, roadmap_gen, resume_parser, interview_engine
 
-loader, preprocessor, extractor, matcher, gap_analyzer, rec_engine, roadmap_gen, resume_parser = get_system_engines()
+loader, preprocessor, extractor, matcher, semantic_matcher, gap_analyzer, rec_engine, roadmap_gen, resume_parser, interview_engine = get_system_engines()
 
 
 # -----------------------------------------------------------------------------
@@ -249,11 +255,12 @@ st.markdown('<div class="main-header">🎓 Student Skill Gap & Career Recommenda
 st.markdown('<div class="sub-header">Bridge the transition from academic coursework to industry career placement with AI-driven gap analysis & prerequisite roadmaps.</div>', unsafe_allow_html=True)
 
 # Tabs
-tab_dashboard, tab_roadmap, tab_recommendations, tab_analytics, tab_about = st.tabs([
+tab_dashboard, tab_roadmap, tab_recommendations, tab_analytics, tab_interview, tab_about = st.tabs([
     "📊 Skill Gap & Role Match",
     "🗺️ Learning Roadmap",
     "💡 Curated Projects & Resources",
     "📈 Dataset Analytics & Heatmap",
+    "🎙️ AI Mock Interviewer",
     "ℹ️ System Architecture"
 ])
 
@@ -496,7 +503,7 @@ with tab_analytics:
             orientation="h",
             title="<b>Top 10 In-Demand Skills Across All 7 Roles</b>",
             color="Count",
-            color_continuous_scale="Crest"
+            color_continuous_scale="Teal"
         )
         fig_top.update_layout(yaxis=dict(autorange="reversed"), height=380, margin=dict(l=20, r=20, t=50, b=40))
         st.plotly_chart(fig_top, use_container_width=True)
@@ -510,7 +517,133 @@ with tab_analytics:
 
 
 # =============================================================================
-# TAB 5: SYSTEM ARCHITECTURE & ABOUT
+# TAB 5: AI MOCK INTERVIEW SIMULATOR
+# =============================================================================
+with tab_interview:
+    st.subheader(f"🎙️ AI Technical Mock Interviewer ({selected_career})")
+    st.caption("Practice answering real technical interview questions specifically targeted at your identified skill gaps. Receive automated semantic scoring and rubric evaluation.")
+
+    # 1. Select Target Gap Skill
+    missing_skill_names = [s.skill_name for s in gap_result.learning_roadmap]
+    available_interview_skills = missing_skill_names if missing_skill_names else sorted(loader.skills["skill_name"].tolist())
+
+    col_int1, col_int2 = st.columns([3, 1])
+    with col_int1:
+        target_interview_skill = st.selectbox(
+            "Select Skill Gap to Practice:",
+            available_interview_skills,
+            index=0 if available_interview_skills else 0
+        )
+    with col_int2:
+        st.markdown("<br>", unsafe_allow_html=True)
+        new_q_clicked = st.button("🎲 Next Question", use_container_width=True)
+
+    # Initialize or update question index in session state
+    if "current_question_idx" not in st.session_state or new_q_clicked:
+        st.session_state["current_question_idx"] = 0
+        st.session_state["last_evaluated_answer"] = None
+
+    questions_for_skill = interview_engine.get_questions_for_skill(target_interview_skill)
+    q_idx = st.session_state["current_question_idx"] % len(questions_for_skill)
+    current_q = questions_for_skill[q_idx]
+
+    # Display Interviewer Question Card
+    st.markdown(f"""
+    <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-left: 5px solid #16a34a; padding: 18px; border-radius: 8px; margin: 15px 0;">
+        <div style="font-size: 0.85rem; font-weight: 700; color: #15803d; text-transform: uppercase;">
+            🤖 Tech Interviewer Question &nbsp;|&nbsp; <b>Skill:</b> {current_q.skill_name} &nbsp;|&nbsp; <b>Difficulty:</b> {current_q.difficulty} &nbsp;|&nbsp; <b>Type:</b> {current_q.question_type}
+        </div>
+        <div style="font-size: 1.15rem; font-weight: 600; color: #1e293b; margin-top: 8px;">
+            "{current_q.question_text}"
+        </div>
+        <div style="font-size: 0.85rem; color: #64748b; margin-top: 6px;">
+            💡 <i>Interviewer Hint: {current_q.follow_up_hint}</i>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Candidate Answer Form
+    with st.form("interview_answer_form"):
+        candidate_response = st.text_area(
+            "Your Technical Answer:",
+            placeholder="Type your explanation here... Focus on underlying principles, architecture, and practical trade-offs.",
+            height=140
+        )
+        submit_answer = st.form_submit_button("🚀 Submit Answer for AI Evaluation", type="primary")
+
+    if submit_answer:
+        if not candidate_response.strip():
+            st.warning("Please type an answer before submitting.")
+        else:
+            with st.spinner("Analyzing answer concepts and evaluating semantic depth..."):
+                eval_result = interview_engine.evaluate_candidate_answer(current_q, candidate_response)
+                st.session_state["last_evaluated_answer"] = eval_result
+
+    # Display Evaluation Feedback Card
+    if st.session_state.get("last_evaluated_answer") is not None:
+        eval_res: AnswerEvaluation = st.session_state["last_evaluated_answer"]
+        
+        st.markdown("---")
+        st.markdown("### 📊 Automated AI Evaluation & Feedback Scorecard")
+        
+        # Top Score Metrics
+        col_sc1, col_sc2, col_sc3 = st.columns(3)
+        score_color = "#16a34a" if eval_res.overall_score >= 8 else ("#ea580c" if eval_res.overall_score >= 6 else "#dc2626")
+        
+        with col_sc1:
+            st.markdown(f"""
+            <div class="metric-card">
+                <div class="metric-val" style="color: {score_color};">{eval_res.overall_score} / 10</div>
+                <div class="metric-lbl">Overall Technical Score</div>
+            </div>
+            """, unsafe_allow_html=True)
+        with col_sc2:
+            st.markdown(f"""
+            <div class="metric-card">
+                <div class="metric-val">{eval_res.score_tier}</div>
+                <div class="metric-lbl">Proficiency Tier</div>
+            </div>
+            """, unsafe_allow_html=True)
+        with col_sc3:
+            st.markdown(f"""
+            <div class="metric-card">
+                <div class="metric-val">{eval_res.concept_coverage_pct:.1f}%</div>
+                <div class="metric-lbl">Concept Keyword Coverage</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        # Concept Breakdown Tags
+        col_cp1, col_cp2 = st.columns(2)
+        with col_cp1:
+            st.markdown("##### ✅ Key Concepts Covered")
+            if eval_res.matched_concepts:
+                for c in eval_res.matched_concepts:
+                    st.markdown(f'<span class="skill-badge-matched">✓ {c}</span>', unsafe_allow_html=True)
+            else:
+                st.caption("No key domain concepts detected in the response.")
+
+        with col_cp2:
+            st.markdown("##### ⚠️ Missing Key Concepts to Address")
+            if eval_res.missing_concepts:
+                for c in eval_res.missing_concepts:
+                    st.markdown(f'<span class="skill-badge-gap-high">! {c}</span>', unsafe_allow_html=True)
+            else:
+                st.success("All expected key concepts were covered!")
+
+        # Detailed Qualitative Feedback
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.info(f"**💪 Strengths:** {eval_res.feedback_strengths}")
+        st.warning(f"**🎯 Actionable Advice for Placement Interviews:** {eval_res.feedback_improvements}")
+
+        # Benchmark Ideal Model Answer
+        with st.expander("📖 View Benchmark Senior-Level Model Answer"):
+            st.write(eval_res.ideal_model_answer)
+
+
+# =============================================================================
+# TAB 6: SYSTEM ARCHITECTURE & ABOUT
 # =============================================================================
 with tab_about:
     st.subheader("ℹ️ System Architecture & Engineering Specifications")
