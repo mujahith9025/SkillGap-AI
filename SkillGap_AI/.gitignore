@@ -2,13 +2,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
-
-# Caches & Test artifacts
-.pytest_cache/
-.coverage
-htmlcov/
-.cache/
 
 # Virtual Environments
 venv/
@@ -29,12 +22,14 @@ dist/
 models/*.bin
 models/*.pt
 models/*.onnx
+.cache/
 
 # OS files
 .DS_Store
 Thumbs.db
-desktop.ini
 
-# Environment variables & secrets
+# Environment variables
 .env
-*.local
+
+# Streamlit config
+.streamlit/secrets.toml

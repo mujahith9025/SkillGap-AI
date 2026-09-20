@@ -112,8 +112,8 @@ def test_normalization_suite():
         
     print("\n[SUCCESS] Free-form parsing extracted all expected canonical competencies without duplicates.")
     print("=" * 75)
-    return passed_count == len(test_cases)
+    assert passed_count == len(test_cases)
 
 if __name__ == "__main__":
-    success = test_normalization_suite()
-    sys.exit(0 if success else 1)
+    test_normalization_suite()
+    sys.exit(0)

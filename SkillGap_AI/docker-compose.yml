@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  # SkillGap AI Full Web Application & REST API
+  web-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: skillgap-web-app
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+    restart: unless-stopped
+    command: ["python", "-m", "uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,0 +1,52 @@
+name: SkillGap AI CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test-and-evaluate:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+        cache: "pip"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Verify Environment Setup
+      run: |
+        python src/verify_setup.py
+
+    - name: Run Complete Unit & Robustness Test Suite
+      run: |
+        python -u src/test_preprocessing.py
+        python -u src/test_skill_matcher.py
+        python -u src/test_gap_analyzer.py
+        python -u src/test_recommendation_engine.py
+        python -u src/test_roadmap_generator.py
+        python -u src/test_skill_extractor.py
+        python -u src/test_semantic_matcher.py
+        python -u src/test_resume_parser.py
+        python -u src/test_analytics_dashboard.py
+        python -u src/test_system_robustness.py
+        python -u src/test_end_to_end_integration.py
+        python -u src/test_interview_simulator.py
+        python -u src/test_job_market_scraper.py
+        python -u src/test_github_scanner.py
+        python -u src/test_ats_optimizer.py
+
+    - name: Run Quantitative System Evaluation Benchmark
+      run: |
+        python -u src/system_evaluation.py

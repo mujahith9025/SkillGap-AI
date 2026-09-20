@@ -22,8 +22,10 @@ torch>=2.0.0
 # Resume Extraction (PDF Parsing)
 PyMuPDF>=1.23.0
 
-# Web Application & Interactive UI
-streamlit>=1.30.0
+# Web Application & REST API (FastAPI Backend + Modern Frontend)
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
 
 # Development & Notebooks
 ipykernel>=6.25.0

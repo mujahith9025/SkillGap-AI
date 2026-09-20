@@ -1,0 +1,2440 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillGap AI — Enterprise Career Recommendation Platform</title>
+  <meta name="description" content="Official Shadcn UI Enterprise Analytics Platform for Skill Gap Analysis, Career Roadmaps, and Placement Diagnostics.">
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ========================================================================
+     OPENING / WELCOME LANDING PAGE (WELCOME SCREEN)
+     ======================================================================== -->
+<div id="welcome-screen" class="welcome-screen">
+  
+  <!-- Welcome Top Header -->
+  <header class="welcome-header">
+    <div class="welcome-brand">
+      <div class="welcome-logo-icon">🎓</div>
+      <div>
+        <div class="welcome-brand-text">SkillGap AI</div>
+        <div style="font-size: 0.75rem; color: hsl(var(--muted-foreground)); font-weight: 500;">Placement Readiness & Career Recommendation System</div>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <button id="welcome-theme-toggle" class="btn btn-outline btn-icon" title="Toggle Theme">
+        <i data-lucide="moon" id="welcome-theme-icon" style="width: 16px; height: 16px;"></i>
+      </button>
+      <a href="/docs" target="_blank" class="btn btn-outline btn-sm" title="FastAPI Swagger Documentation">
+        <i data-lucide="terminal" style="width: 14px; height: 14px;"></i>
+        <span>API Docs</span>
+      </a>
+      <button id="welcome-explore-demo-btn" class="btn btn-outline btn-sm" onclick="launchAppWithCurrentState()">
+        <span>Explore Demo Directly →</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Welcome Main Content Container -->
+  <main class="welcome-main">
+    
+    <!-- Hero Banner -->
+    <div class="welcome-hero">
+      <div class="welcome-hero-badge">
+        <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i>
+        <span>AI-Powered Campus Placement Intelligence</span>
+      </div>
+      <h1 class="welcome-hero-title">Bridge the Gap Between College and Your Dream Tech Career</h1>
+      <p class="welcome-hero-subtitle">
+        Evaluate your technical job readiness, discover missing skills, generate step-by-step learning roadmaps, optimize your resume for ATS, and practice technical interviews — completely in simple, plain English.
+      </p>
+    </div>
+
+    <!-- How It Works / General Instructions (3 Simple Steps) -->
+    <div class="welcome-steps-container">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+        <div style="font-size: 0.95rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+          <i data-lucide="info" style="width: 18px; height: 18px; color: var(--brand-blue);"></i>
+          <span>How It Works & Quick Instructions</span>
+        </div>
+        <span class="badge badge-emerald">Zero Technical Jargon</span>
+      </div>
+
+      <div class="welcome-steps-grid">
+        <div class="welcome-step-card">
+          <div class="welcome-step-num">1</div>
+          <div class="welcome-step-content">
+            <h3>Select Your Target Role</h3>
+            <p>Pick your dream career path (Data Scientist, ML Engineer, Backend Developer, Data Analyst, etc.).</p>
+          </div>
+        </div>
+
+        <div class="welcome-step-card">
+          <div class="welcome-step-num">2</div>
+          <div class="welcome-step-content">
+            <h3>Upload Resume or Select Skills</h3>
+            <p>Upload your PDF/TXT resume to auto-extract skills, or quickly choose your skills using presets.</p>
+          </div>
+        </div>
+
+        <div class="welcome-step-card">
+          <div class="welcome-step-num">3</div>
+          <div class="welcome-step-content">
+            <h3>Launch & Analyze Readiness</h3>
+            <p>Click the launch button to view your placement score, prerequisite roadmap, and personalized interview kit.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Interactive Onboarding / Launch Card -->
+    <div class="welcome-launch-card">
+      
+      <!-- Section 1: Role Selector -->
+      <div style="margin-bottom: 24px;">
+        <div class="welcome-section-heading">
+          <span style="width: 24px; height: 24px; border-radius: 50%; background: rgba(37,99,235,0.1); color: var(--brand-blue); display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 800;">1</span>
+          <span>Step 1: Select Your Target Career Role</span>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; align-items: center;">
+          <select id="welcome-career-select" class="select-input" style="font-size: 0.95rem; font-weight: 600; padding: 10px 14px;">
+            <option value="Data Scientist" selected>🎯 Data Scientist</option>
+            <option value="Machine Learning Engineer">🤖 Machine Learning Engineer</option>
+            <option value="Data Analyst">📊 Data Analyst</option>
+            <option value="Business Intelligence Analyst">📈 Business Intelligence Analyst</option>
+            <option value="Data Engineer">🛠️ Data Engineer</option>
+            <option value="Backend Developer (Python)">⚡ Backend Developer (Python)</option>
+            <option value="AI Research Assistant">🧠 AI Research Assistant</option>
+          </select>
+
+          <div style="font-size: 0.8rem; color: hsl(var(--muted-foreground));">
+            Selected role benchmark includes required core skills, prerequisite chains, and placement tiers.
+          </div>
+        </div>
+      </div>
+
+      <div style="height: 1px; background-color: hsl(var(--border)); margin-bottom: 24px;"></div>
+
+      <!-- Section 2: Resume Upload & Skill Input -->
+      <div style="margin-bottom: 28px;">
+        <div class="welcome-section-heading">
+          <span style="width: 24px; height: 24px; border-radius: 50%; background: rgba(37,99,235,0.1); color: var(--brand-blue); display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 800;">2</span>
+          <span>Step 2: Upload Resume or Choose Your Skills</span>
+        </div>
+
+        <!-- Segmented Tab Selector -->
+        <div class="segmented-control" style="width: 100%; max-width: 440px; margin-bottom: 16px;">
+          <button id="welcome-tab-resume-btn" class="segment-tab active" onclick="switchWelcomeInputTab('resume')" style="flex: 1;">📄 Upload Resume (PDF / TXT)</button>
+          <button id="welcome-tab-skills-btn" class="segment-tab" onclick="switchWelcomeInputTab('skills')" style="flex: 1;">⚡ Quick Skill Selector</button>
+        </div>
+
+        <!-- Sub-pane 1: Resume Upload -->
+        <div id="welcome-pane-resume">
+          <div id="welcome-dropzone" class="welcome-dropzone">
+            <div style="font-size: 2rem; margin-bottom: 8px;">📄</div>
+            <div style="font-weight: 700; font-size: 1rem; margin-bottom: 4px;">Drag and drop your Resume file here</div>
+            <div style="font-size: 0.82rem; color: hsl(var(--muted-foreground)); margin-bottom: 12px;">Supports PDF, TXT, DOCX formats with instant skill parsing</div>
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('welcome-resume-file-input').click()">
+              <i data-lucide="folder-open" style="width: 14px; height: 14px;"></i> Browse Files from Device
+            </button>
+            <input type="file" id="welcome-resume-file-input" accept=".pdf,.txt,.docx,.md" style="display: none;">
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; flex-wrap: wrap; gap: 8px;">
+            <span style="font-size: 0.8rem; color: hsl(var(--muted-foreground));">Want to test with a sample resume right away?</span>
+            <button id="welcome-load-sample-btn" class="btn btn-outline btn-sm" onclick="loadSampleResumeInWelcome()">
+              ⚡ Load Sample Data Science Resume
+            </button>
+          </div>
+
+          <!-- Resume Extracted Preview Box -->
+          <div id="welcome-resume-status-card" class="file-preview-card" style="display: none; margin-top: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div style="font-weight: 700; font-size: 0.9rem;" id="welcome-resume-name">📄 sample_resume.pdf</div>
+              <span class="badge badge-emerald" id="welcome-resume-badge">5 Skills Identified</span>
+            </div>
+            <div style="font-size: 0.8rem; font-weight: 600; margin-bottom: 6px;">Skills Extracted from Resume:</div>
+            <div id="welcome-resume-tags" class="tags-wrap"></div>
+          </div>
+        </div>
+
+        <!-- Sub-pane 2: Quick Skill Selector -->
+        <div id="welcome-pane-skills" style="display: none;">
+          <div style="margin-bottom: 12px;">
+            <div style="font-size: 0.82rem; color: hsl(var(--muted-foreground)); margin-bottom: 8px;">Quick-fill using student personas:</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+              <button class="btn btn-outline btn-sm" onclick="applyWelcomePreset('ds')">📊 Data Science Student</button>
+              <button class="btn btn-outline btn-sm" onclick="applyWelcomePreset('mle')">🤖 ML Engineer Student</button>
+              <button class="btn btn-outline btn-sm" onclick="applyWelcomePreset('bi')">📈 BI Analyst Student</button>
+              <button class="btn btn-outline btn-sm" onclick="applyWelcomePreset('beg')">🌱 Beginner Student</button>
+            </div>
+          </div>
+
+          <div style="font-size: 0.82rem; color: hsl(var(--muted-foreground)); margin-bottom: 8px;">Or click individual skills to select/unselect:</div>
+          <div id="welcome-skills-chips-container" class="tags-wrap" style="max-height: 160px; overflow-y: auto; padding: 4px;"></div>
+          
+          <div style="margin-top: 10px; font-size: 0.82rem; font-weight: 600;">
+            Selected Skills: <span id="welcome-selected-count-badge" class="badge badge-indigo">4 Selected</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Section 3: Action Launch Button -->
+      <div>
+        <button id="welcome-launch-btn" class="btn-launch-primary" onclick="launchAppWithCurrentState()">
+          <i data-lucide="rocket" style="width: 20px; height: 20px;"></i>
+          <span>🚀 Start / Analyze Career Readiness</span>
+        </button>
+        <div style="text-align: center; margin-top: 8px; font-size: 0.78rem; color: hsl(var(--muted-foreground));">
+          Generates your Job Readiness Score, missing skill audit, prerequisite flowchart, and interview questions.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Platform Highlights & Core Capabilities Grid -->
+    <div>
+      <div style="font-size: 1rem; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="layers" style="width: 18px; height: 18px; color: var(--brand-blue);"></i>
+        <span>Included Platform Capabilities</span>
+      </div>
+
+      <div class="welcome-features-grid">
+        <div class="welcome-feature-card">
+          <div class="welcome-feature-icon"><i data-lucide="bar-chart-3" style="width: 20px; height: 20px;"></i></div>
+          <h4>📊 Job Readiness Scoring</h4>
+          <p>Calculates weighted readiness percentages, interview success chance, and multi-role compatibility.</p>
+        </div>
+
+        <div class="welcome-feature-card">
+          <div class="welcome-feature-icon"><i data-lucide="git-fork" style="width: 20px; height: 20px;"></i></div>
+          <h4>🗺️ Step-by-Step Roadmaps</h4>
+          <p>Topological prerequisite flowcharts with study calendar sync (.ics) so you master foundations first.</p>
+        </div>
+
+        <div class="welcome-feature-card">
+          <div class="welcome-feature-icon"><i data-lucide="file-check" style="width: 20px; height: 20px;"></i></div>
+          <h4>📄 Smart ATS Resume Scorer</h4>
+          <p>Scan your resume for missing keywords, fix bullet points, and export 1-click recruiter-ready LaTeX formats.</p>
+        </div>
+
+        <div class="welcome-feature-card">
+          <div class="welcome-feature-icon"><i data-lucide="mic" style="width: 20px; height: 20px;"></i></div>
+          <h4>🎙️ AI Mock Interview & Sandbox</h4>
+          <p>Practice voice/text interview questions with instant grading and run live Python/SQL code in your browser.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Welcome Screen Footer -->
+  <footer class="welcome-footer">
+    <div>SkillGap AI — Final-Year Major Capstone Project • AI/NLP Decision Support Architecture</div>
+    <div style="margin-top: 4px; font-size: 0.75rem; color: hsl(var(--muted-foreground));">100% Free & Open Source • Powered by FastAPI & Sentence-Transformers</div>
+  </footer>
+
+</div>
+
+<!-- ========================================================================
+     MAIN APPLICATION WRAPPER (HIDDEN UNTIL LAUNCHED)
+     ======================================================================== -->
+<div id="main-app-wrapper" style="display: none;">
+
+<!-- ========================================================================
+     SHADCN UI ENTERPRISE HEADER
+     ======================================================================== -->
+<header class="shadcn-header">
+  <div class="header-top">
+    <!-- Left: Brand Logo & Return Home Button -->
+    <div class="header-brand">
+      <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.95rem;">
+        <div style="width: 28px; height: 28px; border-radius: var(--radius); background: linear-gradient(135deg, var(--brand-blue), #1d4ed8); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">🎓</div>
+        <span>SkillGap AI</span>
+      </div>
+
+      <button class="btn btn-outline btn-sm" id="btn-return-welcome" onclick="returnToWelcomeScreen()" title="Return to opening setup screen" style="display: flex; align-items: center; gap: 6px; margin-left: 12px;">
+        <i data-lucide="home" style="width: 14px; height: 14px;"></i>
+        <span>Change Role / Skills</span>
+      </button>
+    </div>
+
+    <!-- Right: Command search, notifications, theme toggle -->
+    <div class="header-actions">
+      <button class="search-command-btn" id="search-command-btn">
+        <span style="display: flex; align-items: center; gap: 6px;">
+          <i data-lucide="search" style="width: 14px; height: 14px;"></i>
+          <span>Search skills, jobs...</span>
+        </span>
+        <kbd>⌘K</kbd>
+      </button>
+
+      <button id="theme-toggle" class="btn btn-outline btn-icon" title="Toggle Theme">
+        <i data-lucide="moon" id="theme-icon" style="width: 16px; height: 16px;"></i>
+      </button>
+
+      <a href="/docs" target="_blank" class="btn btn-outline btn-sm" title="FastAPI Swagger Documentation">
+        <i data-lucide="terminal" style="width: 14px; height: 14px;"></i>
+        <span>API Docs</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Horizontal Navigation Tabs (Exact Shadcn Dashboard Nav) -->
+  <nav class="header-nav">
+    <div class="nav-link active" data-view="view-overview">📊 Job Readiness</div>
+    <div class="nav-link" data-view="view-roadmap">🗺️ Learning Path</div>
+    <div class="nav-link" data-view="view-projects">🚀 Guided Projects</div>
+    <div class="nav-link" data-view="view-market">📈 Salary & Market</div>
+    <div class="nav-link" data-view="view-interview">🎙️ Practice Interview</div>
+    <div class="nav-link" data-view="view-ats">📄 Smart Resume</div>
+    <div class="nav-link" data-view="view-github">🐙 GitHub Portfolio</div>
+    <div class="nav-link" data-view="view-vector">⚡ Ask AI Search</div>
+    <div class="nav-link" data-view="view-tpo-recruiter">🏢 College & Recruiter</div>
+  </nav>
+</header>
+
+<!-- ========================================================================
+     MAIN DASHBOARD CONTAINER
+     ======================================================================== -->
+<main class="dashboard-container">
+
+  <!-- Hero Header -->
+  <div class="dashboard-hero">
+    <div>
+      <h1 class="hero-title">Career Readiness Dashboard</h1>
+      <p class="hero-subtitle">See how ready you are for your dream tech job, find missing skills, and practice for campus interviews in simple steps.</p>
+    </div>
+
+    <div class="hero-controls">
+      <!-- Target Career Select -->
+      <select id="career-dropdown" class="select-input">
+        <option value="Data Scientist" selected>🎯 Role: Data Scientist</option>
+        <option value="Machine Learning Engineer">🎯 Role: ML Engineer</option>
+        <option value="Data Analyst">🎯 Role: Data Analyst</option>
+        <option value="Business Intelligence Analyst">🎯 Role: BI Analyst</option>
+        <option value="Data Engineer">🎯 Role: Data Engineer</option>
+        <option value="Backend Developer (Python)">🎯 Role: Backend Developer</option>
+        <option value="AI Research Assistant">🎯 Role: AI Researcher</option>
+      </select>
+
+      <button id="download-report-btn" class="btn btn-outline" title="Download System Evaluation Benchmark">
+        <i data-lucide="download" style="width: 15px; height: 15px;"></i>
+        <span>Download Report</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       VIEW 1: SHADCN ENTERPRISE OVERVIEW (MAIN HERO VIEW)
+       ======================================================================== -->
+  <section id="view-overview" class="view-panel active">
+    
+    <!-- 4 Exact Shadcn Metric Cards -->
+    <div class="metrics-grid">
+      
+      <!-- Metric 1: Weighted Match Score & Placement Probability -->
+      <div class="card metric-card">
+        <div class="metric-header">
+          <span class="metric-title">Job Readiness Score</span>
+          <i data-lucide="target" class="metric-icon"></i>
+        </div>
+        <div class="metric-value" id="kpi-match-val">42.9%</div>
+        <div class="metric-delta" id="kpi-delta-text">Interview Success Chance: <b id="kpi-placement-prob-text">64.5%</b></div>
+        <div class="progress-rail">
+          <div class="progress-thumb" id="kpi-progress-bar" style="width: 42.9%;"></div>
+        </div>
+      </div>
+
+      <!-- Metric 2: Skills Covered -->
+      <div class="card metric-card">
+        <div class="metric-header">
+          <span class="metric-title">Skills You Know</span>
+          <i data-lucide="check-circle" class="metric-icon"></i>
+        </div>
+        <div class="metric-value" id="kpi-coverage-val">4 / 14</div>
+        <div class="metric-delta" id="kpi-core-text">+2 essential skills satisfied</div>
+      </div>
+
+      <!-- Metric 3: Priority Gaps -->
+      <div class="card metric-card">
+        <div class="metric-header">
+          <span class="metric-title">Skills to Learn</span>
+          <i data-lucide="alert-triangle" class="metric-icon"></i>
+        </div>
+        <div class="metric-value" id="kpi-gaps-val" style="color: var(--rose-text);">10</div>
+        <div class="metric-delta" id="kpi-gaps-sub-text">4 High Priority | 4 Medium | 2 Low</div>
+      </div>
+
+      <!-- Metric 4: Est Study Time & Cohort Standing -->
+      <div class="card metric-card">
+        <div class="metric-header">
+          <span class="metric-title">Your Class Standing</span>
+          <i data-lucide="award" class="metric-icon"></i>
+        </div>
+        <div class="metric-value" id="kpi-percentile-val" style="font-size: 1.4rem;">Top 22.5%</div>
+        <div class="metric-delta" id="kpi-cohort-sub">Compared to 1,200 Student Applicants</div>
+      </div>
+
+    </div>
+
+    <!-- Predictive Placement Probability & Peer Cohort Benchmarking Card -->
+    <div class="card" style="margin-bottom: 24px;">
+      <div class="card-header" style="padding-bottom: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+              <i data-lucide="sparkles" style="width: 17px; height: 17px; color: var(--brand-blue);"></i>
+              <span>🎯 Interview Success Chance & Expected Salary Package</span>
+            </div>
+            <div class="card-description">Accurate prediction based on your verified skills, project evidence, and resume quality.</div>
+          </div>
+          <span class="badge badge-gold" id="placement-tier-badge" style="font-size: 0.82rem; padding: 5px 12px;">
+            🏆 High-Growth Tech Company (₹10–18 LPA)
+          </span>
+        </div>
+      </div>
+      <div class="card-content">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center;">
+          <!-- Left: Probability Metrics -->
+          <div>
+            <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px;">
+              <span style="font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em;" id="placement-prob-large">76.4%</span>
+              <span style="font-size: 0.88rem; color: var(--emerald-text); font-weight: 600;" id="placement-status-text">✓ High Likelihood</span>
+            </div>
+            <div style="font-size: 0.83rem; color: hsl(var(--muted-foreground)); margin-bottom: 12px;">
+              <b>Target Salary Range:</b> <span id="placement-salary-range" style="color: hsl(var(--foreground)); font-weight: 600;">₹10,00,000 – ₹18,00,000 LPA ($75k–$115k)</span>
+            </div>
+            <div style="font-size: 0.83rem; color: hsl(var(--muted-foreground));">
+              <b>Class Ranking:</b> <span id="placement-cohort-standing" style="color: hsl(var(--foreground)); font-weight: 600;">Top 23.6% of 1,200 Applicants</span>
+            </div>
+          </div>
+
+          <!-- Right: Key Factor Attribution -->
+          <div>
+            <div style="font-size: 0.8rem; font-weight: 600; margin-bottom: 8px; color: hsl(var(--muted-foreground));">Why You Received This Score:</div>
+            <div id="placement-factors-container" style="display: flex; flex-wrap: wrap;">
+              <span class="factor-pill factor-pill-pos">✓ Strong Foundation Skills (+14.0%)</span>
+              <span class="factor-pill factor-pill-pos">✓ Verified GitHub Coding Proof (+11.5%)</span>
+              <span class="factor-pill factor-pill-neg">! Missing Key Job Skills (-16.0%)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Two-Column Layout (Exact 7:5 Ratio from Shadcn Dashboard) -->
+    <div class="dashboard-grid">
+      
+      <!-- Left Column: Overview Chart & Prerequisite Roadmap -->
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        
+        <!-- Chart Card with 3 Toggle Tabs (Radar, Donut, Bell Curve) -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Visual Skill Breakdown & Class Comparison</div>
+              <div class="card-description">Interactive spider chart, completion percentage, and student distribution bell curve.</div>
+            </div>
+            <div class="segmented-control">
+              <button class="segment-tab active" id="tab-chart-radar">Skill Spider Chart</button>
+              <button class="segment-tab" id="tab-chart-donut">Skills Completed (%)</button>
+              <button class="segment-tab" id="tab-chart-bell">Class Standing Curve</button>
+            </div>
+          </div>
+          <div class="card-content" style="height: 310px; position: relative;">
+            <canvas id="overviewChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Prerequisite Roadmap Milestone Preview -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title"><i data-lucide="git-branch" style="width: 16px; height: 16px;"></i> Step-by-Step Learning Plan</div>
+              <div class="card-description">Organized so basic foundations come first before intermediate and advanced tools.</div>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="switchNavTab('view-roadmap')">View Full Roadmap ↗</button>
+          </div>
+          <div class="card-content">
+            <div id="overview-roadmap-list" class="item-list">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Recent Milestones & Priority Gap Actions -->
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        
+        <!-- Satisfied Competencies Card -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">✅ Skills You Have Mastered</div>
+              <div class="card-description">Skills verified in your technical profile.</div>
+            </div>
+            <span class="badge badge-emerald" id="overview-matched-count">4 Verified</span>
+          </div>
+          <div class="card-content">
+            <div id="overview-milestones-list" class="item-list">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- High Priority Gaps Checklist Card -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">⚠️ Skills You Need to Learn Next</div>
+              <div class="card-description">Most important missing skills needed to pass company placement interviews.</div>
+            </div>
+            <span class="badge badge-rose" id="overview-gaps-badge">4 Priority</span>
+          </div>
+          <div class="card-content">
+            <div id="overview-gaps-list" class="item-list">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Cross Career Multi-Role Fit Matrix (7 Careers Grid) -->
+    <div class="card" style="margin-top: 24px;">
+      <div class="card-header">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <div class="card-title"><i data-lucide="compass" style="width: 16px; height: 16px;"></i> 🧭 Other Jobs You Qualify For (Alternative Careers)</div>
+            <div class="card-description">See your readiness percentage for all 7 tech roles and discover other jobs you can easily apply for.</div>
+          </div>
+          <span class="badge badge-outline" id="multi-role-count-badge">7 Industry Roles Evaluated</span>
+        </div>
+      </div>
+      <div class="card-content">
+        <div id="multi-role-matrix-grid" class="role-matrix-grid">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ========================================================================
+       VIEW 2: PREREQUISITE LEARNING ROADMAP & DAG
+       ======================================================================== -->
+  <section id="view-roadmap" class="view-panel">
+    
+    <!-- Top Stats & Mode Selector Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+      <div>
+        <h2 style="font-size: 1.25rem; font-weight: 700; display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+          <i data-lucide="git-fork" style="width: 20px; height: 20px; color: var(--brand-blue);"></i>
+          Step-by-Step Learning Path & Skill Chart
+        </h2>
+        <p style="font-size: 0.85rem; color: hsl(var(--muted-foreground));">
+          Interactive skill connection chart with unlock quizzes, weekly study timelines, and 1-click calendar export.
+        </p>
+      </div>
+
+      <!-- Segmented View Mode Toggle -->
+      <div class="segmented-control" style="background: hsl(var(--muted) / 0.5); padding: 4px;">
+        <button id="roadmap-mode-dag" class="segment-tab active" onclick="switchRoadmapMode('dag')">
+          <i data-lucide="network" style="width: 14px; height: 14px; margin-right: 4px;"></i> Interactive Skill Chart
+        </button>
+        <button id="roadmap-mode-cards" class="segment-tab" onclick="switchRoadmapMode('cards')">
+          <i data-lucide="layers" style="width: 14px; height: 14px; margin-right: 4px;"></i> Step-by-Step Chapters
+        </button>
+        <button id="roadmap-mode-calendar" class="segment-tab" onclick="switchRoadmapMode('calendar')">
+          <i data-lucide="calendar" style="width: 14px; height: 14px; margin-right: 4px;"></i> Weekly Study Sprints
+        </button>
+      </div>
+    </div>
+
+    <!-- Mode 1: Interactive DAG Graph Container -->
+    <div id="roadmap-pane-dag" class="roadmap-subpane">
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <div class="legend-badge legend-green">🟢 Mastered (<span id="dag-count-mastered">0</span>)</div>
+            <div class="legend-badge legend-amber">🟡 Ready / In-Progress (<span id="dag-count-ready">0</span>)</div>
+            <div class="legend-badge legend-gray">⚪ Locked (<span id="dag-count-locked">0</span>)</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <button class="btn btn-outline btn-sm" onclick="zoomDagCanvas(1.15)" title="Zoom In">🔍+</button>
+            <button class="btn btn-outline btn-sm" onclick="zoomDagCanvas(0.85)" title="Zoom Out">🔍-</button>
+            <button class="btn btn-outline btn-sm" onclick="resetDagCanvasZoom()" title="Reset Zoom">↺ Reset</button>
+          </div>
+        </div>
+        <div class="card-content" style="padding: 0; position: relative; overflow: hidden; background: radial-gradient(circle at center, hsl(var(--muted)/0.3) 1px, transparent 1px); background-size: 20px 20px; height: 520px; border-radius: 0 0 var(--radius) var(--radius);">
+          <div id="dag-canvas-container" style="width: 100%; height: 100%; cursor: grab; position: relative;">
+            <svg id="dag-canvas-svg" width="100%" height="100%" style="display: block;"></svg>
+          </div>
+
+          <!-- Bottom hint overlay -->
+          <div style="position: absolute; bottom: 12px; left: 16px; font-size: 0.75rem; color: hsl(var(--muted-foreground)); background: hsl(var(--background)/0.85); padding: 4px 8px; border-radius: 4px; border: 1px solid hsl(var(--border)); pointer-events: none;">
+            💡 Tip: Click any node to inspect prerequisites or take the 3-question Mastery Quiz Gate!
+          </div>
+        </div>
+      </div>
+
+      <!-- Node Detail Inspector Drawer/Card -->
+      <div id="dag-node-inspector" class="card" style="display: none; margin-bottom: 20px; border-left: 4px solid var(--brand-blue);">
+        <div class="card-content" style="padding: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <h3 id="inspector-skill-name" style="font-size: 1.1rem; font-weight: 700;">Skill Name</h3>
+                <span id="inspector-status-badge" class="badge">Status</span>
+                <span id="inspector-difficulty-badge" class="badge badge-outline">Intermediate</span>
+              </div>
+              <p id="inspector-category" style="font-size: 0.8rem; color: hsl(var(--muted-foreground)); margin-top: 2px;">Category</p>
+            </div>
+            <button class="btn btn-outline btn-icon" onclick="closeDagInspector()" style="height: 28px; width: 28px;">&times;</button>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 12px;">
+            <div style="font-size: 0.85rem;">
+              <div style="color: hsl(var(--muted-foreground)); font-size: 0.78rem;">Estimated Study Effort</div>
+              <div id="inspector-hours" style="font-weight: 600; font-size: 1rem;">~15 Hours</div>
+            </div>
+            <div style="font-size: 0.85rem;">
+              <div style="color: hsl(var(--muted-foreground)); font-size: 0.78rem;">Unlocks Downstream</div>
+              <div id="inspector-unlocks" style="font-weight: 600; font-size: 1rem;">2 Skills</div>
+            </div>
+            <div style="font-size: 0.85rem;">
+              <div style="color: hsl(var(--muted-foreground)); font-size: 0.78rem;">Prerequisite Blockers</div>
+              <div id="inspector-prereqs" style="font-weight: 600; font-size: 0.88rem; color: var(--rose-text);">None (Ready)</div>
+            </div>
+          </div>
+
+          <div id="inspector-resources-section" style="margin-top: 12px;">
+            <div style="font-size: 0.8rem; font-weight: 600; margin-bottom: 6px;">Recommended Learning Material:</div>
+            <div id="inspector-resources-list" style="display: flex; flex-direction: column; gap: 6px;"></div>
+          </div>
+
+          <div style="margin-top: 16px; display: flex; justify-content: flex-end; gap: 8px;">
+            <button id="inspector-quiz-btn" class="btn btn-default" onclick="openSkillQuizFromInspector()">
+              🎯 Take 3-Question Quiz Gate to Unlock
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mode 2: Milestone Phases View -->
+    <div id="roadmap-pane-cards" class="roadmap-subpane" style="display: none;">
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-header">
+          <div class="card-title">Phased Milestone Sequence</div>
+          <div class="card-description">Sequential learning paths partitioned into progressive milestones.</div>
+        </div>
+        <div class="card-content" id="full-roadmap-container"></div>
+      </div>
+    </div>
+
+    <!-- Mode 3: Weekly Study Sprint Calendar View -->
+    <div id="roadmap-pane-calendar" class="roadmap-subpane" style="display: none;">
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <div class="card-title">Weekly Placement Sprint Timetable</div>
+            <div class="card-description">Calculates daily study commitment and syncs directly to Google Calendar or Notion.</div>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button id="btn-export-ics" class="btn btn-default btn-sm" onclick="exportCalendarIcs()">
+              <i data-lucide="download" style="width: 14px; height: 14px; margin-right: 4px;"></i> 📅 Download .ics for Google/Apple Calendar
+            </button>
+            <button id="btn-copy-notion" class="btn btn-outline btn-sm" onclick="copyNotionTemplate()">
+              <i data-lucide="copy" style="width: 14px; height: 14px; margin-right: 4px;"></i> 📝 Copy Notion Study Template
+            </button>
+          </div>
+        </div>
+        <div class="card-content">
+          <!-- Calendar Configuration Bar -->
+          <div class="calendar-config-bar" style="display: flex; align-items: center; gap: 16px; background: hsl(var(--muted)/0.3); padding: 12px 16px; border-radius: var(--radius); margin-bottom: 16px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 200px;">
+              <div style="font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Target Placement Season Timeline:</div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <input type="range" id="calendar-days-slider" min="30" max="120" step="15" value="60" style="flex: 1;" oninput="updateCalendarSchedule()">
+                <b id="calendar-days-label" style="font-size: 0.9rem; min-width: 60px;">60 Days</b>
+              </div>
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+              <div style="font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Daily Commitment:</div>
+              <div style="display: flex; gap: 6px;">
+                <button class="btn btn-outline btn-sm commitment-btn" data-hours="1.0" onclick="setDailyHours(1.0)">1.0h/day</button>
+                <button class="btn btn-outline btn-sm commitment-btn active" data-hours="1.5" onclick="setDailyHours(1.5)">1.5h/day</button>
+                <button class="btn btn-outline btn-sm commitment-btn" data-hours="2.0" onclick="setDailyHours(2.0)">2.0h/day</button>
+                <button class="btn btn-outline btn-sm commitment-btn" data-hours="3.0" onclick="setDailyHours(3.0)">3.0h/day</button>
+              </div>
+            </div>
+            <div style="border-left: 1px solid hsl(var(--border)); padding-left: 16px;">
+              <div style="font-size: 0.78rem; color: hsl(var(--muted-foreground));">Pace Velocity</div>
+              <span id="calendar-pace-badge" class="badge badge-emerald">Optimal Sprint Velocity</span>
+            </div>
+          </div>
+
+          <!-- Weekly Sprints Timeline Container -->
+          <div id="calendar-sprints-container" style="display: flex; flex-direction: column; gap: 12px;"></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ========================================================================
+       VIEW 3: PORTFOLIO PROJECTS & CURATED CATALOG
+       ======================================================================== -->
+  <section id="view-projects" class="view-panel">
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <div>
+          <div class="card-title">🚀 Recommended Hands-On Projects</div>
+          <div class="card-description">Real-world coding projects specifically chosen to help you practice and prove your missing skills.</div>
+        </div>
+      </div>
+      <div class="card-content" id="full-projects-container">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       VIEW 4: SECTION 7: LIVE JOB MARKET INTELLIGENCE & SCRAPER
+       ======================================================================== -->
+  <section id="view-market" class="view-panel">
+    <!-- Top Header Card -->
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="trending-up" style="width: 20px; height: 20px; color: var(--brand-blue);"></i>
+            Live Job Market Intelligence & Salary Insights
+          </div>
+          <div class="card-description">
+            Real-world salary ranges, city-by-city hiring hotspots, and the fastest-growing in-demand skills.
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <span class="badge badge-indigo">Salary Estimator</span>
+          <span class="badge badge-emerald">Hiring Cities Map</span>
+          <span class="badge badge-amber">Skill Growth Tracker</span>
+        </div>
+      </div>
+      <div class="card-content" style="padding-top: 0;">
+        <div class="segmented-control" style="width: 100%;">
+          <button class="segment-tab active" data-market-tab="subtab-market-salary" style="flex: 1;">
+            💰 Salary Calculator & Boosts
+          </button>
+          <button class="segment-tab" data-market-tab="subtab-market-heatmap" style="flex: 1;">
+            🗺️ Top Hiring Cities & Heatmap
+          </button>
+          <button class="segment-tab" data-market-tab="subtab-market-velocity" style="flex: 1;">
+            📈 Fastest Growing Skills
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-TAB 1: LIVE SALARY & COMPENSATION ESTIMATOR -->
+    <div id="subtab-market-salary" class="market-subtab-pane">
+      <!-- 4 Salary KPI Cards -->
+      <div class="kpi-grid" style="margin-bottom: 20px;">
+        <div class="kpi-card">
+          <div class="kpi-label"><i data-lucide="wallet" style="width: 14px; height: 14px;"></i> Estimated Current Standing</div>
+          <div class="kpi-value" id="salary-current-val" style="color: var(--emerald-text);">$138,000</div>
+          <div class="kpi-subtext" id="salary-current-inr">₹18.5 LPA (Indian Equivalent)</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label"><i data-lucide="target" style="width: 14px; height: 14px;"></i> Target Maximum Potential</div>
+          <div class="kpi-value" id="salary-max-val" style="color: var(--brand-blue);">$195,000</div>
+          <div class="kpi-subtext" id="salary-max-inr">₹28.0 LPA (Senior / Top Tier)</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label"><i data-lucide="gauge" style="width: 14px; height: 14px;"></i> Earning Capacity Unlocked</div>
+          <div class="kpi-value" id="salary-capacity-pct">70.8%</div>
+          <div class="kpi-subtext" id="salary-matched-skills-sub">Based on verified skill matches</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label"><i data-lucide="sparkles" style="width: 14px; height: 14px;"></i> Top Single Skill Boost</div>
+          <div class="kpi-value" id="salary-top-boost-val" style="color: var(--indigo-text); font-size: 1.35rem;">+₹4.5 LPA</div>
+          <div class="kpi-subtext" id="salary-top-boost-name">LLMs / GenAI Integration</div>
+        </div>
+      </div>
+
+      <!-- Controls & Currency Toggle -->
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-content" style="padding: 14px 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 280px;">
+              <span style="font-size: 0.85rem; font-weight: 600; white-space: nowrap;">Target Career:</span>
+              <select id="salary-career-select" class="field-input" style="padding: 6px 12px; font-weight: 600;">
+                <option value="Data Scientist" selected>Data Scientist</option>
+                <option value="Machine Learning Engineer">Machine Learning Engineer</option>
+                <option value="AI Engineer">AI Engineer</option>
+                <option value="Data Analyst">Data Analyst</option>
+                <option value="Business Analyst">Business Analyst</option>
+                <option value="Backend Developer">Backend Developer</option>
+                <option value="Python Developer">Python Developer</option>
+              </select>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 0.82rem; font-weight: 600; color: hsl(var(--muted-foreground));">Currency Display:</span>
+              <div class="segmented-control">
+                <button class="segment-tab active" id="currency-toggle-inr" onclick="setSalaryCurrency('INR')">₹ INR (LPA)</button>
+                <button class="segment-tab" id="currency-toggle-usd" onclick="setSalaryCurrency('USD')">$ USD ($k)</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top High-ROI Bridge Skills Cards -->
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-header">
+          <div class="card-title">⚡ Highest-ROI Skill Value Deltas</div>
+          <div class="card-description">Marginal salary boost unlocked by learning each missing high-value competency.</div>
+        </div>
+        <div class="card-content">
+          <div id="salary-top-deltas-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 16px;">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Full Skill Value Delta Breakdown Table -->
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-header">
+          <div class="card-title">Detailed Skill Value Delta & Market Frequency Matrix</div>
+          <div class="card-description">Complete economic value attribution for every required competency in the target career path.</div>
+        </div>
+        <div class="card-content">
+          <div class="table-wrap">
+            <table class="shadcn-table">
+              <thead>
+                <tr>
+                  <th>ROI Rank</th>
+                  <th>Competency / Skill</th>
+                  <th>Importance Tier</th>
+                  <th>Marginal Salary Delta (USD)</th>
+                  <th>Marginal Salary Delta (INR)</th>
+                  <th>Market Frequency</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="salary-deltas-table-body">
+                <!-- Rendered via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-TAB 2: GEOGRAPHICAL TECH HUB HIRING DENSITY & HEATMAP -->
+    <div id="subtab-market-heatmap" class="market-subtab-pane" style="display: none;">
+      <!-- Region Filter Pills -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button class="btn btn-default btn-sm hub-filter-btn active" data-region="all">🌍 All Hubs (9)</button>
+          <button class="btn btn-outline btn-sm hub-filter-btn" data-region="India">🇮🇳 India Hubs (4)</button>
+          <button class="btn btn-outline btn-sm hub-filter-btn" data-region="North America">🇺🇸 North America (3)</button>
+          <button class="btn btn-outline btn-sm hub-filter-btn" data-region="Europe">🇬🇧 Europe (1)</button>
+          <button class="btn btn-outline btn-sm hub-filter-btn" data-region="Remote">🌐 Remote Worldwide (1)</button>
+        </div>
+        <span class="badge badge-emerald" id="heatmap-active-jobs-badge">3,800+ Active Openings Analyzed</span>
+      </div>
+
+      <!-- Tech Hub Cards Grid -->
+      <div id="tech-hubs-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 20px;">
+        <!-- Rendered dynamically via JS -->
+      </div>
+    </div>
+
+    <!-- SUB-TAB 3: EMERGING SKILL VELOCITY TRACKER -->
+    <div id="subtab-market-velocity" class="market-subtab-pane" style="display: none;">
+      <!-- 4 Velocity Summary Cards -->
+      <div class="metrics-grid" style="margin-bottom: 20px;">
+        <div class="card metric-card">
+          <div class="metric-header"><span class="metric-title">🚀 Breakout / High Surge</span><i data-lucide="zap" class="metric-icon" style="color: var(--amber-text);"></i></div>
+          <div class="metric-value" style="color: var(--amber-text);">+40% to +142%</div>
+          <div class="metric-delta">LLMs, FastAPI, PyTorch</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-header"><span class="metric-title">📈 Strong Growth</span><i data-lucide="trending-up" class="metric-icon" style="color: var(--emerald-text);"></i></div>
+          <div class="metric-value" style="color: var(--emerald-text);">+15% to +40%</div>
+          <div class="metric-delta">Docker, Kubernetes, MLOps</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-header"><span class="metric-title">⚓ Established Core</span><i data-lucide="anchor" class="metric-icon" style="color: var(--brand-blue);"></i></div>
+          <div class="metric-value" style="color: var(--brand-blue);">90%+ Inclusion</div>
+          <div class="metric-delta">Python, SQL, Pandas, Scikit-Learn</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-header"><span class="metric-title">📉 Maturing / Niche</span><i data-lucide="clock" class="metric-icon"></i></div>
+          <div class="metric-value" style="color: hsl(var(--muted-foreground));">-3.5% MoM</div>
+          <div class="metric-delta">Legacy Monoliths (Django/Flask)</div>
+        </div>
+      </div>
+
+      <!-- Velocity Metrics Table -->
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-header">
+          <div class="card-title">Month-over-Month (MoM) Skill Velocity & 6-Month Demand Trajectory</div>
+          <div class="card-description">Real-time demand momentum scoring derived from live job posting frequency shifts.</div>
+        </div>
+        <div class="card-content">
+          <div class="table-wrap">
+            <table class="shadcn-table">
+              <thead>
+                <tr>
+                  <th>Competency</th>
+                  <th>Category</th>
+                  <th>Market Inclusion</th>
+                  <th>MoM Growth</th>
+                  <th>Velocity Tier</th>
+                  <th>6-Month Demand Trajectory</th>
+                  <th>Momentum Index</th>
+                  <th>Market Driver Context</th>
+                </tr>
+              </thead>
+              <tbody id="skill-velocity-table-body">
+                <!-- Rendered via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Dynamic Market Weights vs Static Curriculum -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Dynamic Market Weights vs. Static Curriculum</div>
+        <div class="card-description">Hiring frequencies dynamically shift skill weights to reflect real employer demand.</div>
+      </div>
+      <div class="card-content">
+        <div class="table-wrap">
+          <table class="shadcn-table">
+            <thead>
+              <tr>
+                <th>Skill</th>
+                <th>Academic Weight</th>
+                <th>Market Frequency</th>
+                <th>Dynamic Weight</th>
+                <th>Hiring Urgency</th>
+              </tr>
+            </thead>
+            <tbody id="market-weights-table-body">
+              <tr><td><b>Python</b></td><td>3.0 (Core)</td><td>94.8%</td><td>3.0 (Core)</td><td><span class="badge badge-emerald">★ Essential</span></td></tr>
+              <tr><td><b>SQL</b></td><td>3.0 (Core)</td><td>87.2%</td><td>3.0 (Core)</td><td><span class="badge badge-emerald">★ Essential</span></td></tr>
+              <tr><td><b>FastAPI</b></td><td>2.0 (Secondary)</td><td>76.4%</td><td>2.8 (Elevated)</td><td><span class="badge badge-emerald">▲ High Surge</span></td></tr>
+              <tr><td><b>Docker</b></td><td>2.0 (Secondary)</td><td>68.1%</td><td>2.5 (Elevated)</td><td><span class="badge badge-amber">▲ Moderate</span></td></tr>
+              <tr><td><b>Tableau</b></td><td>2.0 (Secondary)</td><td>42.0%</td><td>1.8 (Stable)</td><td><span class="badge badge-secondary">Standard</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       VIEW 5: AI MOCK INTERVIEW & LIVE CODING SANDBOX (SECTION 4 UPGRADES)
+       ======================================================================== -->
+  <section id="view-interview" class="view-panel">
+    
+    <!-- Mode Switcher Header Card -->
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header" style="padding: 14px 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+              <i data-lucide="mic" style="width: 18px; height: 18px; color: var(--brand-blue);"></i>
+              <span>AI Technical Mock Interview Arena</span>
+            </div>
+            <div class="card-description">Practice voice-driven conceptual interviews or live coding & SQL challenges targeting your skill gaps.</div>
+          </div>
+          
+          <div class="segmented-control">
+            <button class="segment-tab active" id="tab-int-mode-voice" onclick="switchInterviewMode('voice')">
+              🎙️ Voice & Conceptual Interview
+            </button>
+            <button class="segment-tab" id="tab-int-mode-code" onclick="switchInterviewMode('code')">
+              💻 Live Code & SQL Sandbox
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANE 1: CONVERSATIONAL & VOICE INTERVIEW MODE -->
+    <div id="interview-voice-pane">
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-header">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <label class="field-label" style="margin: 0; white-space: nowrap;">Target Skill Gap:</label>
+              <select id="int-skill-select" class="field-input" style="width: auto; padding: 6px 12px; font-weight: 600;">
+                <option value="SQL" selected>SQL (Database Queries & Aggregations)</option>
+                <option value="Python">Python (Core Mechanics & Concurrency)</option>
+                <option value="Machine Learning">Machine Learning (Modeling & Metrics)</option>
+                <option value="Deep Learning">Deep Learning (Neural Architectures)</option>
+                <option value="FastAPI">FastAPI (REST Microservices)</option>
+                <option value="Docker">Docker (Container Architecture)</option>
+                <option value="Pandas">Pandas (Data Wrangling)</option>
+              </select>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+              <button id="int-speak-question-btn" class="btn btn-outline btn-sm" onclick="speakCurrentQuestion()">
+                🔊 Read Aloud (AI Voice)
+              </button>
+              <button id="int-next-q-btn" class="btn btn-outline btn-sm" onclick="loadNextInterviewQuestion()">
+                🎲 Next Question
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-content">
+          <!-- Question Display Banner -->
+          <div style="background-color: hsl(var(--muted)/0.3); border: 1px solid hsl(var(--border)); border-left: 4px solid var(--brand-blue); padding: 18px; border-radius: var(--radius); margin-bottom: 18px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span id="int-q-meta" class="badge badge-secondary" style="font-size: 0.75rem;">SQL | Intermediate | Practical Scenario</span>
+              <span id="int-speech-status" style="font-size: 0.78rem; color: hsl(var(--muted-foreground)); display: none;">🔊 Speaking...</span>
+            </div>
+            <div id="int-question-text" style="font-size: 1.15rem; font-weight: 600; line-height: 1.4; color: hsl(var(--foreground));">
+              "What is the difference between WHERE and HAVING in SQL queries? Provide a scenario where WHERE cannot be used."
+            </div>
+            <div id="int-hint-text" style="font-size: 0.82rem; color: hsl(var(--muted-foreground)); margin-top: 8px;">
+              💡 <i>Interviewer Hint: Focus on the query execution pipeline and aggregate functions like COUNT() and SUM().</i>
+            </div>
+          </div>
+
+          <!-- Answer Input & Speech Recognition Controls -->
+          <div class="form-field">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <label class="field-label" for="int-answer-input" style="margin: 0;">Your Technical Answer:</label>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span id="voice-recording-status" class="voice-status-indicator" style="display: none;">
+                  <span class="recording-dot"></span> Listening to microphone...
+                </span>
+                <button id="int-voice-record-btn" class="voice-record-btn" onclick="toggleVoiceRecording()">
+                  🎤 <span id="int-voice-btn-label">Record Voice Answer</span>
+                </button>
+              </div>
+            </div>
+            <textarea id="int-answer-input" class="field-textarea" style="height: 140px;" placeholder="Type your answer or click 'Record Voice Answer' to speak through your microphone..."></textarea>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <button id="int-submit-btn" class="btn btn-default" style="padding: 10px 20px;">
+              <i data-lucide="sparkles" style="width: 15px; height: 15px;"></i>
+              <span>Evaluate Answer with AI</span>
+            </button>
+            <span style="font-size: 0.78rem; color: hsl(var(--muted-foreground));">Instant helpful feedback scored on key concepts and clarity.</span>
+          </div>
+
+          <!-- AI Evaluation Rubric Card -->
+          <div id="int-result-card" style="margin-top: 20px; display: none; padding: 20px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background-color: hsl(var(--muted) / 0.25);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <div style="font-weight: 700; font-size: 1.05rem;">AI Interview Feedback</div>
+                <div style="font-size: 0.8rem; color: hsl(var(--muted-foreground));">Simple, friendly score and tips to help you ace your interview.</div>
+              </div>
+              <span class="badge badge-emerald" id="int-score-badge" style="font-size: 0.9rem; padding: 6px 14px;">Score: 8 / 10 (Good)</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+              <div style="padding: 12px; background-color: hsl(var(--card)); border-radius: var(--radius); border: 1px solid hsl(var(--border));">
+                <div style="font-size: 0.8rem; font-weight: 600; color: var(--emerald-text); margin-bottom: 6px;">✅ Key Concepts You Covered:</div>
+                <div id="int-matched-concepts" class="tags-wrap"></div>
+              </div>
+              <div style="padding: 12px; background-color: hsl(var(--card)); border-radius: var(--radius); border: 1px solid hsl(var(--border));">
+                <div style="font-size: 0.8rem; font-weight: 600; color: var(--rose-text); margin-bottom: 6px;">💡 Important Ideas to Remember:</div>
+                <div id="int-missing-concepts" class="tags-wrap"></div>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.88rem; margin-bottom: 16px;">
+              <div><b>💪 What You Did Well:</b> <span id="int-strengths" style="color: hsl(var(--muted-foreground));">Accurately explained WHERE row filtering before aggregation.</span></div>
+              <div><b>🎯 How to Make It Even Better:</b> <span id="int-improvements" style="color: hsl(var(--muted-foreground));">Mention how GROUP BY groups rows together.</span></div>
+            </div>
+
+            <!-- Follow-up Adaptive Action Bar -->
+            <div style="padding-top: 14px; border-top: 1px solid hsl(var(--border)); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <span style="font-size: 0.8rem; color: hsl(var(--muted-foreground));">Want to practice a quick follow-up question on this topic?</span>
+              <button id="int-followup-btn" class="btn btn-outline btn-sm" onclick="requestAdaptiveFollowUp()" style="border-color: var(--brand-blue); color: var(--brand-blue); font-weight: 600;">
+                ⚡ Try Follow-Up Question →
+              </button>
+            </div>
+          </div>
+
+          <!-- Multi-turn Dialogue Thread -->
+          <div id="int-dialogue-container" style="display: none; margin-top: 20px;">
+            <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 8px; color: hsl(var(--muted-foreground));">Conversational Interview History:</div>
+            <div id="int-dialogue-thread" class="dialogue-thread">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- PANE 2: LIVE CODING & SQL SANDBOX MODE -->
+    <div id="interview-code-pane" style="display: none;">
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-header">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <label class="field-label" style="margin: 0; white-space: nowrap;">Coding Challenge:</label>
+              <select id="code-problem-select" class="field-input" style="width: auto; padding: 6px 12px; font-weight: 600;" onchange="loadSelectedCodingProblem()">
+                <option value="py_two_sum" selected>Python: Two Sum (Find Pair)</option>
+                <option value="py_churn_filter">Python: At-Risk Customer Filter</option>
+                <option value="sql_top_salaries">SQL: High Earners Above Average</option>
+                <option value="sql_active_customers">SQL: Customers with > 2 Orders</option>
+              </select>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-outline btn-sm" onclick="resetCodingSandbox()">
+                🔄 Reset Code
+              </button>
+              <button id="run-code-btn" class="btn btn-default btn-sm" onclick="runSandboxCode()">
+                <i data-lucide="play" style="width: 14px; height: 14px;"></i> Run & Test Code
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-content">
+          <div class="sandbox-split-grid">
+            
+            <!-- Left: Problem Spec & Test Case Requirements -->
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                  <span id="code-problem-difficulty" class="badge badge-emerald">Beginner Friendly</span>
+                  <span id="code-problem-lang" class="badge badge-secondary">Python</span>
+                </div>
+                <h3 id="code-problem-title" style="font-size: 1.15rem; font-weight: 700;">Two Sum (Target Pair Indices)</h3>
+              </div>
+
+              <div id="code-problem-desc" style="font-size: 0.88rem; line-height: 1.5; color: hsl(var(--foreground));">
+                Given a list of numbers and a target sum, return the positions of the two numbers that add up to the target.
+              </div>
+
+              <div style="padding: 12px; border-radius: var(--radius); background-color: hsl(var(--muted)/0.3); border: 1px solid hsl(var(--border)); font-size: 0.82rem;">
+                <div style="font-weight: 600; margin-bottom: 4px;">Automated Checks:</div>
+                <div id="code-test-cases-summary">3 Test Checks (Normal numbers, zeroes, duplicates)</div>
+              </div>
+            </div>
+
+            <!-- Right: Interactive Code Editor -->
+            <div class="code-editor-box">
+              <div class="code-editor-header">
+                <span id="editor-lang-label">Python 3.11 In-Browser Editor</span>
+                <span>UTF-8 &bull; 4 Spaces</span>
+              </div>
+              <textarea id="code-editor-input" class="code-editor-textarea" spellcheck="false"></textarea>
+            </div>
+
+          </div>
+
+          <!-- Bottom: Test Case Results & Console Terminal Output -->
+          <div id="code-results-box" style="margin-top: 20px; display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <div style="font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;">
+                <span>Test Results:</span>
+                <span id="code-pass-count-badge" class="badge badge-emerald">3/3 Passed</span>
+              </div>
+              <span id="code-latency-badge" style="font-size: 0.78rem; color: hsl(var(--muted-foreground));">Speed: 4.2ms</span>
+            </div>
+
+            <!-- Test Cases Grid -->
+            <table class="test-cases-table">
+              <thead>
+                <tr>
+                  <th>Test Case</th>
+                  <th>Input</th>
+                  <th>Expected Output</th>
+                  <th>Your Output</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="test-cases-tbody">
+                <!-- Rendered via JS -->
+              </tbody>
+            </table>
+
+            <!-- Console Stdout / Traceback Terminal -->
+            <div style="margin-top: 14px;">
+              <div style="font-size: 0.78rem; font-weight: 600; color: #94a3b8; margin-bottom: 4px;">Code Output:</div>
+              <div id="code-console-output" class="console-terminal">Program finished successfully!</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ========================================================================
+       VIEW 6: ATS RESUME SCORER & OPTIMIZER (SECTION 3 UPGRADES)
+       ======================================================================== -->
+  <section id="view-ats" class="view-panel">
+    
+    <!-- Candidate Profile & Header Metadata Inputs -->
+    <div class="card" style="margin-bottom: 16px;">
+      <div class="card-header" style="padding-bottom: 8px;">
+        <div class="card-title" style="font-size: 0.88rem;"><i data-lucide="user-check" style="width: 15px; height: 15px;"></i> Candidate Contact Info (Used for 1-Click Resume Generation)</div>
+      </div>
+      <div class="card-content">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+          <div>
+            <label class="field-label">Full Name</label>
+            <input type="text" id="ats-candidate-name" class="field-input" value="Alex Chen">
+          </div>
+          <div>
+            <label class="field-label">Email Address</label>
+            <input type="email" id="ats-candidate-email" class="field-input" value="alex.chen@email.com">
+          </div>
+          <div>
+            <label class="field-label">Phone Number</label>
+            <input type="text" id="ats-candidate-phone" class="field-input" value="(555) 019-2834">
+          </div>
+          <div>
+            <label class="field-label">LinkedIn Profile</label>
+            <input type="text" id="ats-candidate-linkedin" class="field-input" value="linkedin.com/in/alexchen-tech">
+          </div>
+          <div>
+            <label class="field-label">GitHub / Portfolio</label>
+            <input type="text" id="ats-candidate-github" class="field-input" value="github.com/alexchen-dev">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resume Text vs Job Description Textareas -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i data-lucide="file-text" style="width: 16px; height: 16px;"></i> Your Resume Content</div>
+        </div>
+        <div class="card-content">
+          <textarea id="ats-resume-text" class="field-textarea" style="height: 180px;">Alex Chen | alex.chen@email.com | (555) 019-2834 | linkedin.com/in/alexchen-tech | github.com/alexchen-dev
+
+Summary:
+Motivated Computer Science graduate with hands-on experience in Python programming, machine learning, and data analytics. Built predictive models using scikit-learn and pandas. Experience with SQL database queries and Git version control.
+
+Technical Skills:
+Python, SQL, Pandas, NumPy, Scikit-Learn, Git, Matplotlib, Data Visualization, REST APIs.
+
+Work Experience:
+Software Engineering Intern - Tech Innovators Inc. (Summer 2024)
+- Worked on customer churn prediction models using python.
+- Created dashboards and ran SQL queries for business team.
+- Responsible for helping with deployment and testing.</textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i data-lucide="briefcase" style="width: 16px; height: 16px;"></i> Target Job Description</div>
+        </div>
+        <div class="card-content">
+          <textarea id="ats-jd-text" class="field-textarea" style="height: 180px;">We are seeking a talented Data Scientist to join our team.
+Requirements:
+- Strong proficiency in Python, SQL, Pandas, and NumPy.
+- Experience developing ML models with Scikit-Learn and PyTorch.
+- Knowledge of Docker, CI/CD pipelines, and FastAPI REST APIs.
+- Experience delivering business impact and optimizing query latency.</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dual Action Buttons -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+      <button id="ats-calc-btn" class="btn btn-default" style="padding: 12px;">
+        <i data-lucide="check-circle" style="width: 16px; height: 16px;"></i>
+        <span>Audit Resume & Check Match Score</span>
+      </button>
+      <button id="ats-generate-resume-btn" class="btn btn-outline" style="padding: 12px; border-color: var(--brand-blue); color: var(--brand-blue); font-weight: 600;">
+        <i data-lucide="download" style="width: 16px; height: 16px;"></i>
+        <span>⚡ 1-Click Generate Clean Resume (PDF/Print)</span>
+      </button>
+    </div>
+
+    <!-- ATS Result Card & Score Breakdown -->
+    <div id="ats-score-box" class="card" style="display: none; margin-bottom: 20px;">
+      <div class="card-content" style="padding-top: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <h3 style="font-size: 1.1rem; font-weight: 700;">Resume Match Score & Compatibility</h3>
+            <p style="font-size: 0.82rem; color: hsl(var(--muted-foreground));">How closely your resume matches the job requirements and automated screening benchmarks.</p>
+          </div>
+          <span id="ats-grade-badge" class="badge badge-emerald" style="font-size: 0.85rem; padding: 6px 12px;">A+ High Callback Chance</span>
+        </div>
+
+        <div class="metrics-grid" style="margin-bottom: 16px;">
+          <div class="card metric-card"><div class="metric-title">Overall Match Score</div><div class="metric-value" id="ats-overall-val">82%</div></div>
+          <div class="card metric-card"><div class="metric-title">Skill Keyword Match</div><div class="metric-value" id="ats-keyword-val">71.4%</div></div>
+          <div class="card metric-card"><div class="metric-title">Job Alignment</div><div class="metric-value" id="ats-semantic-val">84.5%</div></div>
+          <div class="card metric-card"><div class="metric-title">Measurable Impact</div><div class="metric-value" id="ats-metric-val">75.0%</div></div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div>
+            <div style="font-size: 0.82rem; font-weight: 600; margin-bottom: 6px; color: var(--emerald-text);">✅ Matched Target Job Skills:</div>
+            <div id="ats-matched-badges" class="tags-wrap"></div>
+          </div>
+          <div>
+            <div style="font-size: 0.82rem; font-weight: 600; margin-bottom: 6px; color: var(--rose-text);">⚠️ Skills to Add to Your Resume:</div>
+            <div id="ats-missing-badges" class="tags-wrap"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section-by-Section ATS Red-Flag Scanner -->
+    <div id="ats-red-flags-box" class="card" style="display: none; margin-bottom: 20px;">
+      <div class="card-header">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <div class="card-title"><i data-lucide="shield-check" style="width: 16px; height: 16px;"></i> Quick Fix Checklist for Job Recruiters</div>
+            <div class="card-description">Helpful suggestions to make sure your resume is clean, complete, and easy for recruiters to read.</div>
+          </div>
+          <div id="ats-flags-counter-badge" class="badge badge-secondary">0 Suggestions</div>
+        </div>
+      </div>
+      <div class="card-content">
+        <div id="ats-red-flags-grid" class="red-flags-grid">
+          <!-- Red Flag Cards Rendered via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Side-by-Side Diff Comparison View -->
+    <div id="ats-diff-box" class="card" style="display: none; margin-bottom: 20px;">
+      <div class="card-header">
+        <div>
+          <div class="card-title"><i data-lucide="git-compare" style="width: 16px; height: 16px;"></i> Before & After: Stronger Bullet Points</div>
+          <div class="card-description">See how adding numbers and action words makes your project experience stand out.</div>
+        </div>
+      </div>
+      <div class="card-content">
+        <div id="ats-diff-container" class="diff-card-wrap">
+          <!-- Side-by-Side Diff Cards Rendered via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Single Google XYZ Rewriter -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title"><i data-lucide="sparkles" style="width: 16px; height: 16px;"></i> 1-Click Bullet Point Polisher</div>
+          <div class="card-description">Paste any simple sentence to transform it into an impressive accomplishment statement.</div>
+        </div>
+      </div>
+      <div class="card-content">
+        <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+          <input type="text" id="xyz-input-bullet" class="field-input" value="Worked on customer churn prediction models using python.">
+          <button id="xyz-rewrite-btn" class="btn btn-outline" style="white-space: nowrap;">Polish Bullet Point</button>
+        </div>
+        <div id="xyz-output-box" style="padding: 14px; border: 1px solid hsl(var(--border)); border-left: 3px solid var(--brand-blue); border-radius: var(--radius); background-color: hsl(var(--muted) / 0.2);">
+          <div style="font-size: 0.8rem; font-weight: 600; color: var(--brand-blue); margin-bottom: 4px;">✨ Polished Resume Bullet:</div>
+          <div id="xyz-optimized-text" style="font-size: 0.9rem; font-weight: 500;">
+            "Built a customer churn prediction model in Python with 94% accuracy, helping the team identify and retain high-risk accounts."
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       VIEW 7: GITHUB CODE PROOF & DEEP AST SCANNER
+       ======================================================================== -->
+  <section id="view-github" class="view-panel">
+    
+    <!-- Hero Profile Search & Summary Card -->
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <div>
+          <div class="card-title"><i data-lucide="github" style="width: 18px; height: 18px;"></i> GitHub Profile & Code Proof Verification Engine</div>
+          <div class="card-description">Verify real coding evidence, check code cleanliness and readability, inspect documentation, and generate project blueprints.</div>
+        </div>
+      </div>
+      <div class="card-content">
+        <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
+          <input type="text" id="github-username-input" class="field-input" placeholder="Enter GitHub username..." value="alex_datascientist" style="flex: 1; min-width: 200px;">
+          <button id="github-scan-btn" class="btn btn-default" style="white-space: nowrap;">
+            <i data-lucide="search" style="width: 14px; height: 14px;"></i> Audit Portfolio
+          </button>
+        </div>
+
+        <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 18px; flex-wrap: wrap;">
+          <span style="font-size: 0.8rem; color: hsl(var(--muted-foreground)); font-weight: 600;">Sample Profiles:</span>
+          <button class="btn btn-outline btn-sm" onclick="loadGithubSampleUser('alex_datascientist')">👨‍💻 alex_datascientist (Senior Ready)</button>
+          <button class="btn btn-outline btn-sm" onclick="loadGithubSampleUser('jordan_fresher')">🎓 jordan_fresher (Beginner)</button>
+          <button class="btn btn-outline btn-sm" onclick="loadGithubSampleUser('torvalds')">🐧 torvalds (Live GitHub API)</button>
+        </div>
+
+        <!-- Metric KPI Cards Row -->
+        <div class="metrics-grid" style="margin-bottom: 16px;">
+          <div class="card metric-card">
+            <div class="metric-title">Verified Skills</div>
+            <div class="metric-value" id="gh-skills-count" style="color: var(--brand-blue);">3</div>
+          </div>
+          <div class="card metric-card">
+            <div class="metric-title">Coding Quality Score</div>
+            <div class="metric-value" id="gh-quality-score" style="color: var(--emerald-text);">85.0%</div>
+          </div>
+          <div class="card metric-card">
+            <div class="metric-title">Portfolio Readiness Tier</div>
+            <div class="metric-value" id="gh-tier-val" style="font-size: 1.05rem; color: #8b5cf6;">Senior Placement Ready</div>
+          </div>
+          <div class="card metric-card">
+            <div class="metric-title">GitHub Stars & Repos</div>
+            <div class="metric-value" id="gh-repos-count" style="color: #f59e0b;">44 ⭐ (3 Repos)</div>
+          </div>
+        </div>
+
+        <!-- Verified Badges & Best Practices Checklist -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+          <div style="padding: 14px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background-color: hsl(var(--muted)/0.15);">
+            <div style="font-size: 0.82rem; font-weight: 700; margin-bottom: 8px; color: var(--emerald-text);">🛡️ Verified Code-Backed Competencies:</div>
+            <div id="gh-verified-badges" class="tags-wrap">
+              <span class="badge badge-emerald">✓ Python</span>
+              <span class="badge badge-emerald">✓ SQL</span>
+              <span class="badge badge-emerald">✓ PyTorch</span>
+              <span class="badge badge-emerald">✓ Docker</span>
+              <span class="badge badge-emerald">✓ FastAPI</span>
+            </div>
+          </div>
+
+          <div style="padding: 14px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background-color: hsl(var(--muted)/0.15);">
+            <div style="font-size: 0.82rem; font-weight: 700; margin-bottom: 8px;">⚙️ Professional Engineering Practices:</div>
+            <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.83rem;">
+              <div id="gh-badge-ci">⚡ <b>Automated CI/CD Workflows:</b> <span class="badge badge-emerald">Detected</span></div>
+              <div id="gh-badge-docker">🐳 <b>Docker Containerization:</b> <span class="badge badge-emerald">Detected</span></div>
+              <div id="gh-badge-tests">🧪 <b>Automated Pytest Suites:</b> <span class="badge badge-emerald">Detected</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 5 Segmented Sub-Tabs -->
+    <div class="segmented-control" style="width: 100%; margin-bottom: 20px;">
+      <button id="gh-subtab-repos" class="segment-tab active" onclick="switchGithubSubTab('repos')" style="flex: 1;">
+        📂 Repositories & Code Cleanliness
+      </button>
+      <button id="gh-subtab-readme" class="segment-tab" onclick="switchGithubSubTab('readme')" style="flex: 1;">
+        📑 README & Documentation Quality
+      </button>
+      <button id="gh-subtab-blueprint" class="segment-tab" onclick="switchGithubSubTab('blueprint')" style="flex: 1;">
+        💡 Step-by-Step Project Blueprint
+      </button>
+    </div>
+
+    <!-- SUB-TAB 1: Repositories Table & AST Code Inspector -->
+    <div id="gh-pane-repos" class="gh-tab-pane">
+      
+      <!-- Repositories Table Card -->
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-header">
+          <div class="card-title"><i data-lucide="folder-git-2" style="width: 16px; height: 16px;"></i> Audited Repositories Breakdown</div>
+          <div class="card-description">Individual repository inspection with library detection and best-practice tags.</div>
+        </div>
+        <div class="card-content">
+          <div class="table-wrap">
+            <table class="shadcn-table">
+              <thead>
+                <tr>
+                  <th>Repository</th>
+                  <th>Language</th>
+                  <th>Stars</th>
+                  <th>Detected Skills</th>
+                  <th>Tests</th>
+                  <th>Docker</th>
+                  <th>CI/CD</th>
+                </tr>
+              </thead>
+              <tbody id="gh-repos-table-body">
+                <!-- Rendered dynamically via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Deep AST Code Analysis & Linter Card -->
+      <div class="card">
+        <div class="card-header">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <div class="card-title"><i data-lucide="check-circle" style="width: 16px; height: 16px;"></i> Code Cleanliness & Readability Checker</div>
+              <div class="card-description">Automatically checks Python code for clear organization, readability, and good software engineering habits.</div>
+            </div>
+            <button id="btn-run-ast-analysis" class="btn btn-default" onclick="runASTCodeAnalysis()">
+              <i data-lucide="play" style="width: 14px; height: 14px;"></i> Check Code Cleanliness
+            </button>
+          </div>
+        </div>
+        <div class="card-content">
+          <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-size: 0.82rem; font-weight: 600;">Python Source Code (.py):</span>
+                <span style="font-size: 0.75rem; color: hsl(var(--muted-foreground));">Ready to Check</span>
+              </div>
+              <textarea id="ast-code-editor" class="code-editor-textarea" style="height: 280px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;" spellcheck="false">from typing import List, Dict, Optional
+
+class CustomerRetentionPredictor:
+    """Predicts customer churn probabilities and flags at-risk accounts."""
+    
+    def __init__(self, threshold: float = 0.75):
+        self.threshold: float = threshold
+        self.risk_weights: Dict[str, float] = {"tenure": 0.4, "usage_drop": 0.6}
+
+    def evaluate_churn_risk(self, account_id: str, tenure_months: int, usage_score: float) -> Dict[str, Any]:
+        """Calculates risk score and returns mitigation plan."""
+        if tenure_months <= 0:
+            raise ValueError("Tenure months must be positive integer.")
+        
+        normalized_tenure = max(0.0, min(1.0, 1.0 - (tenure_months / 36.0)))
+        risk = (normalized_tenure * self.risk_weights["tenure"]) + ((1.0 - usage_score) * self.risk_weights["usage_drop"])
+        
+        is_high_risk = risk >= self.threshold
+        return {
+            "account_id": account_id,
+            "risk_score": round(risk, 4),
+            "is_high_risk": is_high_risk,
+            "action_tier": "Immediate Executive Outreach" if is_high_risk else "Standard Monitoring"
+        }
+</textarea>
+            </div>
+
+            <!-- AST Metrics Scorecard -->
+            <div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+                <div class="card metric-card" style="padding: 10px;">
+                  <div class="metric-title" style="font-size: 0.72rem;">Readability Score</div>
+                  <div class="metric-value" id="ast-complexity-val" style="font-size: 1.15rem; color: var(--emerald-text);">Grade A ⭐⭐⭐⭐⭐</div>
+                </div>
+                <div class="card metric-card" style="padding: 10px;">
+                  <div class="metric-title" style="font-size: 0.72rem;">Type Clarity</div>
+                  <div class="metric-value" id="ast-typing-val" style="font-size: 1.15rem; color: var(--brand-blue);">100% Clear</div>
+                </div>
+                <div class="card metric-card" style="padding: 10px;">
+                  <div class="metric-title" style="font-size: 0.72rem;">Organization</div>
+                  <div class="metric-value" id="ast-oop-val" style="font-size: 0.95rem; color: #8b5cf6;">Well-Organized</div>
+                </div>
+                <div class="card metric-card" style="padding: 10px;">
+                  <div class="metric-title" style="font-size: 0.72rem;">Explanations & Comments</div>
+                  <div class="metric-value" id="ast-docstring-val" style="font-size: 1.15rem; color: #0891b2;">100% Clear</div>
+                </div>
+              </div>
+
+              <!-- Detected Patterns & Suggestions -->
+              <div style="padding: 12px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background-color: hsl(var(--muted)/0.15); margin-bottom: 10px;">
+                <div style="font-size: 0.8rem; font-weight: 700; margin-bottom: 4px; color: var(--emerald-text);">✨ Clean Coding Habits Found:</div>
+                <div id="ast-patterns-list" style="font-size: 0.8rem; color: hsl(var(--muted-foreground));">
+                  Clear function inputs & outputs, clean class structure, and readable logic steps.
+                </div>
+              </div>
+
+              <div style="padding: 12px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background-color: hsl(var(--muted)/0.15);">
+                <div style="font-size: 0.8rem; font-weight: 700; margin-bottom: 4px; color: #f59e0b;">💡 Simple Tips to Make Your Code Even Better:</div>
+                <div id="ast-feedback-list" style="font-size: 0.8rem; color: hsl(var(--foreground));">
+                  No issues found! Your code is clean, easy to read, and ready for team collaboration.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-TAB 2: README Documentation Auditor -->
+    <div id="gh-pane-readme" class="gh-tab-pane" style="display: none;">
+      <div class="card">
+        <div class="card-header">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <div class="card-title"><i data-lucide="file-text" style="width: 16px; height: 16px;"></i> Project Guide & README Quality Scorer</div>
+              <div class="card-description">Checks if your project has clear setup steps, simple explanations, live demo links, and status badges.</div>
+            </div>
+            <button id="btn-audit-readme" class="btn btn-default" onclick="auditReadmeDocument()">
+              <i data-lucide="check-circle" style="width: 14px; height: 14px;"></i> Score Project Guide
+            </button>
+          </div>
+        </div>
+        <div class="card-content">
+          <div style="display: grid; grid-template-columns: 1.1fr 1fr; gap: 16px;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-size: 0.82rem; font-weight: 600;">Project README.md Document:</span>
+                <span style="font-size: 0.75rem; color: hsl(var(--muted-foreground));">Markdown Ready</span>
+              </div>
+              <textarea id="readme-markdown-editor" class="code-editor-textarea" style="height: 320px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;" spellcheck="false"># 🚀 Enterprise Customer Churn Prediction Microservice
+An end-to-end machine learning classification system with FastAPI inference and Docker containerization.
+
+![Build Status](https://img.shields.io/badge/build-passing-green.svg)
+![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)
+![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)
+
+## 🏗️ System Architecture
+```mermaid
+graph TD
+    Client[Web Dashboard / REST Client] --> Gateway[FastAPI Gateway]
+    Gateway --> Model[Scikit-Learn Random Forest Engine]
+    Model --> DB[(PostgreSQL Analytics DB)]
+```
+
+## ⚡ Quickstart & Installation
+```bash
+# Clone the repository
+git clone https://github.com/alexchen-dev/churn-prediction.git
+cd churn-prediction
+
+# Install dependencies and start server
+pip install -r requirements.txt
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+## 🌐 Interactive Cloud Demo
+Test the live deployed prediction UI at: https://churn-predictor-demo.streamlit.app/
+
+## 📑 API Request Sample
+```python
+import requests
+response = requests.post("http://localhost:8000/api/v1/predict", json={"tenure": 14, "usage_score": 0.42})
+print(response.json())
+```
+</textarea>
+            </div>
+
+            <!-- README Audit Results Panel -->
+            <div>
+              <div style="display: flex; align-items: center; gap: 16px; padding: 14px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background-color: hsl(var(--muted)/0.15); margin-bottom: 14px;">
+                <div style="text-align: center; min-width: 80px;">
+                  <div id="readme-score-gauge" style="font-size: 2rem; font-weight: 800; color: var(--emerald-text);">95.0%</div>
+                  <div style="font-size: 0.7rem; text-transform: uppercase; color: hsl(var(--muted-foreground)); font-weight: 700;">Score</div>
+                </div>
+                <div>
+                  <div id="readme-grade-badge" class="badge badge-emerald" style="font-size: 0.9rem; padding: 4px 10px; margin-bottom: 4px;">
+                    A+ Clear & Complete Guide
+                  </div>
+                  <div style="font-size: 0.8rem; color: hsl(var(--muted-foreground));">
+                    Meets all standards for clear setup instructions and recruiter visibility.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Section Checks Checklist -->
+              <div id="readme-checks-container" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
+                <!-- Rendered dynamically via JS -->
+              </div>
+
+              <!-- Actionable Suggestions -->
+              <div style="padding: 12px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background-color: hsl(var(--muted)/0.15);">
+                <div style="font-size: 0.8rem; font-weight: 700; margin-bottom: 4px; color: var(--brand-blue);">💡 Helpful Writing Tips:</div>
+                <div id="readme-suggestions-list" style="font-size: 0.8rem; color: hsl(var(--foreground));">
+                  • Outstanding project guide! Clear, easy to follow, and recruiter-friendly.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-TAB 3: Skill-Gap Project Blueprint Generator -->
+    <div id="gh-pane-blueprint" class="gh-tab-pane" style="display: none;">
+      <div class="card">
+        <div class="card-header">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <div class="card-title"><i data-lucide="compass" style="width: 16px; height: 16px;"></i> Step-by-Step Project Blueprint Generator</div>
+              <div class="card-description">Generate complete project plans, folder structures, and starter code templates tailored to your missing skills.</div>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <select id="blueprint-skill-select" class="select-input" style="font-size: 0.85rem; padding: 6px 12px;">
+                <option value="Docker" selected>🐳 Missing Skill: Docker</option>
+                <option value="FastAPI">⚡ Missing Skill: FastAPI</option>
+                <option value="PyTorch">🔥 Missing Skill: PyTorch</option>
+                <option value="Large Language Models (LLMs)">🤖 Missing Skill: Large Language Models (LLMs)</option>
+                <option value="Big Data Fundamentals (Spark)">⚡ Missing Skill: Apache PySpark</option>
+                <option value="SQL">🗄️ Missing Skill: Advanced SQL & Analytics</option>
+              </select>
+              <button id="btn-generate-blueprint" class="btn btn-default" onclick="generateProjectBlueprint()">
+                <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i> Generate Blueprint
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="card-content">
+          <!-- Rendered Blueprint Display -->
+          <div id="blueprint-display-card" style="padding: 18px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background-color: hsl(var(--muted)/0.1);">
+            
+            <!-- Blueprint Header -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <span id="bp-skill-tag" class="badge badge-amber" style="margin-bottom: 6px;">Target Gap: Docker</span>
+                <h3 id="bp-title" style="font-size: 1.25rem; font-weight: 700; margin: 4px 0;">Containerized ML Microservice with Docker & FastAPI</h3>
+                <p id="bp-tagline" style="font-size: 0.88rem; color: hsl(var(--muted-foreground)); margin: 0;">Step-by-step project that bundles a machine learning app into a clean Docker container.</p>
+              </div>
+              <button class="btn btn-outline btn-sm" onclick="copyBlueprintFolderTree()">
+                📋 Copy Directory Tree
+              </button>
+            </div>
+
+            <!-- Business Problem & Tech Stack -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
+              <div style="padding: 12px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background-color: hsl(var(--background));">
+                <div style="font-size: 0.8rem; font-weight: 700; margin-bottom: 4px; color: var(--rose-text);">💼 Real-World Problem Solved:</div>
+                <div id="bp-problem" style="font-size: 0.82rem; color: hsl(var(--foreground));">
+                  AI & Data Science models often run on your laptop but fail on servers without proper container packaging.
+                </div>
+              </div>
+              <div style="padding: 12px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background-color: hsl(var(--background));">
+                <div style="font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; color: var(--brand-blue);">🛠️ Recommended Tools:</div>
+                <div id="bp-tech-stack" class="tags-wrap">
+                  <span class="badge badge-secondary">Docker</span>
+                  <span class="badge badge-secondary">Docker Compose</span>
+                  <span class="badge badge-secondary">FastAPI</span>
+                  <span class="badge badge-secondary">Scikit-Learn</span>
+                  <span class="badge badge-secondary">Pytest</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sprints & Folder Structure Split View -->
+            <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; margin-bottom: 16px;">
+              <!-- 4-Phase Sprints Timeline -->
+              <div>
+                <div style="font-size: 0.85rem; font-weight: 700; margin-bottom: 10px;">📅 4-Phase Step-by-Step Sprint Plan:</div>
+                <div id="bp-sprints-container" style="display: flex; flex-direction: column; gap: 8px;">
+                  <!-- Rendered via JS -->
+                </div>
+              </div>
+
+              <!-- Directory Tree Structure -->
+              <div>
+                <div style="font-size: 0.85rem; font-weight: 700; margin-bottom: 10px;">🗂️ Clean Folder Structure:</div>
+                <pre id="bp-folder-tree" class="code-editor-textarea" style="height: 220px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin: 0; padding: 12px; overflow-x: auto;"></pre>
+              </div>
+            </div>
+
+            <!-- Starter Template Files Drawer -->
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 0.85rem; font-weight: 700;">📄 Starter Code Files:</span>
+                <div id="bp-starter-tabs" style="display: flex; gap: 6px;">
+                  <!-- Tabs rendered dynamically -->
+                </div>
+              </div>
+              <pre id="bp-starter-file-content" class="code-editor-textarea" style="height: 180px; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; margin: 0; padding: 12px;"></pre>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ========================================================================
+       VIEW 8: SECTION 6: PERSISTENT VECTOR DB, KNOWLEDGE GRAPH & HYBRID RAG
+       ======================================================================== -->
+  <section id="view-vector" class="view-panel">
+    
+    <!-- Top Header Banner -->
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="database" style="width: 20px; height: 20px; color: var(--brand-blue);"></i>
+            Smart AI Search, Skill Maps & Technical Q&A
+          </div>
+          <div class="card-description">
+            Ask technical interview questions, search tech skills by concept or exact keyword, and explore prerequisite knowledge graphs.
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <span class="badge badge-indigo">Concept Search</span>
+          <span class="badge badge-emerald">Keyword Match</span>
+          <span class="badge badge-amber">AI Q&A Assistant</span>
+        </div>
+      </div>
+      <div class="card-content" style="padding-top: 0;">
+        <div class="segmented-control" style="width: 100%;">
+          <button class="segment-tab active" data-subtab="subtab-vector-hybrid" style="flex: 1;">
+            ⚡ Smart Concept & Keyword Search
+          </button>
+          <button class="segment-tab" data-subtab="subtab-vector-graph" style="flex: 1;">
+            🕸️ Skill Connections Map
+          </button>
+          <button class="segment-tab" data-subtab="subtab-vector-rag" style="flex: 1;">
+            🤖 Ask AI Study Assistant (Q&A)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-TAB 1: HYBRID DENSE-SPARSE SEARCH -->
+    <div id="subtab-vector-hybrid" class="vector-subtab-pane">
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-header">
+          <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="search" style="width: 18px; height: 18px;"></i>
+            Search Skills & Concepts
+          </div>
+          <div class="card-description">
+            Find skills, tools, and career concepts with intelligent matching that understands both plain terms and exact keywords.
+          </div>
+        </div>
+        <div class="card-content">
+          <!-- Preset Quick-Chips -->
+          <div style="margin-bottom: 14px;">
+            <span style="font-size: 0.8rem; font-weight: 600; margin-right: 8px; color: hsl(var(--muted-foreground));">Try Common Searches:</span>
+            <div style="display: inline-flex; flex-wrap: wrap; gap: 6px; vertical-align: middle;">
+              <button class="btn btn-outline btn-sm hybrid-preset-btn" data-query="BERT transformer NLP deep learning" data-mode="hybrid">⚡ BERT Transformers</button>
+              <button class="btn btn-outline btn-sm hybrid-preset-btn" data-query="Docker containerization microservices orchestration" data-mode="hybrid">🐳 Docker Microservices</button>
+              <button class="btn btn-outline btn-sm hybrid-preset-btn" data-query="SQL window functions partition by order by" data-mode="hybrid">🗄️ SQL Window Functions</button>
+              <button class="btn btn-outline btn-sm hybrid-preset-btn" data-query="CI/CD automated pipeline testing github actions" data-mode="hybrid">⚙️ CI/CD Pipelines</button>
+              <button class="btn btn-outline btn-sm hybrid-preset-btn" data-query="JWT authentication token OAuth2 backend security" data-mode="hybrid">🔒 JWT Security</button>
+            </div>
+          </div>
+
+          <!-- Main Input Row -->
+          <div style="display: grid; grid-template-columns: 1fr auto; gap: 12px; margin-bottom: 14px;">
+            <input type="text" id="hybrid-search-input" class="field-input" value="Docker containerization microservices orchestration" placeholder="Search technical skills, architectures, or concept documentation...">
+            <button id="hybrid-search-btn" class="btn btn-default" style="display: flex; align-items: center; gap: 6px; padding: 0 20px;">
+              <i data-lucide="search" style="width: 16px; height: 16px;"></i>
+              Search
+            </button>
+          </div>
+
+          <!-- Filter Controls -->
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding: 10px 14px; background-color: hsl(var(--muted) / 0.3); border-radius: var(--radius); border: 1px solid hsl(var(--border));">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 0.8rem; font-weight: 600; color: hsl(var(--muted-foreground));">Search Scope:</span>
+              <select id="hybrid-search-doctype" class="field-input" style="padding: 4px 10px; font-size: 0.82rem; width: auto;">
+                <option value="all" selected>All Technical Knowledge (Skills + Careers + Guides)</option>
+                <option value="skill">Skills Only</option>
+                <option value="career">Career Roles Only</option>
+                <option value="doc">Study Guides & Cheatsheets Only</option>
+              </select>
+            </div>
+            <span class="badge badge-emerald" style="font-size: 0.75rem;">⚡ Instant Intelligent Matching</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hybrid Search Results List -->
+      <div class="card">
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div class="card-title">Matching Topics & Documents</div>
+            <div class="card-description" id="hybrid-results-summary">Top ranked skills and study guides matching your search.</div>
+          </div>
+          <span class="badge badge-secondary" id="hybrid-results-count-badge">0 Results</span>
+        </div>
+        <div class="card-content">
+          <div id="hybrid-search-results-box" style="display: flex; flex-direction: column; gap: 12px;">
+            <!-- Rendered dynamically via JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-TAB 2: PREREQUISITE KNOWLEDGE GRAPH & GATEWAYS -->
+    <div id="subtab-vector-graph" class="vector-subtab-pane" style="display: none;">
+      <!-- 4 Graph KPIs -->
+      <div class="kpi-grid" style="margin-bottom: 20px;">
+        <div class="kpi-card">
+          <div class="kpi-label"><i data-lucide="layers" style="width: 14px; height: 14px;"></i> Total Skills in Map</div>
+          <div class="kpi-value" id="kg-total-nodes">32</div>
+          <div class="kpi-subtext">Essential Tech Skills</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label"><i data-lucide="git-branch" style="width: 14px; height: 14px;"></i> Skill Connections</div>
+          <div class="kpi-value" id="kg-total-edges">28</div>
+          <div class="kpi-subtext">Prerequisite Pathways</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label"><i data-lucide="award" style="width: 14px; height: 14px;"></i> #1 Foundation Skill</div>
+          <div class="kpi-value" id="kg-top-gateway-name" style="font-size: 1.3rem;">Python</div>
+          <div class="kpi-subtext">Unlocks 8 Advanced Tools</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label"><i data-lucide="network" style="width: 14px; height: 14px;"></i> Learning Progression</div>
+          <div class="kpi-value" style="font-size: 1.3rem;">Basics ➔ Advanced</div>
+          <div class="kpi-subtext">Clear Step-by-Step Path</div>
+        </div>
+      </div>
+
+      <!-- Prerequisite Path Tracer Explorer -->
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-header">
+          <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="route" style="width: 18px; height: 18px;"></i>
+            Step-by-Step Prerequisite Flow
+          </div>
+          <div class="card-description">
+            Choose any advanced skill to see what foundational skills you should learn first.
+          </div>
+        </div>
+        <div class="card-content">
+          <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px;">
+            <select id="kg-skill-select" class="field-input" style="flex: 1; min-width: 240px; font-weight: 600;">
+              <option value="Machine Learning" selected>Machine Learning</option>
+              <option value="Deep Learning">Deep Learning</option>
+              <option value="Natural Language Processing">Natural Language Processing</option>
+              <option value="Computer Vision">Computer Vision</option>
+              <option value="FastAPI">FastAPI</option>
+              <option value="Docker">Docker</option>
+              <option value="Kubernetes">Kubernetes</option>
+              <option value="Data Structures & Algorithms">Data Structures & Algorithms</option>
+              <option value="Data Warehousing">Data Warehousing</option>
+              <option value="Statistical Modeling">Statistical Modeling</option>
+              <option value="MLOps">MLOps</option>
+            </select>
+            <button id="kg-trace-btn" class="btn btn-default" style="display: flex; align-items: center; gap: 6px;">
+              <i data-lucide="git-merge" style="width: 16px; height: 16px;"></i>
+              Show Prerequisites
+            </button>
+          </div>
+
+          <!-- Prerequisite Flow Visualizer Bar -->
+          <div id="kg-pathway-card" style="padding: 16px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background-color: hsl(var(--card));">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span style="font-size: 0.85rem; font-weight: 700;">Recommended Learning Order:</span>
+              <span class="badge badge-indigo" id="kg-path-depth-badge">3-Stage Pathway</span>
+            </div>
+            <div id="kg-pathway-container" style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gateway Hubs & Interactive Visual Graph Split Grid -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <!-- Top Gateway Skills Table -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🏆 Top Foundation Skills</div>
+            <div class="card-description">Mastering these core skills unlocks the highest number of advanced topics and job tracks.</div>
+          </div>
+          <div class="card-content">
+            <div id="kg-gateways-list" style="display: flex; flex-direction: column; gap: 10px;">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Visual Knowledge Graph Canvas -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🕸️ Beginner to Advanced Skill Levels</div>
+            <div class="card-description">Structured skill levels from core programming to modern cloud & AI.</div>
+          </div>
+          <div class="card-content" style="padding: 12px;">
+            <div id="kg-visual-canvas" style="background-color: hsl(var(--background)); border: 1px solid hsl(var(--border)); border-radius: var(--radius); padding: 16px; min-height: 320px; display: flex; flex-direction: column; justify-content: space-between;">
+              <!-- Visual Skill Clusters rendered via JS / CSS -->
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span class="badge badge-emerald">Tier 1: Foundations</span>
+                <span class="badge badge-blue">Tier 2: Intermediate</span>
+                <span class="badge badge-indigo">Tier 3: Advanced ML/Cloud</span>
+              </div>
+              <div id="kg-cluster-tree" style="display: flex; flex-direction: column; gap: 14px;">
+                <!-- Clusters rendered via JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-TAB 3: GROUNDED RAG TECHNICAL Q&A ASSISTANT -->
+    <div id="subtab-vector-rag" class="vector-subtab-pane" style="display: none;">
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-header">
+          <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="bot" style="width: 20px; height: 20px; color: var(--brand-blue);"></i>
+            Technical Interview RAG Q&A Assistant
+          </div>
+          <div class="card-description">
+            Ask technical interview and architecture questions. Answers are dynamically retrieved and synthesized from vector knowledge playbooks with verifiable citations and runnable code snippets.
+          </div>
+        </div>
+        <div class="card-content">
+          <!-- Question Chips -->
+          <div style="margin-bottom: 14px;">
+            <span style="font-size: 0.8rem; font-weight: 600; margin-right: 8px; color: hsl(var(--muted-foreground));">Quick Interview Prompts:</span>
+            <div style="display: inline-flex; flex-wrap: wrap; gap: 6px; vertical-align: middle;">
+              <button class="btn btn-outline btn-sm rag-prompt-btn" data-prompt="How do I optimize SQL window queries for performance?">🗄️ SQL Window Optimization</button>
+              <button class="btn btn-outline btn-sm rag-prompt-btn" data-prompt="When should I use K-Fold Cross-Validation vs Stratified Split?">📊 Cross-Validation vs Stratified</button>
+              <button class="btn btn-outline btn-sm rag-prompt-btn" data-prompt="How do I optimize multi-stage Docker container builds for ML services?">🐳 Multi-Stage Docker ML</button>
+              <button class="btn btn-outline btn-sm rag-prompt-btn" data-prompt="Explain the difference between PyTorch Dataset and DataLoader with batching.">🔥 PyTorch Dataset vs DataLoader</button>
+              <button class="btn btn-outline btn-sm rag-prompt-btn" data-prompt="How does Pandas groupby().transform() work for feature engineering?">🐼 Pandas groupby().transform()</button>
+            </div>
+          </div>
+
+          <!-- Question Input -->
+          <div style="display: grid; grid-template-columns: 1fr auto; gap: 12px;">
+            <input type="text" id="rag-question-input" class="field-input" value="How do I optimize SQL window queries for performance?" placeholder="Ask any technical concept or interview question...">
+            <button id="rag-ask-btn" class="btn btn-default" style="display: flex; align-items: center; gap: 6px; padding: 0 22px;">
+              <i data-lucide="message-square" style="width: 16px; height: 16px;"></i>
+              Ask Assistant
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RAG Synthesized Response Container -->
+      <div id="rag-response-container" class="card" style="display: none;">
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+              <i data-lucide="sparkles" style="width: 18px; height: 18px; color: var(--emerald-text);"></i>
+              Grounded Technical Synthesis
+            </div>
+            <div class="card-description" id="rag-response-timestamp">Retrieved from persistent vector knowledge base.</div>
+          </div>
+          <div id="rag-citations-badges-header" style="display: flex; gap: 6px; flex-wrap: wrap;">
+            <!-- Citations badges -->
+          </div>
+        </div>
+        <div class="card-content">
+          <!-- Main Answer Body -->
+          <div style="padding: 16px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background-color: hsl(var(--background)); margin-bottom: 16px;">
+            <div style="font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; color: var(--brand-blue);">📖 Synthesized Concept Explanation:</div>
+            <div id="rag-answer-text" style="font-size: 0.92rem; line-height: 1.6; color: hsl(var(--foreground));"></div>
+          </div>
+
+          <!-- Code Snippet Box (If present) -->
+          <div id="rag-code-card" style="margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span style="font-size: 0.82rem; font-weight: 700;">💻 Code Implementation Example:</span>
+              <button id="rag-copy-code-btn" class="btn btn-outline btn-sm" style="height: 26px; font-size: 0.75rem;">
+                📋 Copy Code
+              </button>
+            </div>
+            <pre id="rag-code-snippet" class="code-editor-textarea" style="height: 180px; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; margin: 0; padding: 12px; overflow-x: auto;"></pre>
+          </div>
+
+          <!-- Key Takeaways & Citations Split -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <!-- Key Takeaways Checklist -->
+            <div style="padding: 14px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background-color: hsl(var(--muted) / 0.2);">
+              <div style="font-size: 0.82rem; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                <i data-lucide="check-circle-2" style="width: 16px; height: 16px; color: var(--emerald-text);"></i>
+                Key Placement Takeaways:
+              </div>
+              <ul id="rag-takeaways-list" style="margin: 0; padding-left: 18px; font-size: 0.85rem; line-height: 1.6; color: hsl(var(--foreground));">
+                <!-- Rendered via JS -->
+              </ul>
+            </div>
+
+            <!-- Grounded Citations Drawer -->
+            <div style="padding: 14px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background-color: hsl(var(--muted) / 0.2);">
+              <div style="font-size: 0.82rem; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                <i data-lucide="book-open" style="width: 16px; height: 16px; color: var(--brand-blue);"></i>
+                Grounded Source Documents:
+              </div>
+              <div id="rag-citations-list" style="display: flex; flex-direction: column; gap: 8px;">
+                <!-- Rendered via JS -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       VIEW 9: TPO & CORPORATE RECRUITER PORTAL (SECTION 8 ENTERPRISE UPGRADE)
+       ======================================================================== -->
+  <section id="view-tpo-recruiter" class="view-panel" style="display: none;">
+    
+    <div style="margin-bottom: 24px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="badge badge-emerald">🏢 Enterprise Edition</span>
+            <span class="badge badge-secondary">College & Recruiter Portal</span>
+          </div>
+          <h2 style="font-size: 1.5rem; font-weight: 700; margin-top: 6px;">College Placement Officer & Recruiter Intelligence</h2>
+          <p style="color: hsl(var(--muted-foreground)); font-size: 0.88rem; margin-top: 2px;">
+            Student batch readiness analytics, department skill gap audits, and corporate recruiter candidate matching.
+          </p>
+        </div>
+
+        <!-- Segmented Sub-Tab Switcher -->
+        <div class="segmented-control" style="max-width: 520px; width: 100%;">
+          <button id="btn-tpo-subtab-cohort" class="segment-tab active" onclick="switchTPOSubTab('cohort')">
+            🎓 Student Batch Analytics
+          </button>
+          <button id="btn-tpo-subtab-recruiter" class="segment-tab" onclick="switchTPOSubTab('recruiter')">
+            🔍 Recruiter Candidate Search
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-TAB 1: TPO COHORT ANALYTICS -->
+    <div id="tpo-subview-cohort">
+      <!-- Cohort Filter Bar -->
+      <div class="card" style="padding: 16px 20px; margin-bottom: 20px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <label style="font-size: 0.85rem; font-weight: 600; color: hsl(var(--muted-foreground));">Filter Department:</label>
+            <select id="tpo-dept-filter" class="select-input" style="min-width: 220px;" onchange="reloadTPOCohortData()">
+              <option value="all">🏢 All Engineering Departments (60 Students)</option>
+              <option value="AI & Data Science">🤖 AI & Data Science</option>
+              <option value="Computer Science & Engineering">💻 Computer Science & Engineering</option>
+              <option value="Information Technology">🌐 Information Technology</option>
+              <option value="Electronics & Communication">⚡ Electronics & Communication</option>
+            </select>
+
+            <label style="font-size: 0.85rem; font-weight: 600; color: hsl(var(--muted-foreground)); margin-left: 8px;">Batch Year:</label>
+            <select id="tpo-batch-filter" class="select-input" style="min-width: 140px;" onchange="reloadTPOCohortData()">
+              <option value="2026" selected>Batch 2026 (Graduating)</option>
+              <option value="2025">Batch 2025 (Alumni)</option>
+            </select>
+          </div>
+
+          <button class="btn btn-outline btn-sm" onclick="reloadTPOCohortData()">
+            <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i> Refresh Analytics
+          </button>
+        </div>
+      </div>
+
+      <!-- 4 TPO KPI Summary Cards -->
+      <div class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 24px;">
+        <div class="card" style="padding: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <span style="font-size: 0.8rem; font-weight: 600; color: hsl(var(--muted-foreground));">TOTAL ASSESSED COHORT</span>
+            <span class="badge badge-secondary">All Batches</span>
+          </div>
+          <div id="tpo-kpi-total-students" style="font-size: 2rem; font-weight: 800; margin-top: 8px;">60</div>
+          <div style="font-size: 0.78rem; color: hsl(var(--muted-foreground)); margin-top: 4px;">4 Engineering Departments</div>
+        </div>
+
+        <div class="card" style="padding: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <span style="font-size: 0.8rem; font-weight: 600; color: hsl(var(--muted-foreground));">AVG SKILL READINESS</span>
+            <span class="badge badge-emerald" id="tpo-kpi-readiness-badge">Strong</span>
+          </div>
+          <div id="tpo-kpi-avg-readiness" style="font-size: 2rem; font-weight: 800; margin-top: 8px; color: hsl(var(--emerald));">73.8%</div>
+          <div style="font-size: 0.78rem; color: hsl(var(--muted-foreground)); margin-top: 4px;">Institutional aggregate score</div>
+        </div>
+
+        <div class="card" style="padding: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <span style="font-size: 0.8rem; font-weight: 600; color: hsl(var(--muted-foreground));">PLACEMENT READY (≥75%)</span>
+            <span class="badge badge-primary">High Likelihood</span>
+          </div>
+          <div id="tpo-kpi-ready-count" style="font-size: 2rem; font-weight: 800; margin-top: 8px;">42 / 60 (70.0%)</div>
+          <div style="font-size: 0.78rem; color: hsl(var(--muted-foreground)); margin-top: 4px;">Tier 1 & Tier 2 eligible candidates</div>
+        </div>
+
+        <div class="card" style="padding: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <span style="font-size: 0.8rem; font-weight: 600; color: hsl(var(--muted-foreground));">PLACEMENT CONVERSION</span>
+            <span class="badge badge-emerald">Ready Pool</span>
+          </div>
+          <div id="tpo-kpi-credentials-count" style="font-size: 2rem; font-weight: 800; margin-top: 8px; color: hsl(var(--primary));">70.0%</div>
+          <div style="font-size: 0.78rem; color: hsl(var(--muted-foreground)); margin-top: 4px;">Qualified for campus placement</div>
+        </div>
+      </div>
+
+      <!-- Department Skill Deficit Table -->
+      <div style="display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 24px;">
+        
+        <div class="card" style="padding: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <h3 style="font-size: 1.15rem; font-weight: 700;">Departmental Skill Gaps & Actionable Faculty Remedial Actions</h3>
+              <p style="font-size: 0.82rem; color: hsl(var(--muted-foreground)); margin-top: 2px;">
+                Identifies critical technical bottlenecks by comparing batch skill frequency against industry hiring benchmarks.
+              </p>
+            </div>
+            <span class="badge badge-amber">Curriculum Intervention Required</span>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table class="market-table" style="width: 100%;">
+              <thead>
+                <tr>
+                  <th style="width: 22%;">Department</th>
+                  <th style="width: 10%;">Students</th>
+                  <th style="width: 12%;">Avg Readiness</th>
+                  <th style="width: 26%;">Top Mastered Skills</th>
+                  <th style="width: 30%;">Critical Skill Deficits & Remedial Workshop</th>
+                </tr>
+              </thead>
+              <tbody id="tpo-department-gaps-tbody">
+                <!-- Populated via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SUB-TAB 2: RECRUITER TALENT SEARCH ENGINE -->
+    <div id="tpo-subview-recruiter" style="display: none;">
+      <!-- Recruiter JD Input Card -->
+      <div class="card" style="padding: 24px; margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <h3 style="font-size: 1.15rem; font-weight: 700;">Multi-Factor Corporate Recruiter Talent Search</h3>
+            <p style="font-size: 0.82rem; color: hsl(var(--muted-foreground)); margin-top: 2px;">
+              Paste a full Job Description or required skill keywords. Students are ranked by Skill Match (40%), ML Placement Probability (25%), GitHub Code Proof (20%), and ATS Score (15%).
+            </p>
+          </div>
+          <span class="badge badge-primary">AI Candidate Ranking</span>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 0.82rem; font-weight: 600; margin-bottom: 6px; display: block;">Job Description / Technical Requirements:</label>
+          <textarea id="recruiter-jd-input" class="field-textarea" style="min-height: 90px;" placeholder="e.g. We are looking for a Senior Data Scientist proficient in Python, PyTorch, SQL, Machine Learning, Docker, and REST APIs..."></textarea>
+        </div>
+
+        <!-- Filter Sliders & Dropdowns Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 18px;">
+          <div>
+            <label style="font-size: 0.78rem; font-weight: 600; color: hsl(var(--muted-foreground));">Target Role Category:</label>
+            <select id="recruiter-role-filter" class="select-input" style="width: 100%; margin-top: 4px;">
+              <option value="">🎯 All Career Tracks</option>
+              <option value="Data Scientist">Data Scientist</option>
+              <option value="Machine Learning Engineer">ML Engineer</option>
+              <option value="Backend Developer (Python)">Backend Developer</option>
+              <option value="Data Engineer">Data Engineer</option>
+              <option value="Business Intelligence Analyst">BI Analyst</option>
+              <option value="Data Analyst">Data Analyst</option>
+              <option value="AI Research Assistant">AI Researcher</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size: 0.78rem; font-weight: 600; color: hsl(var(--muted-foreground));">Min Readiness Score:</label>
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 6px;">
+              <input type="range" id="recruiter-min-readiness" min="0" max="95" value="50" step="5" style="flex: 1;" oninput="document.getElementById('recruiter-readiness-val').innerText = this.value + '%'">
+              <span id="recruiter-readiness-val" style="font-size: 0.82rem; font-weight: 700; width: 40px;">50%</span>
+            </div>
+          </div>
+
+          <div>
+            <label style="font-size: 0.78rem; font-weight: 600; color: hsl(var(--muted-foreground));">Min ATS Resume Score:</label>
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 6px;">
+              <input type="range" id="recruiter-min-ats" min="0" max="95" value="60" step="5" style="flex: 1;" oninput="document.getElementById('recruiter-ats-val').innerText = this.value + '%'">
+              <span id="recruiter-ats-val" style="font-size: 0.82rem; font-weight: 700; width: 40px;">60%</span>
+            </div>
+          </div>
+
+          <div>
+            <label style="font-size: 0.78rem; font-weight: 600; color: hsl(var(--muted-foreground));">Min GitHub Stars:</label>
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 6px;">
+              <input type="range" id="recruiter-min-stars" min="0" max="30" value="0" step="2" style="flex: 1;" oninput="document.getElementById('recruiter-stars-val').innerText = this.value">
+              <span id="recruiter-stars-val" style="font-size: 0.82rem; font-weight: 700; width: 40px;">0 ⭐</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-outline btn-sm" onclick="loadSampleRecruiterJD('ds')">Sample Data Science JD</button>
+            <button class="btn btn-outline btn-sm" onclick="loadSampleRecruiterJD('backend')">Sample Backend JD</button>
+          </div>
+
+          <button id="btn-search-candidates" class="btn btn-default" onclick="executeRecruiterSearch()">
+            <i data-lucide="search" style="width: 15px; height: 15px;"></i> Find Top Ranked Candidates
+          </button>
+        </div>
+      </div>
+
+      <!-- Recruiter Matching Candidates Grid -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h4 style="font-size: 1rem; font-weight: 700;">Matching Candidate Talent Pool (<span id="recruiter-matches-count">0</span> Candidates)</h4>
+        <span style="font-size: 0.78rem; color: hsl(var(--muted-foreground));">Ranked by Composite Recruiter Fit Score</span>
+      </div>
+
+      <div id="recruiter-candidates-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; margin-bottom: 24px;">
+        <!-- Populated via JS -->
+      </div>
+    </div>
+  </section>
+</main>
+</div> <!-- End #main-app-wrapper -->
+
+<!-- Command Palette Modal (⌘K) -->
+<div id="command-modal" class="dialog-overlay">
+  <div class="dialog-content" style="max-width: 480px; padding: 16px;">
+    <div style="display: flex; align-items: center; gap: 8px; border-bottom: 1px solid hsl(var(--border)); padding-bottom: 10px; margin-bottom: 12px;">
+      <i data-lucide="search" style="width: 16px; height: 16px; color: hsl(var(--muted-foreground));"></i>
+      <input type="text" id="command-input" placeholder="Type a command or jump to view..." style="border: none; outline: none; background: transparent; width: 100%; font-size: 0.9rem; color: hsl(var(--foreground));">
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem;">
+      <div class="btn btn-outline" style="justify-content: flex-start;" onclick="switchNavTab('view-overview'); closeCommandModal();">📊 Go to Overview Dashboard</div>
+      <div class="btn btn-outline" style="justify-content: flex-start;" onclick="switchNavTab('view-roadmap'); closeCommandModal();">🗺️ Go to Prerequisite Roadmap</div>
+      <div class="btn btn-outline" style="justify-content: flex-start;" onclick="switchNavTab('view-interview'); closeCommandModal();">🎙️ Go to AI Mock Interviewer</div>
+      <div class="btn btn-outline" style="justify-content: flex-start;" onclick="switchNavTab('view-ats'); closeCommandModal();">📄 Go to ATS Resume Scorer</div>
+      <div class="btn btn-outline" style="justify-content: flex-start;" onclick="switchNavTab('view-github'); closeCommandModal();">🐙 Go to GitHub Scanner</div>
+    </div>
+  </div>
+</div>
+
+<!-- Interactive Micro-Quiz Gate Modal -->
+<div id="quiz-modal" class="dialog-overlay">
+  <div class="dialog-content" style="max-width: 580px; padding: 24px;">
+    <div class="dialog-header" style="margin-bottom: 12px;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="badge badge-amber" id="quiz-modal-badge">🎯 Milestone Quiz Gate</span>
+          <span style="font-size: 0.8rem; color: hsl(var(--muted-foreground));" id="quiz-progress-label">Question 1 of 3</span>
+        </div>
+        <div class="dialog-title" id="quiz-skill-title" style="margin-top: 4px;">Technical Mastery Check</div>
+      </div>
+      <button id="close-quiz-btn" class="btn btn-outline btn-icon" style="height: 28px; width: 28px;" onclick="closeQuizModal()">&times;</button>
+    </div>
+
+    <!-- Quiz Question Body -->
+    <div id="quiz-question-container">
+      <div id="quiz-question-text" style="font-size: 0.95rem; font-weight: 600; margin-bottom: 14px; line-height: 1.4;">
+        Question text loading...
+      </div>
+      <div id="quiz-options-list" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+        <!-- Option Buttons Rendered via JS -->
+      </div>
+      <div id="quiz-feedback-box" style="display: none; padding: 12px; border-radius: var(--radius); margin-bottom: 14px; font-size: 0.85rem;">
+        <div id="quiz-feedback-header" style="font-weight: 700; margin-bottom: 4px;"></div>
+        <div id="quiz-feedback-explanation" style="color: hsl(var(--muted-foreground)); font-size: 0.82rem;"></div>
+      </div>
+    </div>
+
+    <!-- Quiz Results Summary Screen -->
+    <div id="quiz-summary-container" style="display: none; text-align: center; padding: 16px 0;">
+      <div id="quiz-result-icon" style="font-size: 3rem; margin-bottom: 10px;">🎉</div>
+      <h3 id="quiz-result-title" style="font-size: 1.25rem; font-weight: 700; margin-bottom: 6px;">Mastery Verified!</h3>
+      <p id="quiz-result-desc" style="font-size: 0.88rem; color: hsl(var(--muted-foreground)); margin-bottom: 16px;">
+        You scored 3/3 (100%). Skill credential unlocked!
+      </p>
+      <div id="quiz-result-badges" style="display: flex; justify-content: center; gap: 8px; margin-bottom: 16px;">
+        <span class="badge badge-emerald">✓ Verified Skill Credential</span>
+        <span class="badge badge-secondary">🔓 Downstream DAG Unlocked</span>
+      </div>
+    </div>
+
+    <div class="dialog-footer" style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; border-top: 1px solid hsl(var(--border)); padding-top: 12px;">
+      <span style="font-size: 0.78rem; color: hsl(var(--muted-foreground));">Passing score: ≥ 66% (2/3 correct)</span>
+      <div style="display: flex; gap: 8px;">
+        <button id="quiz-submit-btn" class="btn btn-default" onclick="submitQuizCurrentAnswer()">Submit Answer</button>
+        <button id="quiz-next-btn" class="btn btn-default" style="display: none;" onclick="nextQuizStep()">Next Question →</button>
+        <button id="quiz-finish-btn" class="btn btn-default" style="display: none;" onclick="finishQuizGate()">Finish & Unlock DAG 🚀</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tailored ATS Resume Generator Modal Dialog -->
+<div id="resume-preview-modal" class="modal-backdrop" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="badge badge-emerald">✨ 1-Click ATS Tailored Resume</span>
+          <span id="resume-modal-target-badge" class="badge badge-secondary">Target: Data Scientist</span>
+        </div>
+        <div style="font-size: 1.05rem; font-weight: 700; margin-top: 4px;">Optimized Single-Column Resume Preview</div>
+      </div>
+      <button class="btn btn-outline btn-icon" style="height: 28px; width: 28px;" onclick="closeResumeModal()">&times;</button>
+    </div>
+
+    <!-- Modal Segmented Tabs (Printable HTML vs LaTeX Code) -->
+    <div style="padding: 10px 20px 0 20px; background-color: hsl(var(--muted)/0.15); border-bottom: 1px solid hsl(var(--border)); display: flex; gap: 8px;">
+      <button id="tab-resume-preview" class="btn btn-outline btn-sm active" style="border-bottom-left-radius: 0; border-bottom-right-radius: 0;" onclick="switchResumeModalTab('preview')">
+        📄 Printable PDF Preview
+      </button>
+      <button id="tab-resume-latex" class="btn btn-outline btn-sm" style="border-bottom-left-radius: 0; border-bottom-right-radius: 0;" onclick="switchResumeModalTab('latex')">
+        📜 LaTeX Source Code (.tex)
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Tab 1: Printable Preview Container -->
+      <div id="resume-tab-preview-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-size: 0.8rem; color: hsl(var(--muted-foreground));">Industry standard Harvard/Jake's single-column ATS format with injected keywords.</span>
+          <button class="btn btn-default btn-sm" onclick="printResumeFromModal()">
+            <i data-lucide="printer" style="width: 14px; height: 14px;"></i> Print / Save as PDF
+          </button>
+        </div>
+        <div id="html-resume-container" class="html-resume-preview-box">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- Tab 2: LaTeX Source Code Container -->
+      <div id="resume-tab-latex-content" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-size: 0.8rem; color: hsl(var(--muted-foreground));">Ready for Overleaf, TeX Live, or local pdflatex compilation.</span>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-outline btn-sm" onclick="copyLatexCodeToClipboard()">
+              📋 Copy LaTeX Code
+            </button>
+            <button class="btn btn-default btn-sm" onclick="downloadLatexFile()">
+              💾 Download .tex File
+            </button>
+          </div>
+        </div>
+        <pre id="latex-code-display" class="latex-code-container"></pre>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeResumeModal()">Close</button>
+      <button class="btn btn-default" onclick="downloadLatexFile()">Download .tex Package</button>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Application Script -->
+<script src="app.js"></script>
+
+</body>
+</html>
+
