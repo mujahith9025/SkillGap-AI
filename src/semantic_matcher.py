@@ -12,7 +12,6 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 import numpy as np
 import pandas as pd
-from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
@@ -62,6 +61,7 @@ class SemanticSkillMatcher:
         if self._model is None:
             try:
                 print(f"[*] Loading Sentence Transformer Model: '{self.model_name}'...")
+                from sentence_transformers import SentenceTransformer
                 self._model = SentenceTransformer(self.model_name)
             except Exception as e:
                 print(f"[!] Warning: SentenceTransformer fallback mode ({e})")
