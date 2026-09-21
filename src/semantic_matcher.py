@@ -48,35 +48,77 @@ class SemanticSkillMatcher:
         self.model_name = model_name
         self.default_threshold = default_threshold
         self.loader = data_loader if data_loader else DataLoader()
+        self._model = None
+        self._canonical_embeddings = None
         
-        print(f"[*] Initializing Sentence Transformer Model: '{self.model_name}'...")
-        self.model = SentenceTransformer(self.model_name)
-        
-        # Extract and precompute rich contextual embeddings for all canonical taxonomy skills
-        # Combining skill name with domain description provides strong semantic signal for Transformers
         self.canonical_names = self.loader.skills["skill_name"].tolist()
         self.canonical_descriptions = [
             f"{row['skill_name']} ({row['category']}): {row['description']}"
             for _, row in self.loader.skills.iterrows()
         ]
-        
-        print(f"[*] Precomputing contextual vector embeddings for {len(self.canonical_names)} canonical skills...")
-        self.canonical_embeddings = self.model.encode(
-            self.canonical_descriptions,
-            convert_to_numpy=True,
-            normalize_embeddings=True,
-            show_progress_bar=False
-        )
-        print("  [SUCCESS] Canonical skill embeddings ready (Dimension: 384).")
+
+    def _get_model(self):
+        """Lazy-loads the SentenceTransformer model on demand."""
+        if self._model is None:
+            try:
+                print(f"[*] Loading Sentence Transformer Model: '{self.model_name}'...")
+                self._model = SentenceTransformer(self.model_name)
+            except Exception as e:
+                print(f"[!] Warning: SentenceTransformer fallback mode ({e})")
+                self._model = None
+        return self._model
+
+    @property
+    def model(self):
+        return self._get_model()
+
+    @property
+    def canonical_embeddings(self) -> np.ndarray:
+        if self._canonical_embeddings is None:
+            self._canonical_embeddings = self.encode_text(self.canonical_descriptions)
+        return self._canonical_embeddings
 
     def encode_text(self, text: Union[str, List[str]]) -> np.ndarray:
         """Generates normalized vector embeddings for given text(s)."""
-        return self.model.encode(
-            text,
-            convert_to_numpy=True,
-            normalize_embeddings=True,
-            show_progress_bar=False
-        )
+        m = self._get_model()
+        if m is not None:
+            try:
+                return m.encode(
+                    text,
+                    convert_to_numpy=True,
+                    normalize_embeddings=True,
+                    show_progress_bar=False
+                )
+            except Exception:
+                pass
+        
+        # Fast fallback deterministic embedding vector (Dimension: 384)
+        return self._fallback_encode(text)
+
+    def _fallback_encode(self, text: Union[str, List[str]]) -> np.ndarray:
+        """Lightweight deterministic TF-IDF/character n-gram embedding fallback."""
+        is_single = isinstance(text, str)
+        items = [text] if is_single else text
+        
+        embeddings = []
+        for t in items:
+            t_lower = t.lower()
+            vec = np.zeros(384, dtype=np.float32)
+            # Hash tokens into 384 dimensions
+            for word in t_lower.split():
+                h = abs(hash(word)) % 384
+                vec[h] += 1.0
+            for i in range(len(t_lower) - 2):
+                ngram = t_lower[i:i+3]
+                h = abs(hash(ngram)) % 384
+                vec[h] += 0.5
+            norm = np.linalg.norm(vec)
+            if norm > 0:
+                vec /= norm
+            embeddings.append(vec)
+            
+        res = np.array(embeddings, dtype=np.float32)
+        return res[0] if is_single else res
 
     def compute_cosine_similarity(self, text_a: str, text_b: str) -> float:
         """

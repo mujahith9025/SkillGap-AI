@@ -320,57 +320,61 @@ skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
         self.doc_ids: List[str] = []
         self.doc_texts: List[str] = []
         self.doc_metadata: List[Dict[str, Any]] = []
-        self.embeddings: Optional[np.ndarray] = None
+        self._embeddings: Optional[np.ndarray] = None
         self.bm25 = BM25Engine()
 
         self._initialize_default_index()
 
+    @property
+    def embeddings(self) -> Optional[np.ndarray]:
+        if self._embeddings is None and len(self.doc_texts) > 0:
+            self._embeddings = self.matcher.encode_text(self.doc_texts)
+        return self._embeddings
+
+    @embeddings.setter
+    def embeddings(self, val: Optional[np.ndarray]):
+        self._embeddings = val
+
     def _initialize_default_index(self):
-        """Indexes all 32 canonical taxonomy skills, 10 portfolio projects, and technical RAG documents into vector space."""
+        """Indexes all 32 canonical taxonomy skills, 10 portfolio projects, and technical RAG documents into document corpus."""
         loader = self.matcher.loader
         
         # 1. Index Skills
         for _, row in loader.skills.iterrows():
             text = f"{row['skill_name']} ({row['category']}): {row['description']}"
-            self.add_document(
-                doc_id=row["skill_id"],
-                text=text,
-                metadata={
-                    "type": "skill",
-                    "skill_name": row["skill_name"],
-                    "category": row["category"],
-                    "difficulty": row["difficulty_level"]
-                }
-            )
+            self.doc_ids.append(row["skill_id"])
+            self.doc_texts.append(text)
+            self.doc_metadata.append({
+                "type": "skill",
+                "skill_name": row["skill_name"],
+                "category": row["category"],
+                "difficulty": row["difficulty_level"]
+            })
 
         # 2. Index Projects
         for _, row in loader.projects.iterrows():
             text = f"{row['title']}: {row['description']} | Skills: {row['primary_skills']}"
-            self.add_document(
-                doc_id=row["project_id"],
-                text=text,
-                metadata={
-                    "type": "project",
-                    "project_id": row["project_id"],
-                    "career_id": row["career_id"],
-                    "title": row["title"],
-                    "difficulty": row["difficulty"]
-                }
-            )
+            self.doc_ids.append(row["project_id"])
+            self.doc_texts.append(text)
+            self.doc_metadata.append({
+                "type": "project",
+                "project_id": row["project_id"],
+                "career_id": row["career_id"],
+                "title": row["title"],
+                "difficulty": row["difficulty"]
+            })
 
         # 3. Index Technical Knowledge Docs (RAG Corpus)
         for doc in self.TECHNICAL_KNOWLEDGE_DOCS:
             text = f"{doc['title']} ({doc['category']}): {doc['content']}"
-            self.add_document(
-                doc_id=doc["doc_id"],
-                text=text,
-                metadata={
-                    "type": "knowledge_doc",
-                    "title": doc["title"],
-                    "category": doc["category"],
-                    "code_sample": doc.get("code_sample", "")
-                }
-            )
+            self.doc_ids.append(doc["doc_id"])
+            self.doc_texts.append(text)
+            self.doc_metadata.append({
+                "type": "knowledge_doc",
+                "title": doc["title"],
+                "category": doc["category"],
+                "code_sample": doc.get("code_sample", "")
+            })
 
         # Build BM25 sparse index over all indexed documents
         self.bm25.index_documents(self.doc_texts)
@@ -380,15 +384,14 @@ skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
         if doc_id in self.doc_ids:
             return  # already indexed
 
-        emb = self.matcher.encode_text(text).reshape(1, -1)
         self.doc_ids.append(doc_id)
         self.doc_texts.append(text)
         self.doc_metadata.append(metadata if metadata else {})
 
-        if self.embeddings is None:
-            self.embeddings = emb
-        else:
-            self.embeddings = np.vstack([self.embeddings, emb])
+        # If embeddings were already computed, append the new embedding
+        if self._embeddings is not None:
+            emb = self.matcher.encode_text(text).reshape(1, -1)
+            self._embeddings = np.vstack([self._embeddings, emb])
 
         # Refresh BM25 index
         self.bm25.index_documents(self.doc_texts)

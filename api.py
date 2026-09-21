@@ -54,6 +54,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/health")
+@app.get("/api/health")
+def health_check():
+    """Health check endpoint for cloud load balancers and deployment probes."""
+    return {
+        "status": "healthy",
+        "service": "SkillGap AI",
+        "version": "2.0.0",
+        "subsystems": {
+            "vector_store_indexed_docs": len(vector_store.doc_ids)
+        }
+    }
+
 # Initialize engines
 loader = DataLoader()
 preprocessor = SkillPreprocessor(data_loader=loader)

@@ -38,3 +38,7 @@ Thumbs.db
 
 # Streamlit config
 .streamlit/secrets.toml
+
+# Scratch files
+scratch/
+

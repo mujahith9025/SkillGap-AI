@@ -3,7 +3,7 @@
  * Connects asynchronously to FastAPI REST Backend (Port 8000)
  */
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = window.location.origin;
 
 // Canonical Skills Taxonomy
 const ALL_TAXONOMY_SKILLS = [
@@ -49,11 +49,9 @@ document.addEventListener("DOMContentLoaded", () => {
   initATSScorer();
   initInterviewSimulator();
   initGitHubScanner();
-  initVectorSearch();
   initMarketIntelligence();
   initXYZRewriter();
   initDownloadReport();
-  initTPOAndRecruiterPortal();
 });
 
 function initLucideIcons() {
@@ -418,7 +416,7 @@ async function analyzeReadiness() {
 }
 
 function renderOverviewDashboard(data) {
-  // Update KPI Cards
+  // Update 4 Simplified Metric Cards
   const score = data.weighted_readiness_pct || 0;
   const matchVal = document.getElementById("kpi-match-val");
   if (matchVal) matchVal.textContent = `${score.toFixed(1)}%`;
@@ -426,19 +424,26 @@ function renderOverviewDashboard(data) {
   const progBar = document.getElementById("kpi-progress-bar");
   if (progBar) progBar.style.width = `${Math.min(100, score)}%`;
 
+  const deltaText = document.getElementById("kpi-delta-text");
+  if (deltaText) {
+    deltaText.innerHTML = `Target: <b>75%+ for Campus Placements</b>`;
+  }
+
   const matched = data.matched_skills || [];
   const missing = data.missing_skills || [];
   const highGaps = data.high_priority_gaps || [];
   const totalReq = matched.length + missing.length;
 
   const coverageVal = document.getElementById("kpi-coverage-val");
-  if (coverageVal) coverageVal.textContent = `${matched.length} / ${totalReq}`;
+  if (coverageVal) coverageVal.textContent = `${matched.length} / ${totalReq} Mastered`;
 
   const gapsVal = document.getElementById("kpi-gaps-val");
   if (gapsVal) gapsVal.textContent = `${missing.length}`;
 
   const gapsSub = document.getElementById("kpi-gaps-sub-text");
-  if (gapsSub) gapsSub.textContent = `${highGaps.length} High Priority | ${missing.length - highGaps.length} Secondary`;
+  if (gapsSub) {
+    gapsSub.innerHTML = `<span id="kpi-gaps-val" style="color: var(--rose-text); font-weight: 700;">${missing.length}</span> bridge skills remaining to learn`;
+  }
 
   // Predictive Placement & Peer Cohort KPI Updates
   const pred = data.placement_prediction;
@@ -446,10 +451,8 @@ function renderOverviewDashboard(data) {
     const probText = document.getElementById("kpi-placement-prob-text");
     if (probText) probText.textContent = `${pred.placement_probability_pct}%`;
 
-    const deltaText = document.getElementById("kpi-delta-text");
-    if (deltaText) {
-      deltaText.innerHTML = `Interview Success Chance: <b id="kpi-placement-prob-text" style="color: ${pred.placement_probability_pct >= 70 ? 'var(--emerald-text)' : 'var(--amber-text)'};">${pred.placement_probability_pct}%</b>`;
-    }
+    const probSub = document.getElementById("kpi-placement-sub-text");
+    if (probSub) probSub.textContent = `Predicted offer likelihood from top tech firms`;
 
     const percentileVal = document.getElementById("kpi-percentile-val");
     if (percentileVal) {
@@ -458,7 +461,7 @@ function renderOverviewDashboard(data) {
     }
 
     const cohortSub = document.getElementById("kpi-cohort-sub");
-    if (cohortSub) cohortSub.textContent = `Student Score: ${pred.candidate_x_score} / 100`;
+    if (cohortSub) cohortSub.textContent = `Ahead of ${pred.cohort_percentile.toFixed(1)}% of student applicants`;
 
     // Predictive Placement Card
     const probLarge = document.getElementById("placement-prob-large");
@@ -811,22 +814,56 @@ let currentQuizState = {
 let currentDailyCommitmentHours = 1.5;
 
 window.switchRoadmapMode = function(mode) {
-  const btnDag = document.getElementById("roadmap-mode-dag");
-  const btnCards = document.getElementById("roadmap-mode-cards");
+  const btnMilestones = document.getElementById("roadmap-mode-milestones") || document.getElementById("roadmap-mode-cards");
+  const btnProjects = document.getElementById("roadmap-mode-projects");
   const btnCal = document.getElementById("roadmap-mode-calendar");
 
-  if (btnDag) btnDag.classList.toggle("active", mode === 'dag');
-  if (btnCards) btnCards.classList.toggle("active", mode === 'cards');
-  if (btnCal) btnCal.classList.toggle("active", mode === 'calendar');
+  const isMilestones = (mode === 'milestones' || mode === 'cards' || mode === 'dag');
+  const isProjects = (mode === 'projects');
+  const isCalendar = (mode === 'calendar');
 
-  const paneDag = document.getElementById("roadmap-pane-dag");
-  const paneCards = document.getElementById("roadmap-pane-cards");
+  if (btnMilestones) btnMilestones.classList.toggle("active", isMilestones);
+  if (btnProjects) btnProjects.classList.toggle("active", isProjects);
+  if (btnCal) btnCal.classList.toggle("active", isCalendar);
+
+  const paneMilestones = document.getElementById("roadmap-pane-milestones") || document.getElementById("roadmap-pane-cards");
+  const paneProjects = document.getElementById("roadmap-pane-projects");
   const paneCal = document.getElementById("roadmap-pane-calendar");
 
-  if (paneDag) paneDag.style.display = (mode === 'dag') ? 'block' : 'none';
-  if (paneCards) paneCards.style.display = (mode === 'cards') ? 'block' : 'none';
-  if (paneCal) paneCal.style.display = (mode === 'calendar') ? 'block' : 'none';
+  if (paneMilestones) paneMilestones.style.display = isMilestones ? 'block' : 'none';
+  if (paneProjects) paneProjects.style.display = isProjects ? 'block' : 'none';
+  if (paneCal) paneCal.style.display = isCalendar ? 'block' : 'none';
   
+  initLucideIcons();
+};
+
+window.toggleDagCanvasView = function() {
+  const dagWrapper = document.getElementById("roadmap-dag-wrapper");
+  const btn = document.getElementById("btn-toggle-dag-view");
+  if (!dagWrapper) return;
+  const isHidden = (dagWrapper.style.display === "none" || !dagWrapper.style.display);
+  dagWrapper.style.display = isHidden ? "block" : "none";
+  if (btn) {
+    btn.innerHTML = isHidden 
+      ? '<i data-lucide="eye-off" style="width: 14px; height: 14px; margin-right: 4px;"></i> Hide Graph Chart'
+      : '<i data-lucide="network" style="width: 14px; height: 14px; margin-right: 4px;"></i> Toggle Graph Chart';
+  }
+  initLucideIcons();
+};
+
+window.switchResumePortfolioTab = function(tabName) {
+  const btnResume = document.getElementById("ats-tab-resume-btn");
+  const btnGithub = document.getElementById("ats-tab-github-btn");
+  const paneResume = document.getElementById("ats-subpane-resume");
+  const paneGithub = document.getElementById("ats-subpane-github");
+
+  const isResume = (tabName === 'resume');
+  if (btnResume) btnResume.classList.toggle("active", isResume);
+  if (btnGithub) btnGithub.classList.toggle("active", !isResume);
+
+  if (paneResume) paneResume.style.display = isResume ? "block" : "none";
+  if (paneGithub) paneGithub.style.display = !isResume ? "block" : "none";
+
   initLucideIcons();
 };
 
@@ -1317,37 +1354,51 @@ function renderFullRoadmap(data) {
 
   const phases = data.roadmap_phases || [];
   if (!phases.length) {
-    container.innerHTML = '<p style="color: var(--emerald-text);">🎉 All prerequisites satisfied! Proceed to build portfolio projects.</p>';
+    container.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--emerald-text);">🎉 All prerequisites satisfied! Proceed to build portfolio projects or practice interviews.</div>';
     return;
   }
 
-  container.innerHTML = phases.map(phase => `
-    <div style="margin-bottom: 20px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); padding: 16px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-        <h3 style="font-size: 1rem; font-weight: 600;">📌 ${phase.title}</h3>
-        <span class="badge badge-outline">~${phase.estimated_hours} Hours</span>
-      </div>
-      <p style="font-size: 0.85rem; color: hsl(var(--muted-foreground)); margin-bottom: 12px;"><b>Goal:</b> ${phase.objective}</p>
-      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px;">
-        ${phase.skills.map(s => `
-          <div style="border: 1px solid hsl(var(--border)); border-radius: var(--radius); padding: 10px; background-color: hsl(var(--muted) / 0.2);">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-              <b>Step ${s.step}: ${s.skill_name}</b>
-              <span class="badge ${s.priority === 'High' ? 'badge-rose' : 'badge-amber'}">${s.priority}</span>
-            </div>
-            <div style="font-size: 0.78rem; color: hsl(var(--muted-foreground));">
-              <div><b>Why:</b> ${s.reason}</div>
-              <div><b>Commitment:</b> ~${s.hours}h</div>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
-              <a href="${s.resource_url}" target="_blank" style="font-size: 0.78rem; font-weight: 600; color: var(--brand-blue); text-decoration: none;">🔗 ${s.top_resource}</a>
-              <button class="btn btn-outline btn-sm" style="font-size: 0.72rem; padding: 2px 6px;" onclick="startSkillQuiz('${s.skill_name}')">Quiz Gate</button>
-            </div>
+  const phaseStageIcons = ["🟢 Stage 1: Foundations", "🟡 Stage 2: Applied Frameworks & Tools", "🔵 Stage 3: Advanced Specialization & Cloud"];
+
+  container.innerHTML = phases.map((phase, pIdx) => {
+    const stageLabel = phaseStageIcons[pIdx] || `Stage ${pIdx + 1}: Technical Progression`;
+    return `
+      <div style="margin-bottom: 20px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); padding: 16px; background-color: hsl(var(--card));">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="badge ${pIdx === 0 ? 'badge-emerald' : (pIdx === 1 ? 'badge-amber' : 'badge-indigo')}" style="font-size: 0.75rem;">${stageLabel}</span>
+            <h3 style="font-size: 1rem; font-weight: 700; margin: 0;">${phase.title}</h3>
           </div>
-        `).join("")}
+          <span class="badge badge-outline">~${phase.estimated_hours} Hours Total</span>
+        </div>
+        <p style="font-size: 0.85rem; color: hsl(var(--muted-foreground)); margin-bottom: 12px;"><b>Goal:</b> ${phase.objective}</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px;">
+          ${phase.skills.map(s => `
+            <div style="border: 1px solid hsl(var(--border)); border-radius: var(--radius); padding: 12px; background-color: hsl(var(--muted) / 0.15); display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <b style="font-size: 0.9rem;">${s.skill_name}</b>
+                  <span class="badge ${s.priority === 'High' ? 'badge-rose' : 'badge-amber'}">${s.priority}</span>
+                </div>
+                <div style="font-size: 0.78rem; color: hsl(var(--muted-foreground)); line-height: 1.4;">
+                  <div><b>Why:</b> ${s.reason}</div>
+                  <div style="margin-top: 2px;"><b>Effort:</b> ~${s.hours} Hours</div>
+                </div>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px dashed hsl(var(--border));">
+                <a href="${s.resource_url}" target="_blank" style="font-size: 0.78rem; font-weight: 600; color: var(--brand-blue); text-decoration: none; display: flex; align-items: center; gap: 4px;">
+                  🔗 ${s.top_resource}
+                </a>
+                <button class="btn btn-default btn-sm" style="font-size: 0.75rem; padding: 4px 10px;" onclick="startSkillQuiz('${s.skill_name}')">
+                  🎯 Quiz Gate
+                </button>
+              </div>
+            </div>
+          `).join("")}
+        </div>
       </div>
-    </div>
-  `).join("");
+    `;
+  }).join("");
 }
 
 function renderFullProjects(data) {
@@ -1650,7 +1701,6 @@ async function generateAndOpenTailoredResume() {
     if (!response.ok) throw new Error("Failed to generate tailored resume");
 
     const data = await response.json();
-    currentTailoredLatex = data.latex_code;
     currentTailoredHtml = data.html_code;
     currentTargetCareer = candidateCareer;
 
@@ -1661,7 +1711,7 @@ async function generateAndOpenTailoredResume() {
     alert("Could not generate tailored resume: " + err.message);
   } finally {
     if (generateBtn) {
-      generateBtn.innerHTML = '<i data-lucide="file-code" style="width: 16px; height: 16px;"></i><span>⚡ 1-Click Generate Tailored LaTeX / PDF Resume</span>';
+      generateBtn.innerHTML = '<i data-lucide="printer" style="width: 16px; height: 16px;"></i><span>⚡ 1-Click Generate Tailored Resume (PDF)</span>';
       initLucideIcons();
     }
   }
@@ -1672,40 +1722,17 @@ window.openResumeModal = function() {
   const modal = document.getElementById("resume-preview-modal");
   const targetBadge = document.getElementById("resume-modal-target-badge");
   const htmlContainer = document.getElementById("html-resume-container");
-  const latexContainer = document.getElementById("latex-code-display");
 
   if (targetBadge) targetBadge.textContent = `Target: ${currentTargetCareer}`;
   if (htmlContainer) htmlContainer.innerHTML = currentTailoredHtml;
-  if (latexContainer) latexContainer.textContent = currentTailoredLatex;
 
   if (modal) modal.style.display = "flex";
-  switchResumeModalTab('preview');
   initLucideIcons();
 };
 
 window.closeResumeModal = function() {
   const modal = document.getElementById("resume-preview-modal");
   if (modal) modal.style.display = "none";
-};
-
-window.switchResumeModalTab = function(tabName) {
-  const tabPreviewBtn = document.getElementById("tab-resume-preview");
-  const tabLatexBtn = document.getElementById("tab-resume-latex");
-  const previewContent = document.getElementById("resume-tab-preview-content");
-  const latexContent = document.getElementById("resume-tab-latex-content");
-
-  if (tabName === "preview") {
-    if (tabPreviewBtn) tabPreviewBtn.classList.add("active");
-    if (tabLatexBtn) tabLatexBtn.classList.remove("active");
-    if (previewContent) previewContent.style.display = "block";
-    if (latexContent) latexContent.style.display = "none";
-  } else {
-    if (tabPreviewBtn) tabPreviewBtn.classList.remove("active");
-    if (tabLatexBtn) tabLatexBtn.classList.add("active");
-    if (previewContent) previewContent.style.display = "none";
-    if (latexContent) latexContent.style.display = "block";
-  }
-  initLucideIcons();
 };
 
 window.printResumeFromModal = function() {
@@ -1720,29 +1747,6 @@ window.printResumeFromModal = function() {
   setTimeout(() => {
     printWindow.print();
   }, 400);
-};
-
-window.copyLatexCodeToClipboard = function() {
-  if (!currentTailoredLatex) return;
-  navigator.clipboard.writeText(currentTailoredLatex).then(() => {
-    alert("✓ Tailored LaTeX source code copied to clipboard! Ready to paste into Overleaf.");
-  }).catch(err => {
-    console.error("Clipboard copy failed:", err);
-  });
-};
-
-window.downloadLatexFile = function() {
-  if (!currentTailoredLatex) return;
-  const filename = `Resume_${currentTargetCareer.replace(/\s+/g, "_")}_Alex_Chen.tex`;
-  const blob = new Blob([currentTailoredLatex], { type: "text/plain;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
 };
 
 window.copyBulletText = function(text) {
@@ -1815,13 +1819,15 @@ const INTERVIEW_LOCAL_BANK = {
       "text": "What is the difference between WHERE and HAVING in SQL queries? Provide a scenario where WHERE cannot be used.",
       "hint": "Consider query execution pipeline order and aggregate functions like COUNT() and SUM().",
       "difficulty": "Intermediate",
-      "type": "Practical Scenario"
+      "type": "Practical Scenario",
+      "model_answer": "<b>Situation & Concept:</b> WHERE filters individual records before any grouping occurs, whereas HAVING filters aggregated metric rows after GROUP BY.<br><b>Concrete Example:</b> To find departments with more than 5 engineers: <code>SELECT dept_id, COUNT(*) FROM emp GROUP BY dept_id HAVING COUNT(*) > 5;</code> WHERE cannot be used here because the aggregate count does not exist prior to grouping.<br><b>Result:</b> Understanding this execution order prevents query syntax errors and ensures correct data aggregation."
     },
     {
       "text": "Explain how Window Functions (ROW_NUMBER, RANK, DENSE_RANK) differ from GROUP BY aggregations.",
       "hint": "Highlight whether the number of output rows equals the input rows count.",
       "difficulty": "Advanced",
-      "type": "Conceptual"
+      "type": "Conceptual",
+      "model_answer": "<b>Core Difference:</b> GROUP BY collapses multiple rows into a single summary row per group. Window functions perform calculations across a partition of rows while preserving each individual row's identity.<br><b>Ranking Distinctions:</b> ROW_NUMBER assigns unique sequential integers (1, 2, 3). RANK assigns identical values for ties with gaps (1, 2, 2, 4). DENSE_RANK assigns identical values without gaps (1, 2, 2, 3)."
     }
   ],
   "Python": [
@@ -1829,13 +1835,15 @@ const INTERVIEW_LOCAL_BANK = {
       "text": "Explain the difference between deep copy and shallow copy in Python. When would you use each?",
       "hint": "Think about how nested mutable objects behave when cloned or passed by reference.",
       "difficulty": "Intermediate",
-      "type": "Core Mechanics"
+      "type": "Core Mechanics",
+      "model_answer": "<b>Shallow Copy (<code>copy.copy</code>):</b> Creates a new container object, but inserts references to the original nested objects. Modifying nested elements modifies both.<br><b>Deep Copy (<code>copy.deepcopy</code>):</b> Recursively clones the container and all nested objects completely independently.<br><b>Usage:</b> Use shallow copies for flat structures for memory efficiency; use deep copies when mutating nested dictionaries or lists without affecting the original dataset."
     },
     {
       "text": "How do Python generators use 'yield' for lazy evaluation, and why are they preferred over lists for 100k+ rows?",
       "hint": "Focus on RAM memory footprint and on-the-fly stream processing.",
       "difficulty": "Intermediate",
-      "type": "Memory & Performance"
+      "type": "Memory & Performance",
+      "model_answer": "<b>Mechanism:</b> <code>yield</code> pauses function execution and emits a single value, saving its execution state to resume when <code>next()</code> is invoked.<br><b>Memory Advantage:</b> A list of 100k records allocates substantial heap memory all at once. A generator uses O(1) constant memory because it streams one item at a time on demand."
     }
   ],
   "Machine Learning": [
@@ -1843,13 +1851,15 @@ const INTERVIEW_LOCAL_BANK = {
       "text": "Explain the Bias-Variance Tradeoff. What concrete techniques would you use if your model has high variance?",
       "hint": "Relate high variance to overfitting and discuss L1/L2 regularization and ensemble bagging.",
       "difficulty": "Intermediate",
-      "type": "Modeling & Validation"
+      "type": "Modeling & Validation",
+      "model_answer": "<b>Tradeoff:</b> High bias means underfitting (oversimplified assumptions). High variance means overfitting (capturing random noise in training data).<br><b>High Variance Remedies:</b> 1) Add L1/L2 regularization to penalize large weights, 2) Use ensemble bagging (e.g. Random Forests), 3) Increase training dataset size or reduce feature dimensionality via PCA."
     },
     {
       "text": "Why is accuracy a misleading metric for imbalanced classification (e.g. 99% non-fraud, 1% fraud)? What metrics should be used?",
       "hint": "Discuss Precision, Recall, F1-Score, and Precision-Recall AUC.",
       "difficulty": "Intermediate",
-      "type": "Evaluation Metrics"
+      "type": "Evaluation Metrics",
+      "model_answer": "<b>The Problem:</b> A naive classifier predicting 'non-fraud' 100% of the time achieves 99% accuracy while missing every single fraud event.<br><b>Recommended Metrics:</b> 1) Recall (percentage of actual frauds caught), 2) Precision (minimize false alarms), 3) F1-Score (harmonic mean), and 4) PR-AUC (Precision-Recall Area Under Curve)."
     }
   ],
   "Deep Learning": [
@@ -1857,7 +1867,8 @@ const INTERVIEW_LOCAL_BANK = {
       "text": "What causes the Vanishing Gradient problem in deep neural networks, and how do ReLU and ResNet skip connections resolve it?",
       "hint": "Analyze activation function derivatives and backpropagation chain rule.",
       "difficulty": "Advanced",
-      "type": "Architectural Design"
+      "type": "Architectural Design",
+      "model_answer": "<b>Cause:</b> Repeated multiplication of small gradients (< 1.0) through sigmoid/tanh activation layers during backpropagation causes early layer weight updates to approach zero.<br><b>Solution:</b> ReLU has a constant gradient of 1 for positive inputs. ResNet skip connections add residual pathways (<code>F(x) + x</code>), allowing gradients to flow unimpeded directly back to early layers."
     }
   ],
   "FastAPI": [
@@ -1865,7 +1876,8 @@ const INTERVIEW_LOCAL_BANK = {
       "text": "How does FastAPI leverage Python type hints and Pydantic for high throughput asynchronous I/O?",
       "hint": "Mention async/await event loops, Starlette/Uvicorn, and automatic Swagger OpenAPI generation.",
       "difficulty": "Intermediate",
-      "type": "REST Microservices"
+      "type": "REST Microservices",
+      "model_answer": "<b>Architecture:</b> Built on Starlette and Uvicorn with native <code>async/await</code> event loops for high-concurrency non-blocking I/O.<br><b>Pydantic Integration:</b> Type annotations enable request body validation, serialization, and automatic Swagger/OpenAPI documentation."
     }
   ],
   "Docker": [
@@ -1873,7 +1885,8 @@ const INTERVIEW_LOCAL_BANK = {
       "text": "What is the core architectural difference between a Docker container and a Virtual Machine (VM)?",
       "hint": "Compare Linux kernel sharing/cgroups vs hypervisor guest operating system overhead.",
       "difficulty": "Intermediate",
-      "type": "System Architecture"
+      "type": "System Architecture",
+      "model_answer": "<b>Architecture:</b> VMs package a full guest operating system and virtualized hardware via a hypervisor. Containers share the host OS kernel and isolate processes via Linux namespaces and cgroups.<br><b>Benefits:</b> Containers start in milliseconds and consume drastically fewer compute resources."
     }
   ],
   "Pandas": [
@@ -1881,48 +1894,10 @@ const INTERVIEW_LOCAL_BANK = {
       "text": "Explain the behavioral difference between .loc and .iloc in Pandas DataFrame indexing.",
       "hint": "Compare label-based inclusive slicing vs 0-indexed integer position exclusive slicing.",
       "difficulty": "Beginner",
-      "type": "Data Manipulation"
+      "type": "Data Manipulation",
+      "model_answer": "<b><code>.loc</code> (Label-based):</b> Selects data using explicit index and column labels. Slices are inclusive of both start and stop bounds.<br><b><code>.iloc</code> (Integer-based):</b> Selects data by numeric position (0 to n-1). Slices are exclusive of the stop bound."
     }
   ]
-};
-
-const CODING_PROBLEMS_LOCAL = {
-  "py_two_sum": {
-    "title": "Two Sum (Target Pair Indices)",
-    "skill": "Python",
-    "lang": "python",
-    "difficulty": "Easy",
-    "desc": "Given a list of integers <code>nums</code> and an integer <code>target</code>, return the indices of the two numbers such that they add up to <code>target</code>. Assume exactly one valid solution exists.",
-    "summary": "3 Automated Test Cases (Standard Pair, Negative Numbers, Duplicate Elements)",
-    "starter": "def two_sum(nums, target):\n    # Write your solution here\n    seen = {}\n    for i, num in enumerate(nums):\n        diff = target - num\n        if diff in seen:\n            return [seen[diff], i]\n        seen[num] = i\n    return []\n"
-  },
-  "py_churn_filter": {
-    "title": "High-Risk Customer Churn Filter",
-    "skill": "Python",
-    "lang": "python",
-    "difficulty": "Medium",
-    "desc": "Write a function <code>filter_high_risk_churn(customers, threshold)</code> that accepts a list of customer dictionaries and returns a list of IDs of customers who are active AND have risk_score >= threshold, sorted by risk_score descending.",
-    "summary": "2 Automated Test Cases (Active/Inactive Filter, Threshold Boundaries)",
-    "starter": "def filter_high_risk_churn(customers, threshold):\n    filtered = [c for c in customers if c.get('active', False) and c.get('risk_score', 0) >= threshold]\n    filtered.sort(key=lambda x: x['risk_score'], reverse=True)\n    return [c['id'] for c in filtered]\n"
-  },
-  "sql_top_salaries": {
-    "title": "Employees Above Department Average Salary",
-    "skill": "SQL",
-    "lang": "sql",
-    "difficulty": "Medium",
-    "desc": "Write a SQL query to select <code>name</code>, <code>department</code>, and <code>salary</code> from the <code>employees</code> table where an employee's salary is strictly greater than the average salary of their respective department. Order by <code>salary</code> DESC.",
-    "summary": "1 Automated Test Case (Relational Department Subquery & Sorting)",
-    "starter": "-- Write your SQL query here\nSELECT e.name, e.department, e.salary\nFROM employees e\nWHERE e.salary > (\n    SELECT AVG(e2.salary)\n    FROM employees e2\n    WHERE e2.department = e.department\n)\nORDER BY e.salary DESC;\n"
-  },
-  "sql_active_customers": {
-    "title": "High-Value Customers with > 2 Orders (HAVING)",
-    "skill": "SQL",
-    "lang": "sql",
-    "difficulty": "Easy",
-    "desc": "Write a SQL query using <code>GROUP BY</code> and <code>HAVING</code> to find <code>customer_id</code> and total order count <code>order_count</code> for customers who placed more than 2 total orders. Order by <code>order_count</code> DESC.",
-    "summary": "1 Automated Test Case (Aggregate HAVING Filter & Sort)",
-    "starter": "-- Write your SQL query using GROUP BY and HAVING\nSELECT customer_id, COUNT(order_id) AS order_count\nFROM orders\nGROUP BY customer_id\nHAVING COUNT(order_id) > 2\nORDER BY order_count DESC;\n"
-  }
 };
 
 function initInterviewSimulator() {
@@ -2011,31 +1986,7 @@ function initInterviewSimulator() {
       }
     });
   }
-
-  // Load first coding problem into sandbox
-  loadSelectedCodingProblem();
 }
-
-// Mode Switcher: Voice vs Coding
-window.switchInterviewMode = function(mode) {
-  const tabVoice = document.getElementById("tab-int-mode-voice");
-  const tabCode = document.getElementById("tab-int-mode-code");
-  const voicePane = document.getElementById("interview-voice-pane");
-  const codePane = document.getElementById("interview-code-pane");
-
-  if (mode === "voice") {
-    if (tabVoice) tabVoice.classList.add("active");
-    if (tabCode) tabCode.classList.remove("active");
-    if (voicePane) voicePane.style.display = "block";
-    if (codePane) codePane.style.display = "none";
-  } else {
-    if (tabVoice) tabVoice.classList.remove("active");
-    if (tabCode) tabCode.classList.add("active");
-    if (voicePane) voicePane.style.display = "none";
-    if (codePane) codePane.style.display = "block";
-  }
-  initLucideIcons();
-};
 
 window.loadNextInterviewQuestion = function() {
   const bank = INTERVIEW_LOCAL_BANK[currentInterviewSkill] || INTERVIEW_LOCAL_BANK["SQL"];
@@ -2052,13 +2003,28 @@ function updateInterviewQuestionView() {
   const qHint = document.getElementById("int-hint-text");
   const ansInput = document.getElementById("int-answer-input");
   const resCard = document.getElementById("int-result-card");
+  const modelAnswerCard = document.getElementById("int-model-answer-card");
+  const modelAnswerText = document.getElementById("int-model-answer-text");
+  const modelAnswerIcon = document.getElementById("model-answer-icon");
 
   if (qText) qText.textContent = `"${q.text}"`;
   if (qMeta) qMeta.textContent = `${currentInterviewSkill} | ${q.difficulty} | ${q.type}`;
   if (qHint) qHint.innerHTML = `💡 <i>Interviewer Hint: ${q.hint}</i>`;
   if (ansInput) ansInput.value = "";
   if (resCard) resCard.style.display = "none";
+  if (modelAnswerCard) modelAnswerCard.style.display = "none";
+  if (modelAnswerIcon) modelAnswerIcon.textContent = "▼";
+  if (modelAnswerText && q.model_answer) modelAnswerText.innerHTML = q.model_answer;
 }
+
+window.toggleModelAnswer = function() {
+  const card = document.getElementById("int-model-answer-card");
+  const icon = document.getElementById("model-answer-icon");
+  if (!card) return;
+  const isHidden = (card.style.display === "none" || !card.style.display);
+  card.style.display = isHidden ? "block" : "none";
+  if (icon) icon.textContent = isHidden ? "▲" : "▼";
+};
 
 // Web Speech API Text-to-Speech (TTS)
 window.speakCurrentQuestion = function() {
@@ -2236,122 +2202,8 @@ window.requestAdaptiveFollowUp = async function() {
   }
 };
 
-// Live Coding Sandbox Handlers
-window.loadSelectedCodingProblem = function() {
-  const select = document.getElementById("code-problem-select");
-  const pid = select ? select.value : "py_two_sum";
-  const prob = CODING_PROBLEMS_LOCAL[pid] || CODING_PROBLEMS_LOCAL["py_two_sum"];
-  activeCodingProblem = prob;
-
-  const titleEl = document.getElementById("code-problem-title");
-  const diffEl = document.getElementById("code-problem-difficulty");
-  const langEl = document.getElementById("code-problem-lang");
-  const descEl = document.getElementById("code-problem-desc");
-  const sumEl = document.getElementById("code-test-cases-summary");
-  const editorLang = document.getElementById("editor-lang-label");
-  const editorInput = document.getElementById("code-editor-input");
-  const resBox = document.getElementById("code-results-box");
-
-  if (titleEl) titleEl.textContent = prob.title;
-  if (diffEl) {
-    diffEl.textContent = prob.difficulty;
-    diffEl.className = prob.difficulty === "Easy" ? "badge badge-emerald" : (prob.difficulty === "Medium" ? "badge badge-amber" : "badge badge-rose");
-  }
-  if (langEl) langEl.textContent = prob.skill;
-  if (descEl) descEl.innerHTML = prob.desc;
-  if (sumEl) sumEl.textContent = prob.summary;
-  if (editorLang) editorLang.textContent = prob.lang === "python" ? "Python 3.11 Sandbox" : "SQLite In-Memory Relational Engine";
-  if (editorInput) editorInput.value = prob.starter;
-  if (resBox) resBox.style.display = "none";
-};
-
-window.resetCodingSandbox = function() {
-  if (activeCodingProblem) {
-    const editorInput = document.getElementById("code-editor-input");
-    if (editorInput) editorInput.value = activeCodingProblem.starter;
-  }
-};
-
-window.runSandboxCode = async function() {
-  const select = document.getElementById("code-problem-select");
-  const pid = select ? select.value : "py_two_sum";
-  const prob = CODING_PROBLEMS_LOCAL[pid] || CODING_PROBLEMS_LOCAL["py_two_sum"];
-  const code = document.getElementById("code-editor-input")?.value || "";
-  const runBtn = document.getElementById("run-code-btn");
-
-  try {
-    if (runBtn) runBtn.innerHTML = '<i data-lucide="loader" class="animate-spin" style="width: 14px; height: 14px;"></i> Running Tests...';
-
-    const response = await fetch(`${API_BASE}/api/v1/interview/run-code`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        problem_id: pid,
-        code: code,
-        language: prob.lang
-      })
-    });
-
-    if (!response.ok) throw new Error("Sandbox execution failed");
-    const data = await response.json();
-
-    // Render Test Cases & Terminal Output
-    const resBox = document.getElementById("code-results-box");
-    if (resBox) resBox.style.display = "block";
-
-    const passCountBadge = document.getElementById("code-pass-count-badge");
-    if (passCountBadge) {
-      passCountBadge.textContent = `${data.passed_count}/${data.total_count} Passed`;
-      passCountBadge.className = data.all_passed ? "badge badge-emerald" : "badge badge-rose";
-    }
-
-    const latencyBadge = document.getElementById("code-latency-badge");
-    if (latencyBadge) {
-      latencyBadge.textContent = `Execution Time: ${data.execution_time_ms.toFixed(1)}ms`;
-    }
-
-    const tbody = document.getElementById("test-cases-tbody");
-    if (tbody) {
-      tbody.innerHTML = (data.test_results || []).map(t => {
-        const statusBadge = t.passed
-          ? `<span class="test-pass-pill">✓ PASS</span>`
-          : `<span class="test-fail-pill">✗ FAIL</span>`;
-
-        return `
-          <tr>
-            <td><b>${t.name}</b></td>
-            <td><code>${t.input_val}</code></td>
-            <td><code>${t.expected_val}</code></td>
-            <td><code>${t.actual_val !== null ? t.actual_val : (t.error_message || "None")}</code></td>
-            <td>${statusBadge}</td>
-          </tr>
-        `;
-      }).join("");
-    }
-
-    const consoleOutput = document.getElementById("code-console-output");
-    if (consoleOutput) {
-      let outputText = "";
-      if (data.stdout && data.stdout.trim()) outputText += `[STDOUT]\n${data.stdout}\n`;
-      if (data.error_traceback) outputText += `[ERROR TRACEBACK]\n${data.error_traceback}\n`;
-      if (!outputText) outputText = data.all_passed ? "✓ All test cases passed with exit code 0." : "! Some test cases failed.";
-      consoleOutput.textContent = outputText;
-    }
-
-  } catch (err) {
-    console.error("Run Code Error:", err);
-    alert("Execution failed: " + err.message);
-  } finally {
-    if (runBtn) {
-      runBtn.innerHTML = '<i data-lucide="play" style="width: 14px; height: 14px;"></i> Run Tests & Verify';
-      initLucideIcons();
-    }
-  }
-};
-
 window.practiceSkillInInterview = function(skillName) {
   switchNavTab("view-interview");
-  switchInterviewMode("voice");
   const skillSelect = document.getElementById("int-skill-select");
   if (skillSelect) {
     skillSelect.value = skillName;
@@ -3384,224 +3236,5 @@ async function initSkillVelocityTracker() {
   }
 }
 
-// =============================================================================
-// SECTION 8: TPO COHORT ANALYTICS, RECRUITER SEARCH & CREDENTIALS CONTROLLER
-// =============================================================================
-
-window.tpoState = {
-  currentSubTab: 'cohort'
-};
-
-window.switchTPOSubTab = function(subTab) {
-  window.tpoState.currentSubTab = subTab;
-  const tabs = ['cohort', 'recruiter'];
-  tabs.forEach(t => {
-    const btn = document.getElementById(`btn-tpo-subtab-${t}`);
-    const view = document.getElementById(`tpo-subview-${t}`);
-    if (btn) {
-      if (t === subTab) {
-        btn.classList.add("active");
-      } else {
-        btn.classList.remove("active");
-      }
-    }
-    if (view) {
-      view.style.display = (t === subTab) ? "block" : "none";
-    }
-  });
-  initLucideIcons();
-  if (subTab === 'recruiter') {
-    const matchesGrid = document.getElementById("recruiter-candidates-grid");
-    if (matchesGrid && matchesGrid.children.length === 0) {
-      executeRecruiterSearch();
-    }
-  }
-};
-
-window.reloadTPOCohortData = async function() {
-  const deptSelect = document.getElementById("tpo-dept-filter");
-  const batchSelect = document.getElementById("tpo-batch-filter");
-  const dept = deptSelect ? deptSelect.value : "all";
-  const batch = batchSelect ? batchSelect.value : "2026";
-
-  try {
-    // 1. Fetch Cohort Summary
-    const sumRes = await fetch(`${API_BASE}/api/v1/tpo/cohort-summary?department=${encodeURIComponent(dept)}&batch_year=${batch}`);
-    const sumData = await sumRes.json();
-    if (sumData.status === "success" && sumData.summary) {
-      const s = sumData.summary;
-      const totalEl = document.getElementById("tpo-kpi-total-students");
-      const avgEl = document.getElementById("tpo-kpi-avg-readiness");
-      const readyEl = document.getElementById("tpo-kpi-ready-count");
-      const credsEl = document.getElementById("tpo-kpi-credentials-count");
-
-      if (totalEl) totalEl.textContent = s.total_students;
-      if (avgEl) avgEl.textContent = `${s.avg_readiness_pct}%`;
-      if (readyEl) readyEl.textContent = `${s.placement_ready_count} / ${s.total_students} (${s.placement_ready_pct}%)`;
-      if (credsEl) credsEl.textContent = s.verified_credentials_count;
-    }
-
-    // 2. Fetch Department Gaps
-    const gapsRes = await fetch(`${API_BASE}/api/v1/tpo/department-gaps?department=${encodeURIComponent(dept)}`);
-    const gapsData = await gapsRes.json();
-    const tbody = document.getElementById("tpo-department-gaps-tbody");
-    if (tbody && gapsData.status === "success" && gapsData.reports) {
-      tbody.innerHTML = gapsData.reports.map(r => {
-        const masteredChips = r.top_mastered_skills.map(m =>
-          `<span class="badge badge-emerald" style="margin: 2px;" title="${m.student_count} students">${m.skill_name} (${m.penetration_pct}%)</span>`
-        ).join("");
-
-        const deficitList = r.critical_skill_deficits.map(d => `
-          <div style="margin-bottom: 6px; padding: 6px 8px; background-color: hsl(var(--muted)/0.3); border-radius: var(--radius); border-left: 3px solid hsl(var(--destructive));">
-            <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 0.8rem;">
-              <span>${d.skill_name} (Actual: ${d.actual_penetration_pct}%)</span>
-              <span class="badge badge-rose">Deficit: -${d.deficit_pct}%</span>
-            </div>
-            <div style="font-size: 0.74rem; color: hsl(var(--muted-foreground)); margin-top: 2px;">${d.remedial_action}</div>
-          </div>
-        `).join("");
-
-        return `
-          <tr>
-            <td>
-              <div style="font-weight: 700; font-size: 0.88rem;">${r.department}</div>
-              <div style="font-size: 0.75rem; color: hsl(var(--muted-foreground));">Tier-1 Ready: ${r.tier_distribution['Tier 1 (Dream >12 LPA)'] || 0} students</div>
-            </td>
-            <td><b>${r.total_students}</b></td>
-            <td><span class="badge ${r.avg_readiness_pct >= 75 ? 'badge-emerald' : 'badge-amber'}">${r.avg_readiness_pct}%</span></td>
-            <td><div style="display: flex; flex-wrap: wrap; gap: 4px;">${masteredChips}</div></td>
-            <td>${deficitList}</td>
-          </tr>
-        `;
-      }).join("");
-    }
-
-  } catch (err) {
-    console.error("Error loading TPO Cohort Data:", err);
-  }
-};
-
-window.loadSampleRecruiterJD = function(type) {
-  const jdInput = document.getElementById("recruiter-jd-input");
-  const roleSelect = document.getElementById("recruiter-role-filter");
-  if (!jdInput) return;
-
-  if (type === "ds") {
-    jdInput.value = "Seeking a Senior Data Scientist to architect predictive ML pipelines. Required proficiencies: Python, SQL, PyTorch, Scikit-Learn, Machine Learning, Deep Learning, and Docker containerization.";
-    if (roleSelect) roleSelect.value = "Data Scientist";
-  } else {
-    jdInput.value = "Hiring Python Backend Developer for high-throughput microservices. Requirements: Python, FastAPI, PostgreSQL, Docker, Redis, REST APIs, Git, and Microservices architecture.";
-    if (roleSelect) roleSelect.value = "Backend Developer (Python)";
-  }
-  executeRecruiterSearch();
-};
-
-window.executeRecruiterSearch = async function() {
-  const jdText = document.getElementById("recruiter-jd-input")?.value || "";
-  const role = document.getElementById("recruiter-role-filter")?.value || null;
-  const minReadiness = parseFloat(document.getElementById("recruiter-min-readiness")?.value || "0");
-  const minAts = parseFloat(document.getElementById("recruiter-min-ats")?.value || "0");
-  const minStars = parseInt(document.getElementById("recruiter-min-stars")?.value || "0");
-  const dept = document.getElementById("tpo-dept-filter")?.value || "all";
-
-  const container = document.getElementById("recruiter-candidates-grid");
-  const countEl = document.getElementById("recruiter-matches-count");
-  if (!container) return;
-
-  container.innerHTML = `<div style="grid-column: 1 / -1; padding: 32px; text-align: center; color: hsl(var(--muted-foreground));">Searching and ranking candidate cohort...</div>`;
-
-  try {
-    const res = await fetch(`${API_BASE}/api/v1/recruiter/search-candidates`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        jd_text: jdText,
-        target_career: role,
-        min_readiness: minReadiness,
-        min_ats: minAts,
-        min_github_stars: minStars,
-        department: dept,
-        limit: 18
-      })
-    });
-
-    const data = await res.json();
-    const matches = data.matches || [];
-    if (countEl) countEl.textContent = matches.length;
-
-    if (matches.length === 0) {
-      container.innerHTML = `<div style="grid-column: 1 / -1; padding: 32px; text-align: center; color: hsl(var(--muted-foreground));">No candidates found matching the selected criteria. Try lowering the threshold filters.</div>`;
-      return;
-    }
-
-    container.innerHTML = matches.map(c => {
-      const isTop = c.recruiter_fit_score >= 85;
-      const badgeClass = isTop ? 'badge-emerald' : (c.recruiter_fit_score >= 72 ? 'badge-primary' : 'badge-secondary');
-      
-      const matchedChips = c.matched_jd_skills.map(s => `<span class="badge badge-emerald" style="font-size: 0.72rem;">✓ ${s}</span>`).join(" ");
-      const missingChips = c.missing_jd_skills.map(s => `<span class="badge badge-outline" style="font-size: 0.72rem; color: hsl(var(--muted-foreground));">+ ${s}</span>`).join(" ");
-
-      return `
-        <div class="card" style="padding: 18px; border-top: 3px solid ${isTop ? 'hsl(var(--emerald))' : 'hsl(var(--primary))'}; display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-              <div>
-                <div style="font-size: 1.05rem; font-weight: 700;">${c.name}</div>
-                <div style="font-size: 0.78rem; color: hsl(var(--muted-foreground));">${c.department} • Batch ${c.batch_year}</div>
-              </div>
-              <span class="badge ${badgeClass}" style="font-weight: 700;">${c.recruiter_fit_score}% Fit</span>
-            </div>
-
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
-              <span class="badge badge-outline" style="font-size: 0.75rem;">🎯 ${c.target_career}</span>
-              <span class="badge badge-outline" style="font-size: 0.75rem;">⭐ ${c.github_stars} GH Stars</span>
-              <span class="badge badge-secondary" style="font-size: 0.75rem;">${c.github_complexity_grade}</span>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; background-color: hsl(var(--muted)/0.25); border-radius: var(--radius); padding: 8px;">
-              <div>
-                <div style="font-size: 0.7rem; color: hsl(var(--muted-foreground));">Placement Probability</div>
-                <div style="font-size: 0.92rem; font-weight: 700; color: hsl(var(--emerald));">${c.placement_probability_pct}%</div>
-              </div>
-              <div>
-                <div style="font-size: 0.7rem; color: hsl(var(--muted-foreground));">ATS Resume Match</div>
-                <div style="font-size: 0.92rem; font-weight: 700; color: hsl(var(--primary));">${c.ats_score}%</div>
-              </div>
-            </div>
-
-            <div style="margin-bottom: 8px;">
-              <div style="font-size: 0.74rem; font-weight: 600; color: hsl(var(--muted-foreground)); margin-bottom: 4px;">Matched JD Skills:</div>
-              <div style="display: flex; flex-wrap: wrap; gap: 4px;">${matchedChips || '<span style="font-size:0.75rem; color:hsl(var(--muted-foreground));">None</span>'}</div>
-            </div>
-
-            ${c.missing_jd_skills.length > 0 ? `
-              <div style="margin-bottom: 8px;">
-                <div style="font-size: 0.74rem; font-weight: 600; color: hsl(var(--muted-foreground)); margin-bottom: 4px;">Missing Skills to Bridge:</div>
-                <div style="display: flex; flex-wrap: wrap; gap: 4px;">${missingChips}</div>
-              </div>
-            ` : ''}
-          </div>
-
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding-top: 10px; border-top: 1px solid hsl(var(--border));">
-            <span style="font-size: 0.75rem; color: hsl(var(--muted-foreground));">${c.email}</span>
-            <button class="btn btn-outline btn-sm" onclick="alert('Candidate profile for ${c.name}:\\nEmail: ${c.email}\\nTarget Role: ${c.target_career}\\nReadiness: ${c.placement_probability_pct}%\\nGitHub: ${c.github_complexity_grade} (${c.github_stars} stars)\\nATS Score: ${c.ats_score}%')">
-              👁️ View Profile
-            </button>
-          </div>
-        </div>
-      `;
-    }).join("");
-
-    initLucideIcons();
-
-  } catch (err) {
-    console.error("Error executing recruiter search:", err);
-    container.innerHTML = `<div style="grid-column: 1 / -1; padding: 32px; text-align: center; color: hsl(var(--destructive));">Search failed: ${err.message}</div>`;
-  }
-};
-
-function initTPOAndRecruiterPortal() {
-  reloadTPOCohortData();
-}
 
 

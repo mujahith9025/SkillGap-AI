@@ -22,11 +22,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy source code, datasets, and configurations
 COPY . .
 
-# Expose FastAPI Web App (8000)
+# Expose default port
 EXPOSE 8000
 
-# Healthcheck for container stability
-HEALTHCHECK CMD curl --fail http://localhost:8000/health || exit 1
-
-# Default command launches the FastAPI web application and REST API
-CMD ["python", "-m", "uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+# Launch command using shell format to support dynamic $PORT from cloud providers (Render, Railway, HuggingFace, Cloud Run)
+CMD ["sh", "-c", "python -m uvicorn api:app --host 0.0.0.0 --port ${PORT:-8000}"]
