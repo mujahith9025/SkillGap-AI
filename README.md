@@ -1,9 +1,14 @@
 # SkillGap AI: Placement Readiness & Career Recommendation System
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-skillgap--ai--psm4.onrender.com-success?style=for-the-badge&logo=render&logoColor=white)](https://skillgap-ai-psm4.onrender.com/)
 [![Python Version](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Web Framework](https://img.shields.io/badge/UI-FastAPI%20%2B%20Vanilla%20JS-009688.svg)](https://fastapi.tiangolo.com/)
 [![NLP Engine](https://img.shields.io/badge/NLP-SentenceTransformers-yellow.svg)](https://www.sbert.net/)
 [![Tests](https://img.shields.io/badge/Tests-114%2F114%20Passed-brightgreen.svg)]()
+
+> 🌐 **Live Web Application**: [https://skillgap-ai-psm4.onrender.com/](https://skillgap-ai-psm4.onrender.com/)  
+> 📖 **Interactive API Documentation (Swagger)**: [https://skillgap-ai-psm4.onrender.com/docs](https://skillgap-ai-psm4.onrender.com/docs)  
+> 🩺 **System Health Probe**: [https://skillgap-ai-psm4.onrender.com/health](https://skillgap-ai-psm4.onrender.com/health)
 
 An AI/NLP-powered decision-support and personalized learning recommendation system designed to bridge the transition from academic coursework to industry placement readiness. The system evaluates student technical competencies against industry career benchmarks, quantifies skill gaps, enforces topological prerequisite constraints, and generates structured, milestone-driven learning roadmaps with curated portfolio projects.
 
