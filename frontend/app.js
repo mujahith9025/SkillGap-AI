@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initResumeUpload();
   initCommandPalette();
   initATSScorer();
-  initInterviewSimulator();
+  initSkillAssessmentCenter();
   initMarketIntelligence();
   initXYZRewriter();
   initDownloadReport();
@@ -1179,168 +1179,311 @@ window.copyNotionTemplate = function() {
   showToast("📝 Notion Study Template copied to clipboard!");
 };
 
-// -----------------------------------------------------------------------------
-// GAMIFIED QUIZ GATE CONTROLLER
-// -----------------------------------------------------------------------------
-window.startSkillQuiz = async function(skillName) {
+// =============================================================================
+// SKILL ASSESSMENT QUIZ & MARKS CONTROLLER (STEP 4)
+// =============================================================================
+let activeAssessmentState = {
+  skillName: "Python",
+  questions: [],
+  currentIndex: 0,
+  userAnswers: [],
+  history: []
+};
+
+window.startSkillAssessment = async function() {
+  const skillSelect = document.getElementById("quiz-skill-select");
+  const numSelect = document.getElementById("quiz-num-questions-select");
+  const skillName = skillSelect ? skillSelect.value : "Python";
+  const numQuestions = numSelect ? parseInt(numSelect.value, 10) : 5;
+
+  const startBtn = document.getElementById("btn-start-skill-assessment");
+  if (startBtn) startBtn.innerHTML = '<i data-lucide="loader" class="animate-spin" style="width: 15px; height: 15px;"></i> Loading Questions...';
+
   try {
     const res = await fetch(`${API_BASE}/api/v1/quiz/generate`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ skill_name: skillName, num_questions: 3 })
+      body: JSON.stringify({
+        skill_name: skillName,
+        num_questions: numQuestions
+      })
     });
     if (!res.ok) throw new Error("Quiz generation failed");
     const data = await res.json();
 
-    currentQuizState = {
-      skillName: skillName,
-      questions: data.questions || [],
-      currentIndex: 0,
-      userAnswers: [],
-      selectedOptionIndex: -1,
-      evaluatedResult: null
-    };
+    const questions = data.questions || [];
+    if (!questions.length) throw new Error("No questions returned for this skill");
 
-    const modal = document.getElementById("quiz-modal");
-    if (modal) modal.classList.add("active");
+    activeAssessmentState.skillName = skillName;
+    activeAssessmentState.questions = questions;
+    activeAssessmentState.currentIndex = 0;
+    activeAssessmentState.userAnswers = new Array(questions.length).fill(-1);
 
-    document.getElementById("quiz-skill-title").textContent = `${skillName} Technical Mastery Check`;
-    document.getElementById("quiz-question-container").style.display = "block";
-    document.getElementById("quiz-summary-container").style.display = "none";
-    document.getElementById("quiz-submit-btn").style.display = "inline-flex";
-    document.getElementById("quiz-next-btn").style.display = "none";
-    document.getElementById("quiz-finish-btn").style.display = "none";
+    // Show active assessment arena card, hide result card
+    const activeCard = document.getElementById("quiz-active-card");
+    const resultCard = document.getElementById("quiz-result-card");
+    if (activeCard) activeCard.style.display = "block";
+    if (resultCard) resultCard.style.display = "none";
 
-    renderCurrentQuizQuestion();
+    // Update active badges
+    const skillBadge = document.getElementById("quiz-active-skill-badge");
+    const totalCount = document.getElementById("quiz-total-q-count");
+    if (skillBadge) skillBadge.textContent = skillName;
+    if (totalCount) totalCount.textContent = questions.length;
+
+    renderActiveAssessmentQuestion();
+
+    // Scroll to active card smoothly
+    activeCard?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   } catch (err) {
-    console.error("Failed to start quiz:", err);
-    showToast("⚠️ Could not load quiz questions.");
+    console.error("Failed to start skill assessment:", err);
+    showToast("⚠️ Could not load quiz questions. Please try again.");
+  } finally {
+    if (startBtn) {
+      startBtn.innerHTML = '<i data-lucide="play" style="width: 15px; height: 15px;"></i><span>Start Assessment</span>';
+      initLucideIcons();
+    }
   }
 };
 
-function renderCurrentQuizQuestion() {
-  const q = currentQuizState.questions[currentQuizState.currentIndex];
+window.selectAndStartQuiz = function(skillName) {
+  const skillSelect = document.getElementById("quiz-skill-select");
+  if (skillSelect) {
+    let found = false;
+    for (let opt of skillSelect.options) {
+      if (opt.value.toLowerCase() === skillName.toLowerCase()) {
+        skillSelect.value = opt.value;
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      const newOpt = new Option(skillName, skillName, true, true);
+      skillSelect.add(newOpt);
+    }
+  }
+  startSkillAssessment();
+};
+
+function renderActiveAssessmentQuestion() {
+  const { questions, currentIndex, userAnswers } = activeAssessmentState;
+  const q = questions[currentIndex];
   if (!q) return;
 
-  currentQuizState.selectedOptionIndex = -1;
-  document.getElementById("quiz-progress-label").textContent = `Question ${currentQuizState.currentIndex + 1} of ${currentQuizState.questions.length}`;
-  document.getElementById("quiz-question-text").textContent = q.question_text;
-  document.getElementById("quiz-feedback-box").style.display = "none";
-  document.getElementById("quiz-submit-btn").style.display = "inline-flex";
-  document.getElementById("quiz-next-btn").style.display = "none";
+  const currentIdxEl = document.getElementById("quiz-current-q-index");
+  const diffBadgeEl = document.getElementById("quiz-active-diff-badge");
+  const progressBar = document.getElementById("quiz-progress-bar");
+  const questionText = document.getElementById("quiz-question-text");
+  const optionsContainer = document.getElementById("quiz-options-container");
+  const prevBtn = document.getElementById("quiz-prev-btn");
+  const nextBtn = document.getElementById("quiz-next-btn");
 
-  const optsContainer = document.getElementById("quiz-options-list");
+  if (currentIdxEl) currentIdxEl.textContent = currentIndex + 1;
+  if (diffBadgeEl) diffBadgeEl.textContent = q.difficulty || "Intermediate";
+  if (progressBar) progressBar.style.width = `${((currentIndex + 1) / questions.length) * 100}%`;
+  if (questionText) questionText.textContent = q.question_text;
+
+  const currentSelection = userAnswers[currentIndex];
   const letters = ["A", "B", "C", "D"];
-  optsContainer.innerHTML = q.options.map((opt, idx) => `
-    <button class="quiz-option-btn" id="quiz-opt-${idx}" onclick="selectQuizOption(${idx})">
-      <span class="quiz-option-index">${letters[idx]}</span>
-      <span>${opt}</span>
-    </button>
-  `).join("");
+
+  if (optionsContainer) {
+    optionsContainer.innerHTML = (q.options || []).map((opt, optIdx) => {
+      const isSelected = (currentSelection === optIdx);
+      return `
+        <div class="quiz-option-card ${isSelected ? 'selected' : ''}" onclick="selectAssessmentOption(${optIdx})" style="
+          padding: 12px 16px;
+          border-radius: var(--radius);
+          border: 1px solid ${isSelected ? 'var(--brand-blue)' : 'hsl(var(--border))'};
+          background: ${isSelected ? 'hsl(var(--muted)/0.5)' : 'hsl(var(--card))'};
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          transition: all 0.15s ease;
+        ">
+          <span style="
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            background: ${isSelected ? 'var(--brand-blue)' : 'hsl(var(--muted))'};
+            color: ${isSelected ? '#fff' : 'hsl(var(--foreground))'};
+          ">${letters[optIdx]}</span>
+          <span style="font-size: 0.92rem; font-weight: ${isSelected ? '600' : '400'}; color: hsl(var(--foreground)); line-height: 1.4;">${opt}</span>
+        </div>
+      `;
+    }).join("");
+  }
+
+  if (prevBtn) prevBtn.disabled = (currentIndex === 0);
+  if (nextBtn) nextBtn.disabled = (currentIndex === questions.length - 1);
 }
 
-window.selectQuizOption = function(idx) {
-  currentQuizState.selectedOptionIndex = idx;
-  document.querySelectorAll(".quiz-option-btn").forEach((btn, i) => {
-    btn.classList.toggle("selected", i === idx);
+window.selectAssessmentOption = function(optIdx) {
+  activeAssessmentState.userAnswers[activeAssessmentState.currentIndex] = optIdx;
+  renderActiveAssessmentQuestion();
+};
+
+window.navigateQuizQuestion = function(step) {
+  const newIndex = activeAssessmentState.currentIndex + step;
+  if (newIndex >= 0 && newIndex < activeAssessmentState.questions.length) {
+    activeAssessmentState.currentIndex = newIndex;
+    renderActiveAssessmentQuestion();
+  }
+};
+
+window.submitSkillAssessment = async function() {
+  const { skillName, userAnswers, questions } = activeAssessmentState;
+  
+  const unansweredCount = userAnswers.filter(a => a === -1).length;
+  if (unansweredCount > 0) {
+    const confirmSubmit = confirm(`You have ${unansweredCount} unanswered question(s). Are you sure you want to submit?`);
+    if (!confirmSubmit) return;
+  }
+
+  const submitBtn = document.getElementById("quiz-submit-btn");
+  if (submitBtn) submitBtn.innerHTML = '<i data-lucide="loader" class="animate-spin" style="width: 14px; height: 14px;"></i> Calculating Marks...';
+
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/quiz/evaluate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        skill_name: skillName,
+        user_answers: userAnswers
+      })
+    });
+    if (!res.ok) throw new Error("Evaluation failed");
+    const result = await res.json();
+
+    // Hide active question card, show result marks card
+    const activeCard = document.getElementById("quiz-active-card");
+    const resultCard = document.getElementById("quiz-result-card");
+    if (activeCard) activeCard.style.display = "none";
+    if (resultCard) resultCard.style.display = "block";
+
+    renderQuizMarksReport(result);
+
+    // Add to scorecard history table
+    recordQuizHistory(result);
+
+    // Scroll to result smoothly
+    resultCard?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (err) {
+    console.error("Quiz evaluation failed:", err);
+    showToast("⚠️ Could not evaluate assessment. Please try again.");
+  } finally {
+    if (submitBtn) {
+      submitBtn.innerHTML = '✅ Submit Quiz & Get Marks';
+      initLucideIcons();
+    }
+  }
+};
+
+function renderQuizMarksReport(result) {
+  const marksEl = document.getElementById("quiz-res-marks");
+  const pctEl = document.getElementById("quiz-res-percentage");
+  const gradeEl = document.getElementById("quiz-res-grade");
+  const statusEl = document.getElementById("quiz-res-status");
+  const feedbackBox = document.getElementById("quiz-res-feedback-box");
+  const skillLabel = document.getElementById("quiz-result-skill-label");
+  const breakdownList = document.getElementById("quiz-res-breakdown-list");
+
+  const totalMarks = result.total_marks || (result.total_questions * 10);
+  const marksObtained = result.marks_obtained !== undefined ? result.marks_obtained : (result.score * 10);
+
+  if (marksEl) marksEl.textContent = `${marksObtained} / ${totalMarks}`;
+  if (pctEl) pctEl.textContent = `${result.percentage.toFixed(1)}%`;
+  if (gradeEl) gradeEl.textContent = result.grade || (result.passed ? "A (Passed)" : "Needs Practice");
+  if (statusEl) {
+    statusEl.textContent = result.passed ? "✅ Passed" : "⚠️ Needs Practice";
+    statusEl.style.color = result.passed ? "var(--emerald-text)" : "var(--rose-text)";
+  }
+  if (skillLabel) skillLabel.textContent = `Competency Marks Report for ${result.skill_name}`;
+
+  if (feedbackBox) {
+    feedbackBox.textContent = result.feedback;
+    feedbackBox.style.borderLeftColor = result.passed ? "var(--emerald-text)" : "var(--rose-text)";
+  }
+
+  const evaluations = result.question_evaluations || [];
+  const letters = ["A", "B", "C", "D"];
+
+  if (breakdownList) {
+    breakdownList.innerHTML = evaluations.map((item, idx) => {
+      const isCorrect = item.is_correct;
+      const userChoice = item.user_selected_index >= 0 ? `${letters[item.user_selected_index]}. ${item.options[item.user_selected_index]}` : "No answer selected";
+      const correctChoice = `${letters[item.correct_option_index]}. ${item.options[item.correct_option_index]}`;
+
+      return `
+        <div style="border: 1px solid hsl(var(--border)); border-left: 4px solid ${isCorrect ? 'var(--emerald-text)' : 'var(--rose-text)'}; border-radius: var(--radius); padding: 14px; background: hsl(var(--card));">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 8px; flex-wrap: wrap;">
+            <b style="font-size: 0.95rem;">Q${idx + 1}: ${item.question_text}</b>
+            <span class="badge ${isCorrect ? 'badge-emerald' : 'badge-rose'}" style="font-size: 0.78rem;">
+              ${isCorrect ? '+10 Marks (Correct)' : '0 Marks (Incorrect)'}
+            </span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; font-size: 0.85rem;">
+            <div style="padding: 8px 10px; border-radius: var(--radius); background: ${isCorrect ? 'hsl(var(--muted)/0.2)' : 'hsl(var(--muted)/0.3)'};">
+              <span style="font-size: 0.75rem; color: hsl(var(--muted-foreground)); font-weight: 600;">Your Answer:</span>
+              <div style="font-weight: 600; color: ${isCorrect ? 'var(--emerald-text)' : 'var(--rose-text)'}; margin-top: 2px;">
+                ${isCorrect ? '✓' : '✗'} ${userChoice}
+              </div>
+            </div>
+            <div style="padding: 8px 10px; border-radius: var(--radius); background: hsl(var(--muted)/0.2);">
+              <span style="font-size: 0.75rem; color: hsl(var(--muted-foreground)); font-weight: 600;">Correct Answer:</span>
+              <div style="font-weight: 600; color: var(--emerald-text); margin-top: 2px;">
+                ✓ ${correctChoice}
+              </div>
+            </div>
+          </div>
+
+          <div style="font-size: 0.82rem; color: hsl(var(--foreground)); background: hsl(var(--muted)/0.25); padding: 8px 12px; border-radius: var(--radius); line-height: 1.4;">
+            <b>💡 Technical Explanation:</b> ${item.explanation}
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+}
+
+window.retakeCurrentSkillQuiz = function() {
+  startSkillAssessment();
+};
+
+function recordQuizHistory(result) {
+  const tableBody = document.getElementById("quiz-history-table-body");
+  if (!tableBody) return;
+
+  const totalMarks = result.total_marks || (result.total_questions * 10);
+  const marksObtained = result.marks_obtained !== undefined ? result.marks_obtained : (result.score * 10);
+  const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  activeAssessmentState.history.unshift({
+    skill: result.skill_name,
+    marks: `${marksObtained}/${totalMarks}`,
+    pct: `${result.percentage.toFixed(0)}%`,
+    grade: result.grade || (result.passed ? 'A' : 'Needs Practice'),
+    passed: result.passed,
+    time: timeStr
   });
-};
 
-window.submitQuizCurrentAnswer = function() {
-  if (currentQuizState.selectedOptionIndex === -1) {
-    showToast("Please select an answer option first.");
-    return;
-  }
-
-  currentQuizState.userAnswers.push(currentQuizState.selectedOptionIndex);
-
-  // Disable options
-  document.querySelectorAll(".quiz-option-btn").forEach(btn => btn.style.pointerEvents = "none");
-
-  // Show immediate question explanation
-  const feedbackBox = document.getElementById("quiz-feedback-box");
-  const feedbackHeader = document.getElementById("quiz-feedback-header");
-  const feedbackExp = document.getElementById("quiz-feedback-explanation");
-
-  feedbackBox.style.display = "block";
-  feedbackBox.style.background = "hsl(var(--muted)/0.5)";
-  feedbackHeader.textContent = "Answer Recorded!";
-  feedbackExp.textContent = "Advancing to next question or milestone evaluation...";
-
-  document.getElementById("quiz-submit-btn").style.display = "none";
-  const isLast = (currentQuizState.currentIndex >= currentQuizState.questions.length - 1);
-  const nextBtn = document.getElementById("quiz-next-btn");
-  if (isLast) {
-    nextBtn.textContent = "View Final Results 📊";
-  } else {
-    nextBtn.textContent = "Next Question →";
-  }
-  nextBtn.style.display = "inline-flex";
-};
-
-window.nextQuizStep = async function() {
-  if (currentQuizState.currentIndex < currentQuizState.questions.length - 1) {
-    currentQuizState.currentIndex += 1;
-    renderCurrentQuizQuestion();
-  } else {
-    // Evaluate full quiz
-    try {
-      const res = await fetch(`${API_BASE}/api/v1/quiz/evaluate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          skill_name: currentQuizState.skillName,
-          user_answers: currentQuizState.userAnswers
-        })
-      });
-      const result = await res.json();
-      currentQuizState.evaluatedResult = result;
-
-      document.getElementById("quiz-question-container").style.display = "none";
-      document.getElementById("quiz-summary-container").style.display = "block";
-      document.getElementById("quiz-next-btn").style.display = "none";
-      document.getElementById("quiz-finish-btn").style.display = "inline-flex";
-
-      const iconEl = document.getElementById("quiz-result-icon");
-      const titleEl = document.getElementById("quiz-result-title");
-      const descEl = document.getElementById("quiz-result-desc");
-      const badgesEl = document.getElementById("quiz-result-badges");
-
-      if (result.passed) {
-        iconEl.textContent = "🎉";
-        titleEl.textContent = `Mastery Verified: ${currentQuizState.skillName}`;
-        descEl.textContent = `You scored ${result.score}/${result.total_questions} (${result.percentage.toFixed(0)}%). Skill credential unlocked and added to your active profile!`;
-        badgesEl.innerHTML = `<span class="badge badge-emerald">✓ Verified Skill Credential</span><span class="badge badge-secondary">🔓 Downstream DAG Unlocked</span>`;
-      } else {
-        iconEl.textContent = "📚";
-        titleEl.textContent = `Review Needed (${result.score}/${result.total_questions})`;
-        descEl.textContent = `You scored ${result.percentage.toFixed(0)}% (passing threshold is 66%). Review the recommended study resources and retry anytime!`;
-        badgesEl.innerHTML = `<span class="badge badge-rose">Retry Available</span>`;
-      }
-    } catch (err) {
-      console.error("Quiz evaluation failed:", err);
-    }
-  }
-};
-
-window.finishQuizGate = async function() {
-  const result = currentQuizState.evaluatedResult;
-  closeQuizModal();
-
-  if (result && result.passed) {
-    const skill = currentQuizState.skillName;
-    if (!state.studentSkills.some(s => s.toLowerCase() === skill.toLowerCase())) {
-      state.studentSkills.push(skill);
-      showToast(`🌟 ${skill} marked as Mastered! Recalculating readiness...`);
-      await fetchSkillAnalysis();
-    }
-  }
-};
-
-window.closeQuizModal = function() {
-  const modal = document.getElementById("quiz-modal");
-  if (modal) modal.classList.remove("active");
-};
+  tableBody.innerHTML = activeAssessmentState.history.map(h => `
+    <tr>
+      <td><b>${h.skill}</b></td>
+      <td><span style="font-weight: 700; color: var(--brand-blue);">${h.marks}</span></td>
+      <td><b>${h.pct}</b></td>
+      <td><span class="badge ${h.passed ? 'badge-emerald' : 'badge-amber'}">${h.grade}</span></td>
+      <td>${h.passed ? '<span style="color: var(--emerald-text); font-weight: 600;">✓ Passed</span>' : '<span style="color: var(--rose-text); font-weight: 600;">Needs Practice</span>'}</td>
+      <td style="color: hsl(var(--muted-foreground)); font-size: 0.8rem;">${h.time}</td>
+    </tr>
+  `).join("");
+}
 
 function renderFullRoadmap(data) {
   const container = document.getElementById("full-roadmap-container");
@@ -1383,9 +1526,6 @@ function renderFullRoadmap(data) {
                 <a href="${s.resource_url}" target="_blank" style="font-size: 0.78rem; font-weight: 600; color: var(--brand-blue); text-decoration: none; display: flex; align-items: center; gap: 4px;">
                   🔗 ${s.top_resource}
                 </a>
-                <button class="btn btn-default btn-sm" style="font-size: 0.75rem; padding: 4px 10px;" onclick="startSkillQuiz('${s.skill_name}')">
-                  🎯 Quiz Gate
-                </button>
               </div>
             </div>
           `).join("")}
@@ -1798,414 +1938,42 @@ function initXYZRewriter() {
 }
 
 // -----------------------------------------------------------------------------
-// 10. AI MOCK INTERVIEWER & LIVE CODING SANDBOX (SECTION 4 UPGRADES)
+// 10. SKILL ASSESSMENT QUIZ CONTROLLER (STEP 4)
 // -----------------------------------------------------------------------------
-let currentInterviewSkill = "SQL";
-let currentQuestionIndex = 0;
-let isVoiceRecording = false;
-let speechRecognizer = null;
-let interviewHistory = [];
-let activeCodingProblem = null;
+function initSkillAssessmentCenter() {
+  const skillSelect = document.getElementById("quiz-skill-select");
+  const startBtn = document.getElementById("btn-start-skill-quiz");
 
-const INTERVIEW_LOCAL_BANK = {
-  "SQL": [
-    {
-      "text": "What is the difference between WHERE and HAVING in SQL queries? Provide a scenario where WHERE cannot be used.",
-      "hint": "Consider query execution pipeline order and aggregate functions like COUNT() and SUM().",
-      "difficulty": "Intermediate",
-      "type": "Practical Scenario",
-      "model_answer": "<b>Situation & Concept:</b> WHERE filters individual records before any grouping occurs, whereas HAVING filters aggregated metric rows after GROUP BY.<br><b>Concrete Example:</b> To find departments with more than 5 engineers: <code>SELECT dept_id, COUNT(*) FROM emp GROUP BY dept_id HAVING COUNT(*) > 5;</code> WHERE cannot be used here because the aggregate count does not exist prior to grouping.<br><b>Result:</b> Understanding this execution order prevents query syntax errors and ensures correct data aggregation."
-    },
-    {
-      "text": "Explain how Window Functions (ROW_NUMBER, RANK, DENSE_RANK) differ from GROUP BY aggregations.",
-      "hint": "Highlight whether the number of output rows equals the input rows count.",
-      "difficulty": "Advanced",
-      "type": "Conceptual",
-      "model_answer": "<b>Core Difference:</b> GROUP BY collapses multiple rows into a single summary row per group. Window functions perform calculations across a partition of rows while preserving each individual row's identity.<br><b>Ranking Distinctions:</b> ROW_NUMBER assigns unique sequential integers (1, 2, 3). RANK assigns identical values for ties with gaps (1, 2, 2, 4). DENSE_RANK assigns identical values without gaps (1, 2, 2, 3)."
-    }
-  ],
-  "Python": [
-    {
-      "text": "Explain the difference between deep copy and shallow copy in Python. When would you use each?",
-      "hint": "Think about how nested mutable objects behave when cloned or passed by reference.",
-      "difficulty": "Intermediate",
-      "type": "Core Mechanics",
-      "model_answer": "<b>Shallow Copy (<code>copy.copy</code>):</b> Creates a new container object, but inserts references to the original nested objects. Modifying nested elements modifies both.<br><b>Deep Copy (<code>copy.deepcopy</code>):</b> Recursively clones the container and all nested objects completely independently.<br><b>Usage:</b> Use shallow copies for flat structures for memory efficiency; use deep copies when mutating nested dictionaries or lists without affecting the original dataset."
-    },
-    {
-      "text": "How do Python generators use 'yield' for lazy evaluation, and why are they preferred over lists for 100k+ rows?",
-      "hint": "Focus on RAM memory footprint and on-the-fly stream processing.",
-      "difficulty": "Intermediate",
-      "type": "Memory & Performance",
-      "model_answer": "<b>Mechanism:</b> <code>yield</code> pauses function execution and emits a single value, saving its execution state to resume when <code>next()</code> is invoked.<br><b>Memory Advantage:</b> A list of 100k records allocates substantial heap memory all at once. A generator uses O(1) constant memory because it streams one item at a time on demand."
-    }
-  ],
-  "Machine Learning": [
-    {
-      "text": "Explain the Bias-Variance Tradeoff. What concrete techniques would you use if your model has high variance?",
-      "hint": "Relate high variance to overfitting and discuss L1/L2 regularization and ensemble bagging.",
-      "difficulty": "Intermediate",
-      "type": "Modeling & Validation",
-      "model_answer": "<b>Tradeoff:</b> High bias means underfitting (oversimplified assumptions). High variance means overfitting (capturing random noise in training data).<br><b>High Variance Remedies:</b> 1) Add L1/L2 regularization to penalize large weights, 2) Use ensemble bagging (e.g. Random Forests), 3) Increase training dataset size or reduce feature dimensionality via PCA."
-    },
-    {
-      "text": "Why is accuracy a misleading metric for imbalanced classification (e.g. 99% non-fraud, 1% fraud)? What metrics should be used?",
-      "hint": "Discuss Precision, Recall, F1-Score, and Precision-Recall AUC.",
-      "difficulty": "Intermediate",
-      "type": "Evaluation Metrics",
-      "model_answer": "<b>The Problem:</b> A naive classifier predicting 'non-fraud' 100% of the time achieves 99% accuracy while missing every single fraud event.<br><b>Recommended Metrics:</b> 1) Recall (percentage of actual frauds caught), 2) Precision (minimize false alarms), 3) F1-Score (harmonic mean), and 4) PR-AUC (Precision-Recall Area Under Curve)."
-    }
-  ],
-  "Deep Learning": [
-    {
-      "text": "What causes the Vanishing Gradient problem in deep neural networks, and how do ReLU and ResNet skip connections resolve it?",
-      "hint": "Analyze activation function derivatives and backpropagation chain rule.",
-      "difficulty": "Advanced",
-      "type": "Architectural Design",
-      "model_answer": "<b>Cause:</b> Repeated multiplication of small gradients (< 1.0) through sigmoid/tanh activation layers during backpropagation causes early layer weight updates to approach zero.<br><b>Solution:</b> ReLU has a constant gradient of 1 for positive inputs. ResNet skip connections add residual pathways (<code>F(x) + x</code>), allowing gradients to flow unimpeded directly back to early layers."
-    }
-  ],
-  "FastAPI": [
-    {
-      "text": "How does FastAPI leverage Python type hints and Pydantic for high throughput asynchronous I/O?",
-      "hint": "Mention async/await event loops, Starlette/Uvicorn, and automatic Swagger OpenAPI generation.",
-      "difficulty": "Intermediate",
-      "type": "REST Microservices",
-      "model_answer": "<b>Architecture:</b> Built on Starlette and Uvicorn with native <code>async/await</code> event loops for high-concurrency non-blocking I/O.<br><b>Pydantic Integration:</b> Type annotations enable request body validation, serialization, and automatic Swagger/OpenAPI documentation."
-    }
-  ],
-  "Docker": [
-    {
-      "text": "What is the core architectural difference between a Docker container and a Virtual Machine (VM)?",
-      "hint": "Compare Linux kernel sharing/cgroups vs hypervisor guest operating system overhead.",
-      "difficulty": "Intermediate",
-      "type": "System Architecture",
-      "model_answer": "<b>Architecture:</b> VMs package a full guest operating system and virtualized hardware via a hypervisor. Containers share the host OS kernel and isolate processes via Linux namespaces and cgroups.<br><b>Benefits:</b> Containers start in milliseconds and consume drastically fewer compute resources."
-    }
-  ],
-  "Pandas": [
-    {
-      "text": "Explain the behavioral difference between .loc and .iloc in Pandas DataFrame indexing.",
-      "hint": "Compare label-based inclusive slicing vs 0-indexed integer position exclusive slicing.",
-      "difficulty": "Beginner",
-      "type": "Data Manipulation",
-      "model_answer": "<b><code>.loc</code> (Label-based):</b> Selects data using explicit index and column labels. Slices are inclusive of both start and stop bounds.<br><b><code>.iloc</code> (Integer-based):</b> Selects data by numeric position (0 to n-1). Slices are exclusive of the stop bound."
-    }
-  ]
-};
-
-function initInterviewSimulator() {
-  const skillSelect = document.getElementById("int-skill-select");
-  const submitBtn = document.getElementById("int-submit-btn");
+  if (startBtn) {
+    startBtn.addEventListener("click", () => {
+      startSkillAssessment();
+    });
+  }
 
   if (skillSelect) {
-    skillSelect.addEventListener("change", (e) => {
-      currentInterviewSkill = e.target.value;
-      currentQuestionIndex = 0;
-      updateInterviewQuestionView();
-    });
-  }
-
-  if (submitBtn) {
-    submitBtn.addEventListener("click", async () => {
-      const answer = document.getElementById("int-answer-input").value;
-      if (!answer.trim()) {
-        alert("Please provide an answer before submitting.");
-        return;
-      }
-
-      const qText = document.getElementById("int-question-text").textContent.replace(/^"|"$/g, '').trim();
-
-      try {
-        submitBtn.innerHTML = '<i data-lucide="loader" class="animate-spin" style="width: 14px; height: 14px;"></i><span>Evaluating with AI...</span>';
-        const response = await fetch(`${API_BASE}/api/v1/interview/evaluate`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            skill_name: currentInterviewSkill,
-            question_text: qText,
-            candidate_answer: answer
-          })
-        });
-
-        if (!response.ok) throw new Error("Evaluation failed");
-        const data = await response.json();
-
-        // Display Scorecard
-        const resCard = document.getElementById("int-result-card");
-        if (resCard) resCard.style.display = "block";
-
-        const scoreBadge = document.getElementById("int-score-badge");
-        if (scoreBadge) {
-          scoreBadge.textContent = `Score: ${data.overall_score} / 10 (${data.score_tier})`;
-          if (data.overall_score >= 8) scoreBadge.className = "badge badge-emerald";
-          else if (data.overall_score >= 5) scoreBadge.className = "badge badge-amber";
-          else scoreBadge.className = "badge badge-rose";
-        }
-
-        const matchedBox = document.getElementById("int-matched-concepts");
-        if (matchedBox) {
-          matchedBox.innerHTML = (data.matched_concepts && data.matched_concepts.length > 0)
-            ? data.matched_concepts.map(c => `<span class="badge badge-emerald">✓ ${c}</span>`).join("")
-            : `<span style="font-size: 0.75rem; color: hsl(var(--muted-foreground));">No key concepts matched.</span>`;
-        }
-
-        const missingBox = document.getElementById("int-missing-concepts");
-        if (missingBox) {
-          missingBox.innerHTML = (data.missing_concepts && data.missing_concepts.length > 0)
-            ? data.missing_concepts.map(c => `<span class="badge badge-rose">! ${c}</span>`).join("")
-            : `<span class="badge badge-emerald">✓ All concepts covered!</span>`;
-        }
-
-        const strengthsEl = document.getElementById("int-strengths");
-        if (strengthsEl) strengthsEl.textContent = data.feedback_strengths;
-
-        const improvEl = document.getElementById("int-improvements");
-        if (improvEl) improvEl.textContent = data.feedback_improvements;
-
-        // Save into history
-        interviewHistory.push({
-          role: "Candidate",
-          text: answer,
-          score: data.overall_score,
-          tier: data.score_tier
-        });
-
-      } catch (err) {
-        console.error("Evaluation Error:", err);
-        alert("Evaluation failed. Please try again.");
-      } finally {
-        submitBtn.innerHTML = '<i data-lucide="sparkles" style="width: 15px; height: 15px;"></i><span>Evaluate Answer with AI</span>';
-        initLucideIcons();
+    skillSelect.addEventListener("change", () => {
+      const activeCard = document.getElementById("quiz-active-card");
+      if (activeCard && activeCard.style.display !== "none") {
+        startSkillAssessment();
       }
     });
   }
 }
-
-window.loadNextInterviewQuestion = function() {
-  const bank = INTERVIEW_LOCAL_BANK[currentInterviewSkill] || INTERVIEW_LOCAL_BANK["SQL"];
-  currentQuestionIndex = (currentQuestionIndex + 1) % bank.length;
-  updateInterviewQuestionView();
-};
-
-function updateInterviewQuestionView() {
-  const bank = INTERVIEW_LOCAL_BANK[currentInterviewSkill] || INTERVIEW_LOCAL_BANK["SQL"];
-  const q = bank[currentQuestionIndex % bank.length];
-
-  const qText = document.getElementById("int-question-text");
-  const qMeta = document.getElementById("int-q-meta");
-  const qHint = document.getElementById("int-hint-text");
-  const ansInput = document.getElementById("int-answer-input");
-  const resCard = document.getElementById("int-result-card");
-  const modelAnswerCard = document.getElementById("int-model-answer-card");
-  const modelAnswerText = document.getElementById("int-model-answer-text");
-  const modelAnswerIcon = document.getElementById("model-answer-icon");
-
-  if (qText) qText.textContent = `"${q.text}"`;
-  if (qMeta) qMeta.textContent = `${currentInterviewSkill} | ${q.difficulty} | ${q.type}`;
-  if (qHint) qHint.innerHTML = `💡 <i>Interviewer Hint: ${q.hint}</i>`;
-  if (ansInput) ansInput.value = "";
-  if (resCard) resCard.style.display = "none";
-  if (modelAnswerCard) modelAnswerCard.style.display = "none";
-  if (modelAnswerIcon) modelAnswerIcon.textContent = "▼";
-  if (modelAnswerText && q.model_answer) modelAnswerText.innerHTML = q.model_answer;
-}
-
-window.toggleModelAnswer = function() {
-  const card = document.getElementById("int-model-answer-card");
-  const icon = document.getElementById("model-answer-icon");
-  if (!card) return;
-  const isHidden = (card.style.display === "none" || !card.style.display);
-  card.style.display = isHidden ? "block" : "none";
-  if (icon) icon.textContent = isHidden ? "▲" : "▼";
-};
-
-// Web Speech API Text-to-Speech (TTS)
-window.speakCurrentQuestion = function() {
-  if (!("speechSynthesis" in window)) {
-    alert("Speech Synthesis is not supported in this browser.");
-    return;
-  }
-
-  const qText = document.getElementById("int-question-text")?.textContent?.replace(/^"|"$/g, '') || "";
-  window.speechSynthesis.cancel(); // cancel any active speech
-
-  const statusEl = document.getElementById("int-speech-status");
-  if (statusEl) statusEl.style.display = "inline";
-
-  const utterance = new SpeechSynthesisUtterance(qText);
-  utterance.rate = 1.0;
-  utterance.pitch = 1.0;
-
-  utterance.onend = () => {
-    if (statusEl) statusEl.style.display = "none";
-  };
-  utterance.onerror = () => {
-    if (statusEl) statusEl.style.display = "none";
-  };
-
-  window.speechSynthesis.speak(utterance);
-};
-
-// Web Speech API Speech-to-Text (STT) Voice Recording
-window.toggleVoiceRecording = function() {
-  const recordBtn = document.getElementById("int-voice-record-btn");
-  const statusEl = document.getElementById("voice-recording-status");
-  const labelEl = document.getElementById("int-voice-btn-label");
-  const ansInput = document.getElementById("int-answer-input");
-
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-  if (!SpeechRecognition) {
-    alert("Web Speech Recognition API is not supported in this browser. Please use Google Chrome or Edge, or type your answer manually.");
-    return;
-  }
-
-  if (isVoiceRecording) {
-    // Stop recording
-    if (speechRecognizer) speechRecognizer.stop();
-    isVoiceRecording = false;
-    if (recordBtn) recordBtn.classList.remove("voice-recording-active");
-    if (statusEl) statusEl.style.display = "none";
-    if (labelEl) labelEl.textContent = "Record Voice Answer";
-  } else {
-    // Start recording
-    speechRecognizer = new SpeechRecognition();
-    speechRecognizer.continuous = true;
-    speechRecognizer.interimResults = true;
-    speechRecognizer.lang = "en-US";
-
-    let finalTranscript = ansInput ? ansInput.value : "";
-
-    speechRecognizer.onstart = () => {
-      isVoiceRecording = true;
-      if (recordBtn) recordBtn.classList.add("voice-recording-active");
-      if (statusEl) statusEl.style.display = "flex";
-      if (labelEl) labelEl.textContent = "⏹️ Stop Recording";
-    };
-
-    speechRecognizer.onresult = (event) => {
-      let interimTranscript = "";
-      for (let i = event.resultIndex; i < event.results.length; ++i) {
-        if (event.results[i].isFinal) {
-          finalTranscript += " " + event.results[i][0].transcript;
-        } else {
-          interimTranscript += event.results[i][0].transcript;
-        }
-      }
-      if (ansInput) {
-        ansInput.value = (finalTranscript + " " + interimTranscript).trim();
-      }
-    };
-
-    speechRecognizer.onerror = (event) => {
-      console.error("Speech Recognition Error:", event.error);
-      isVoiceRecording = false;
-      if (recordBtn) recordBtn.classList.remove("voice-recording-active");
-      if (statusEl) statusEl.style.display = "none";
-      if (labelEl) labelEl.textContent = "Record Voice Answer";
-    };
-
-    speechRecognizer.onend = () => {
-      isVoiceRecording = false;
-      if (recordBtn) recordBtn.classList.remove("voice-recording-active");
-      if (statusEl) statusEl.style.display = "none";
-      if (labelEl) labelEl.textContent = "Record Voice Answer";
-    };
-
-    speechRecognizer.start();
-  }
-};
-
-// Adaptive Follow-up Probe Generator
-window.requestAdaptiveFollowUp = async function() {
-  const qText = document.getElementById("int-question-text")?.textContent?.replace(/^"|"$/g, '').trim() || "";
-  const candidateAns = document.getElementById("int-answer-input")?.value || "";
-  const followUpBtn = document.getElementById("int-followup-btn");
-
-  if (!candidateAns.trim()) {
-    alert("Please provide an answer first before requesting a follow-up challenge.");
-    return;
-  }
-
-  try {
-    if (followUpBtn) followUpBtn.innerHTML = '<i data-lucide="loader" class="animate-spin" style="width: 14px; height: 14px;"></i><span>Generating Adaptive Challenge...</span>';
-
-    const response = await fetch(`${API_BASE}/api/v1/interview/follow-up`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        skill_name: currentInterviewSkill,
-        question_id: "int_q_01",
-        question_text: qText,
-        candidate_answer: candidateAns
-      })
-    });
-
-    if (!response.ok) throw new Error("Follow-up generation failed");
-    const data = await response.json();
-    const followUp = data.follow_up;
-
-    // Show dialogue container
-    const dialogueContainer = document.getElementById("int-dialogue-container");
-    const dialogueThread = document.getElementById("int-dialogue-thread");
-    if (dialogueContainer && dialogueThread) {
-      dialogueContainer.style.display = "block";
-
-      dialogueThread.innerHTML += `
-        <div class="dialogue-bubble bubble-user">
-          <b>You:</b> ${candidateAns}
-        </div>
-        <div class="dialogue-bubble bubble-ai">
-          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-            <span class="badge badge-amber" style="font-size: 0.7rem;">⚡ ${followUp.probe_type}</span>
-            <span style="font-size: 0.75rem; color: hsl(var(--muted-foreground));">Focus: ${followUp.target_missing_concept}</span>
-          </div>
-          <b>AI Interviewer:</b> ${followUp.probe_text}
-          <div style="font-size: 0.78rem; color: hsl(var(--muted-foreground)); margin-top: 6px;">
-            💡 <i>${followUp.hint}</i>
-          </div>
-        </div>
-      `;
-    }
-
-    // Set follow up as active question
-    const qTextEl = document.getElementById("int-question-text");
-    const qHintEl = document.getElementById("int-hint-text");
-    const qMetaEl = document.getElementById("int-q-meta");
-    const ansInput = document.getElementById("int-answer-input");
-    const resCard = document.getElementById("int-result-card");
-
-    if (qTextEl) qTextEl.textContent = `"${followUp.probe_text}"`;
-    if (qHintEl) qHintEl.innerHTML = `💡 <i>Interviewer Hint: ${followUp.hint}</i>`;
-    if (qMetaEl) qMetaEl.textContent = `${currentInterviewSkill} | Follow-up: ${followUp.probe_type}`;
-    if (ansInput) ansInput.value = "";
-    if (resCard) resCard.style.display = "none";
-
-    // Auto read aloud follow up question
-    speakCurrentQuestion();
-
-  } catch (err) {
-    console.error(err);
-    alert("Could not generate follow-up challenge.");
-  } finally {
-    if (followUpBtn) {
-      followUpBtn.innerHTML = '⚡ Ask Adaptive Follow-Up Probe →';
-      initLucideIcons();
-    }
-  }
-};
 
 window.practiceSkillInInterview = function(skillName) {
   switchNavTab("view-interview");
-  const skillSelect = document.getElementById("int-skill-select");
-  if (skillSelect) {
-    skillSelect.value = skillName;
-    currentInterviewSkill = skillName;
-    currentQuestionIndex = 0;
-    updateInterviewQuestionView();
+  if (typeof selectAndStartQuiz === "function") {
+    selectAndStartQuiz(skillName);
   }
 };
+
+window.practiceSkillInQuiz = function(skillName) {
+  switchNavTab("view-interview");
+  if (typeof selectAndStartQuiz === "function") {
+    selectAndStartQuiz(skillName);
+  }
+};
+
 
 
 // -----------------------------------------------------------------------------

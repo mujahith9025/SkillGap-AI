@@ -265,7 +265,7 @@
     <div class="nav-link active" data-view="view-overview">1. 📊 Job Readiness</div>
     <div class="nav-link" data-view="view-roadmap">2. 🗺️ Skill Milestones & Projects</div>
     <div class="nav-link" data-view="view-market">3. 💰 Value of Each Skill</div>
-    <div class="nav-link" data-view="view-interview">4. 🎙️ AI Mock Interview</div>
+    <div class="nav-link" data-view="view-interview">4. 📝 Skill Assessment Quiz</div>
     <div class="nav-link" data-view="view-ats">5. 📄 ATS Smart Resume</div>
   </nav>
 </header>
@@ -513,7 +513,7 @@
           Skill Milestones & Guided Projects
         </h2>
         <p style="font-size: 0.82rem; color: hsl(var(--muted-foreground));">
-          Phased learning milestones with 3-question quiz gates and hands-on projects.
+          Phased learning milestones with hands-on portfolio projects.
         </p>
       </div>
 
@@ -534,7 +534,7 @@
         <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
           <div>
             <div class="card-title">Phased Learning Milestones (Foundations ➔ Applied ➔ Specialization)</div>
-            <div class="card-description">Master prerequisite foundations first. Click "Quiz Gate" on any skill to test yourself.</div>
+            <div class="card-description">Master prerequisite foundations first. Follow the phased order to bridge skill gaps.</div>
           </div>
           <button class="btn btn-outline btn-sm" id="btn-toggle-dag-view" onclick="toggleDagCanvasView()">
             <i data-lucide="network" style="width: 14px; height: 14px; margin-right: 4px;"></i> Toggle Graph Chart
@@ -599,12 +599,6 @@
           <div id="inspector-resources-section" style="margin-top: 10px;">
             <div style="font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Recommended Material:</div>
             <div id="inspector-resources-list" style="display: flex; flex-direction: column; gap: 4px;"></div>
-          </div>
-
-          <div style="margin-top: 14px; display: flex; justify-content: flex-end; gap: 8px;">
-            <button id="inspector-quiz-btn" class="btn btn-default" onclick="openSkillQuizFromInspector()">
-              🎯 Take 3-Question Quiz Gate
-            </button>
           </div>
         </div>
       </div>
@@ -805,144 +799,252 @@
   </section>
 
   <!-- ========================================================================
-       STEP 4: AI MOCK INTERVIEW ARENA (VOICE & TEXT)
+       STEP 4: SKILL ASSESSMENT QUIZ & MARKS CENTER
        ======================================================================== -->
   <section id="view-interview" class="view-panel">
     
-    <!-- Interview Header Card -->
+    <!-- Header Card -->
     <div class="card" style="margin-bottom: 20px;">
-      <div class="card-header" style="padding: 12px 18px;">
+      <div class="card-header" style="padding: 14px 20px;">
         <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 10px;">
           <div>
             <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
-              <i data-lucide="mic" style="width: 18px; height: 18px; color: var(--brand-blue);"></i>
-              <span>AI Technical Mock Interview</span>
+              <i data-lucide="award" style="width: 20px; height: 20px; color: var(--brand-blue);"></i>
+              <span>📝 Skill Assessment Quiz Center</span>
             </div>
-            <div class="card-description">Practice voice or text interview questions targeting your specific skill gaps.</div>
+            <div class="card-description">
+              Test your technical knowledge on any skill, answer pre-defined questions, and get your marks, letter grades, and detailed explanations.
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Interview Question Box -->
-    <div id="interview-voice-pane">
-      <div class="card" style="margin-bottom: 20px;">
-        <div class="card-header">
-          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 10px;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <label class="field-label" style="margin: 0; white-space: nowrap;">Skill Gap:</label>
-              <select id="int-skill-select" class="field-input" style="width: auto; padding: 6px 12px; font-weight: 600;">
-                <option value="SQL" selected>SQL (Queries & Aggregations)</option>
-                <option value="Python">Python (Core & Concurrency)</option>
-                <option value="Machine Learning">Machine Learning (Models & Metrics)</option>
-                <option value="Deep Learning">Deep Learning (Neural Networks)</option>
-                <option value="FastAPI">FastAPI (REST APIs)</option>
-                <option value="Docker">Docker (Containers)</option>
-                <option value="Pandas">Pandas (Data Wrangling)</option>
-              </select>
-            </div>
+    <!-- Skill Selection & Setup Card -->
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header" style="padding-bottom: 6px;">
+        <div class="card-title" style="font-size: 0.95rem;">🎯 Select Skill & Quiz Configuration</div>
+      </div>
+      <div class="card-content">
+        <div style="display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 12px;">
+          <div style="flex: 2; min-width: 220px;">
+            <label class="field-label">Target Technical Skill:</label>
+            <select id="quiz-skill-select" class="field-input" style="font-weight: 600;">
+              <optgroup label="🐍 Core Programming & Logic">
+                <option value="Python" selected>Python</option>
+                <option value="Data Structures & Algorithms">Data Structures & Algorithms</option>
+                <option value="Linux & Bash Scripting">Linux & Bash Scripting</option>
+                <option value="Git & GitHub">Git & GitHub</option>
+              </optgroup>
+              <optgroup label="🗄️ Database & SQL">
+                <option value="SQL">SQL</option>
+                <option value="Relational Database Design">Relational Database Design</option>
+              </optgroup>
+              <optgroup label="🤖 Machine Learning & Data Science">
+                <option value="Machine Learning">Machine Learning</option>
+                <option value="Scikit-Learn">Scikit-Learn</option>
+                <option value="Feature Engineering">Feature Engineering</option>
+                <option value="Data Preprocessing & Cleaning">Data Preprocessing & Cleaning</option>
+                <option value="Pandas">Pandas</option>
+                <option value="NumPy">NumPy</option>
+                <option value="Statistics & Probability">Statistics & Probability</option>
+                <option value="Linear Algebra">Linear Algebra</option>
+              </optgroup>
+              <optgroup label="🔥 Deep Learning & AI">
+                <option value="Deep Learning">Deep Learning</option>
+                <option value="PyTorch">PyTorch</option>
+                <option value="TensorFlow">TensorFlow</option>
+                <option value="Natural Language Processing (NLP)">Natural Language Processing (NLP)</option>
+                <option value="Computer Vision (CV)">Computer Vision (CV)</option>
+                <option value="Large Language Models (LLMs)">Large Language Models (LLMs)</option>
+              </optgroup>
+              <optgroup label="⚡ Web & Cloud Engineering">
+                <option value="FastAPI">FastAPI</option>
+                <option value="Django">Django</option>
+                <option value="RESTful APIs">RESTful APIs</option>
+                <option value="Docker">Docker</option>
+                <option value="Cloud Fundamentals (AWS/GCP)">Cloud Fundamentals (AWS/GCP)</option>
+                <option value="MLOps & Model Deployment">MLOps & Model Deployment</option>
+                <option value="Big Data Fundamentals (Spark)">Big Data Fundamentals (Spark)</option>
+              </optgroup>
+              <optgroup label="📊 BI & Analytics">
+                <option value="Tableau">Tableau</option>
+                <option value="Power BI">Power BI</option>
+                <option value="Excel">Excel</option>
+                <option value="Matplotlib & Seaborn">Matplotlib & Seaborn</option>
+                <option value="Business Metrics & KPI Modeling">Business Metrics & KPI Modeling</option>
+              </optgroup>
+            </select>
+          </div>
 
-            <div style="display: flex; gap: 6px;">
-              <button id="int-speak-question-btn" class="btn btn-outline btn-sm" onclick="speakCurrentQuestion()">
-                🔊 Read Aloud (Voice)
-              </button>
-              <button id="int-next-q-btn" class="btn btn-outline btn-sm" onclick="loadNextInterviewQuestion()">
-                🎲 Next Question
-              </button>
-            </div>
+          <div style="flex: 1; min-width: 140px;">
+            <label class="field-label">Number of Questions:</label>
+            <select id="quiz-num-questions-select" class="field-input">
+              <option value="3">3 Questions (Quick Check)</option>
+              <option value="5" selected>5 Questions (Standard)</option>
+            </select>
+          </div>
+
+          <div>
+            <button id="btn-start-skill-assessment" class="btn btn-default" onclick="startSkillAssessment()" style="padding: 8px 20px; font-weight: 600;">
+              <i data-lucide="play" style="width: 15px; height: 15px;"></i>
+              <span>Start Assessment</span>
+            </button>
           </div>
         </div>
 
-        <div class="card-content">
-          <!-- Question Display Banner -->
-          <div style="background-color: hsl(var(--muted)/0.3); border: 1px solid hsl(var(--border)); border-left: 4px solid var(--brand-blue); padding: 16px; border-radius: var(--radius); margin-bottom: 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-              <span id="int-q-meta" class="badge badge-secondary" style="font-size: 0.75rem;">SQL | Intermediate</span>
-              <span id="int-speech-status" style="font-size: 0.78rem; color: hsl(var(--muted-foreground)); display: none;">🔊 Speaking...</span>
-            </div>
-            <div id="int-question-text" style="font-size: 1.1rem; font-weight: 600; line-height: 1.4; color: hsl(var(--foreground));">
-              "What is the difference between WHERE and HAVING in SQL queries? Provide a scenario where WHERE cannot be used."
-            </div>
-            <div id="int-hint-text" style="font-size: 0.8rem; color: hsl(var(--muted-foreground)); margin-top: 6px;">
-              💡 <i>Interviewer Hint: Focus on aggregate functions like COUNT() and SUM().</i>
-            </div>
-          </div>
+        <!-- Quick Skill Chips -->
+        <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+          <span style="font-size: 0.78rem; font-weight: 600; color: hsl(var(--muted-foreground));">Popular Skills:</span>
+          <button class="btn btn-outline btn-sm" onclick="selectAndStartQuiz('Python')">🐍 Python</button>
+          <button class="btn btn-outline btn-sm" onclick="selectAndStartQuiz('SQL')">🗄️ SQL</button>
+          <button class="btn btn-outline btn-sm" onclick="selectAndStartQuiz('Machine Learning')">🤖 Machine Learning</button>
+          <button class="btn btn-outline btn-sm" onclick="selectAndStartQuiz('Deep Learning')">🔥 Deep Learning</button>
+          <button class="btn btn-outline btn-sm" onclick="selectAndStartQuiz('Pandas')">📊 Pandas</button>
+          <button class="btn btn-outline btn-sm" onclick="selectAndStartQuiz('FastAPI')">⚡ FastAPI</button>
+          <button class="btn btn-outline btn-sm" onclick="selectAndStartQuiz('Docker')">🐳 Docker</button>
+          <button class="btn btn-outline btn-sm" onclick="selectAndStartQuiz('Scikit-Learn')">🌲 Scikit-Learn</button>
+          <button class="btn btn-outline btn-sm" onclick="selectAndStartQuiz('Data Structures & Algorithms')">🧩 DSA</button>
+        </div>
+      </div>
+    </div>
 
-          <!-- Answer Input & Speech Recognition Controls -->
-          <div class="form-field">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-              <label class="field-label" for="int-answer-input" style="margin: 0;">Your Answer:</label>
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span id="voice-recording-status" class="voice-status-indicator" style="display: none;">
-                  <span class="recording-dot"></span> Listening...
-                </span>
-                <button id="int-voice-record-btn" class="voice-record-btn" onclick="toggleVoiceRecording()">
-                  🎤 <span id="int-voice-btn-label">Record Voice Answer</span>
-                </button>
-              </div>
-            </div>
-            <textarea id="int-answer-input" class="field-textarea" style="height: 120px;" placeholder="Type your answer or click 'Record Voice Answer' to speak through your microphone..."></textarea>
-          </div>
+    <!-- Active Assessment Arena Card (Visible during quiz) -->
+    <div id="quiz-active-card" class="card" style="display: none; margin-bottom: 20px;">
+      <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid hsl(var(--border)); padding-bottom: 10px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span id="quiz-active-skill-badge" class="badge badge-emerald" style="font-size: 0.82rem;">Python</span>
+          <span id="quiz-active-diff-badge" class="badge badge-outline" style="font-size: 0.75rem;">Intermediate</span>
+          <span style="font-size: 0.78rem; color: hsl(var(--muted-foreground));">10 Marks / Question</span>
+        </div>
+        <div style="font-size: 0.88rem; font-weight: 700; color: var(--brand-blue);">
+          Question <span id="quiz-current-q-index">1</span> of <span id="quiz-total-q-count">5</span>
+        </div>
+      </div>
 
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-            <button id="int-submit-btn" class="btn btn-default" style="padding: 8px 18px;">
-              <i data-lucide="sparkles" style="width: 15px; height: 15px;"></i>
-              <span>Evaluate Answer with AI</span>
+      <div class="card-content" style="padding-top: 16px;">
+        <!-- Progress Bar -->
+        <div style="height: 6px; width: 100%; background: hsl(var(--muted)); border-radius: 4px; overflow: hidden; margin-bottom: 16px;">
+          <div id="quiz-progress-bar" style="height: 100%; width: 20%; background: var(--brand-blue); transition: width 0.3s ease;"></div>
+        </div>
+
+        <!-- Question Text -->
+        <div id="quiz-question-text" style="font-size: 1.05rem; font-weight: 600; line-height: 1.5; color: hsl(var(--foreground)); margin-bottom: 18px; padding: 14px; background: hsl(var(--muted)/0.25); border-left: 4px solid var(--brand-blue); border-radius: var(--radius);">
+          Loading question...
+        </div>
+
+        <!-- Multiple Choice Options List -->
+        <div id="quiz-options-container" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+          <!-- Rendered via JS -->
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding-top: 12px; border-top: 1px solid hsl(var(--border));">
+          <button id="quiz-prev-btn" class="btn btn-outline" onclick="navigateQuizQuestion(-1)">
+            ⬅️ Previous
+          </button>
+          
+          <div style="display: flex; gap: 8px;">
+            <button id="quiz-next-btn" class="btn btn-outline" onclick="navigateQuizQuestion(1)">
+              Next ➡️
             </button>
-            <span style="font-size: 0.78rem; color: hsl(var(--muted-foreground));">Instant feedback scored on clarity and key concepts.</span>
+            <button id="quiz-submit-btn" class="btn btn-default" onclick="submitSkillAssessment()" style="background: var(--brand-blue); color: #fff; font-weight: 600;">
+              ✅ Submit Quiz & Get Marks
+            </button>
           </div>
+        </div>
+      </div>
+    </div>
 
-          <!-- AI Evaluation Feedback Card -->
-          <div id="int-result-card" style="margin-top: 18px; display: none; padding: 18px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background-color: hsl(var(--muted) / 0.25);">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-              <div>
-                <div style="font-weight: 700; font-size: 1rem;">AI Interview Feedback</div>
-                <div style="font-size: 0.78rem; color: hsl(var(--muted-foreground));">Simple, friendly tips to help you ace your interview.</div>
-              </div>
-              <span class="badge badge-emerald" id="int-score-badge" style="font-size: 0.85rem; padding: 5px 12px;">Score: 8 / 10 (Good)</span>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-              <div style="padding: 10px; background-color: hsl(var(--card)); border-radius: var(--radius); border: 1px solid hsl(var(--border));">
-                <div style="font-size: 0.78rem; font-weight: 600; color: var(--emerald-text); margin-bottom: 4px;">✅ Key Concepts Covered:</div>
-                <div id="int-matched-concepts" class="tags-wrap"></div>
-              </div>
-              <div style="padding: 10px; background-color: hsl(var(--card)); border-radius: var(--radius); border: 1px solid hsl(var(--border));">
-                <div style="font-size: 0.78rem; font-weight: 600; color: var(--rose-text); margin-bottom: 4px;">💡 Points to Remember:</div>
-                <div id="int-missing-concepts" class="tags-wrap"></div>
-              </div>
-            </div>
-
-            <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; margin-bottom: 14px;">
-              <div><b>💪 What You Did Well:</b> <span id="int-strengths" style="color: hsl(var(--muted-foreground));">Accurately explained WHERE row filtering before aggregation.</span></div>
-              <div><b>🎯 How to Make It Even Better:</b> <span id="int-improvements" style="color: hsl(var(--muted-foreground));">Mention how GROUP BY groups rows together.</span></div>
-            </div>
-
-            <!-- Ideal Model Answer (STAR Method) Collapsible Card -->
-            <div style="margin-bottom: 14px;">
-              <button id="btn-toggle-model-answer" class="btn btn-outline btn-sm" onclick="toggleModelAnswer()" style="width: 100%; justify-content: space-between;">
-                <span>🌟 Reveal Ideal Model Answer (STAR Method)</span>
-                <span id="model-answer-icon">▼</span>
-              </button>
-              <div id="int-model-answer-card" style="display: none; margin-top: 8px; padding: 12px; background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: var(--radius); font-size: 0.85rem; line-height: 1.5;">
-                <div style="font-weight: 700; color: var(--brand-blue); margin-bottom: 4px;">🎯 Recommended Model Response (STAR Framework):</div>
-                <div id="int-model-answer-text">
-                  <b>Situation & Task:</b> In SQL pipelines, WHERE filters individual rows before grouping, while HAVING filters aggregated metric results.<br>
-                  <b>Action & Example:</b> For example, `WHERE salary > 50000` filters employees before aggregation. Conversely, `HAVING COUNT(*) > 5` filters grouped departments after aggregation, which cannot be done with WHERE because aggregates don't exist prior to grouping.<br>
-                  <b>Result:</b> This ensures correct query pipeline execution and optimal indexing.
-                </div>
-              </div>
-            </div>
-
-            <!-- Follow-up Action Bar -->
-            <div style="padding-top: 10px; border-top: 1px solid hsl(var(--border)); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-              <span style="font-size: 0.78rem; color: hsl(var(--muted-foreground));">Want a follow-up challenge on this topic?</span>
-              <button id="int-followup-btn" class="btn btn-outline btn-sm" onclick="requestAdaptiveFollowUp()" style="border-color: var(--brand-blue); color: var(--brand-blue); font-weight: 600;">
-                ⚡ Try Follow-Up Question →
-              </button>
-            </div>
+    <!-- Marks & Detailed Evaluation Results Card (Visible after quiz submission) -->
+    <div id="quiz-result-card" class="card" style="display: none; margin-bottom: 20px;">
+      <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid hsl(var(--border));">
+        <div>
+          <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="check-circle-2" style="width: 20px; height: 20px; color: var(--emerald-text);"></i>
+            <span>Assessment Results & Marks Report</span>
           </div>
+          <div class="card-description" id="quiz-result-skill-label">Results for Python Competency Assessment</div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-outline btn-sm" onclick="retakeCurrentSkillQuiz()">
+            🔄 Retake Quiz
+          </button>
+          <button class="btn btn-default btn-sm" onclick="document.getElementById('quiz-skill-select').focus(); window.scrollTo({top: 0, behavior: 'smooth'});">
+            🎯 Test Another Skill
+          </button>
+        </div>
+      </div>
 
+      <div class="card-content">
+        <!-- Score Summary KPIs -->
+        <div class="metrics-grid" style="margin-bottom: 18px;">
+          <div class="card metric-card" style="border-top: 3px solid var(--brand-blue);">
+            <div class="metric-title">Marks Obtained</div>
+            <div class="metric-value" id="quiz-res-marks" style="color: var(--brand-blue); font-size: 1.5rem;">40 / 50</div>
+          </div>
+          <div class="card metric-card" style="border-top: 3px solid var(--emerald-text);">
+            <div class="metric-title">Percentage</div>
+            <div class="metric-value" id="quiz-res-percentage" style="color: var(--emerald-text); font-size: 1.5rem;">80.0%</div>
+          </div>
+          <div class="card metric-card" style="border-top: 3px solid #8b5cf6;">
+            <div class="metric-title">Letter Grade</div>
+            <div class="metric-value" id="quiz-res-grade" style="color: #8b5cf6; font-size: 1.15rem;">A (Proficient)</div>
+          </div>
+          <div class="card metric-card" style="border-top: 3px solid #f59e0b;">
+            <div class="metric-title">Status</div>
+            <div class="metric-value" id="quiz-res-status" style="color: #f59e0b; font-size: 1.15rem;">✅ Passed</div>
+          </div>
+        </div>
+
+        <!-- Feedback Alert -->
+        <div id="quiz-res-feedback-box" style="padding: 12px 16px; border-radius: var(--radius); background: hsl(var(--muted)/0.3); border: 1px solid hsl(var(--border)); border-left: 4px solid var(--emerald-text); margin-bottom: 20px; font-size: 0.9rem; font-weight: 500;">
+          Feedback message...
+        </div>
+
+        <!-- Detailed Question by Question Review -->
+        <div>
+          <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+            <i data-lucide="list-checks" style="width: 16px; height: 16px;"></i>
+            Detailed Answers & Explanations:
+          </h4>
+          <div id="quiz-res-breakdown-list" style="display: flex; flex-direction: column; gap: 14px;">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Assessment History / Scorecard Card -->
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+          <i data-lucide="history" style="width: 18px; height: 18px;"></i>
+          <span>Recent Quiz Scorecard History</span>
+        </div>
+        <div class="card-description">Track your test scores and performance history across completed skill quizzes.</div>
+      </div>
+      <div class="card-content">
+        <div class="table-wrap">
+          <table class="shadcn-table">
+            <thead>
+              <tr>
+                <th>Skill Name</th>
+                <th>Marks Scored</th>
+                <th>Score (%)</th>
+                <th>Grade</th>
+                <th>Status</th>
+                <th>Date / Time</th>
+              </tr>
+            </thead>
+            <tbody id="quiz-history-table-body">
+              <tr>
+                <td colspan="6" style="text-align: center; color: hsl(var(--muted-foreground)); padding: 18px;">
+                  No quizzes taken yet. Select a skill above and click "Start Assessment" to begin!
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -1161,60 +1263,8 @@ Requirements:
       <div class="btn btn-outline" style="justify-content: flex-start;" onclick="switchNavTab('view-overview'); closeCommandModal();">1. 📊 Job Readiness</div>
       <div class="btn btn-outline" style="justify-content: flex-start;" onclick="switchNavTab('view-roadmap'); closeCommandModal();">2. 🗺️ Skill Milestones & Projects</div>
       <div class="btn btn-outline" style="justify-content: flex-start;" onclick="switchNavTab('view-market'); closeCommandModal();">3. 💰 Value of Each Skill</div>
-      <div class="btn btn-outline" style="justify-content: flex-start;" onclick="switchNavTab('view-interview'); closeCommandModal();">4. 🎙️ AI Mock Interview</div>
+      <div class="btn btn-outline" style="justify-content: flex-start;" onclick="switchNavTab('view-interview'); closeCommandModal();">4. 📝 Skill Assessment Quiz</div>
       <div class="btn btn-outline" style="justify-content: flex-start;" onclick="switchNavTab('view-ats'); closeCommandModal();">5. 📄 ATS Smart Resume</div>
-    </div>
-  </div>
-</div>
-
-<!-- Interactive 3-Question Quiz Gate Modal -->
-<div id="quiz-modal" class="dialog-overlay">
-  <div class="dialog-content" style="max-width: 580px; padding: 24px;">
-    <div class="dialog-header" style="margin-bottom: 12px;">
-      <div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span class="badge badge-amber" id="quiz-modal-badge">🎯 Milestone Quiz Gate</span>
-          <span style="font-size: 0.8rem; color: hsl(var(--muted-foreground));" id="quiz-progress-label">Question 1 of 3</span>
-        </div>
-        <div class="dialog-title" id="quiz-skill-title" style="margin-top: 4px;">Technical Mastery Check</div>
-      </div>
-      <button id="close-quiz-btn" class="btn btn-outline btn-icon" style="height: 28px; width: 28px;" onclick="closeQuizModal()">&times;</button>
-    </div>
-
-    <!-- Quiz Question Body -->
-    <div id="quiz-question-container">
-      <div id="quiz-question-text" style="font-size: 0.95rem; font-weight: 600; margin-bottom: 14px; line-height: 1.4;">
-        Question text loading...
-      </div>
-      <div id="quiz-options-list" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
-        <!-- Option Buttons Rendered via JS -->
-      </div>
-      <div id="quiz-feedback-box" style="display: none; padding: 12px; border-radius: var(--radius); margin-bottom: 14px; font-size: 0.85rem;">
-        <div id="quiz-feedback-header" style="font-weight: 700; margin-bottom: 4px;"></div>
-        <div id="quiz-feedback-explanation" style="color: hsl(var(--muted-foreground)); font-size: 0.82rem;"></div>
-      </div>
-    </div>
-
-    <!-- Quiz Results Summary Screen -->
-    <div id="quiz-summary-container" style="display: none; text-align: center; padding: 16px 0;">
-      <div id="quiz-result-icon" style="font-size: 3rem; margin-bottom: 10px;">🎉</div>
-      <h3 id="quiz-result-title" style="font-size: 1.25rem; font-weight: 700; margin-bottom: 6px;">Mastery Verified!</h3>
-      <p id="quiz-result-desc" style="font-size: 0.88rem; color: hsl(var(--muted-foreground)); margin-bottom: 16px;">
-        You scored 3/3 (100%). Skill credential unlocked!
-      </p>
-      <div id="quiz-result-badges" style="display: flex; justify-content: center; gap: 8px; margin-bottom: 16px;">
-        <span class="badge badge-emerald">✓ Verified Skill Credential</span>
-        <span class="badge badge-secondary">🔓 Downstream Unlocked</span>
-      </div>
-    </div>
-
-    <div class="dialog-footer" style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; border-top: 1px solid hsl(var(--border)); padding-top: 12px;">
-      <span style="font-size: 0.78rem; color: hsl(var(--muted-foreground));">Passing score: ≥ 66% (2/3 correct)</span>
-      <div style="display: flex; gap: 8px;">
-        <button id="quiz-submit-btn" class="btn btn-default" onclick="submitQuizCurrentAnswer()">Submit Answer</button>
-        <button id="quiz-next-btn" class="btn btn-default" style="display: none;" onclick="nextQuizStep()">Next Question →</button>
-        <button id="quiz-finish-btn" class="btn btn-default" style="display: none;" onclick="finishQuizGate()">Finish & Unlock 🚀</button>
-      </div>
     </div>
   </div>
 </div>
