@@ -266,7 +266,7 @@
     <div class="nav-link" data-view="view-roadmap">2. 🗺️ Skill Milestones & Projects</div>
     <div class="nav-link" data-view="view-market">3. 💰 Value of Each Skill</div>
     <div class="nav-link" data-view="view-interview">4. 🎙️ AI Mock Interview</div>
-    <div class="nav-link" data-view="view-ats">5. 📄 Resume & GitHub Portfolio</div>
+    <div class="nav-link" data-view="view-ats">5. 📄 ATS Smart Resume</div>
   </nav>
 </header>
 
@@ -950,36 +950,26 @@
   </section>
 
   <!-- ========================================================================
-       STEP 5: ATS RESUME & GITHUB PORTFOLIO
+       STEP 5: ATS SMART RESUME & 1-CLICK PDF BUILDER
        ======================================================================== -->
   <section id="view-ats" class="view-panel">
     
-    <!-- Top Header Card & Sub-Tab Switcher -->
+    <!-- Top Header Card -->
     <div class="card" style="margin-bottom: 20px;">
       <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
         <div>
           <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
             <i data-lucide="file-check" style="width: 20px; height: 20px; color: var(--brand-blue);"></i>
-            📄 Resume & GitHub Portfolio
+            📄 ATS Smart Resume & 1-Click PDF Builder
           </div>
           <div class="card-description">
-            Audit your resume for ATS screening, generate 1-click tailored PDF resumes, and verify real GitHub coding evidence.
+            Audit your resume against job requirements, score ATS compatibility, and export 1-click tailored PDF resumes.
           </div>
-        </div>
-      </div>
-      <div class="card-content" style="padding-top: 0;">
-        <div class="segmented-control" style="width: 100%;">
-          <button class="segment-tab active" id="ats-tab-resume-btn" onclick="switchResumePortfolioTab('resume')" style="flex: 1;">
-            📄 ATS Smart Resume & 1-Click PDF
-          </button>
-          <button class="segment-tab" id="ats-tab-github-btn" onclick="switchResumePortfolioTab('github')" style="flex: 1;">
-            🐙 GitHub Portfolio & Blueprints
-          </button>
         </div>
       </div>
     </div>
 
-    <!-- SUB-PANE 1: ATS SMART RESUME & 1-CLICK PDF -->
+    <!-- ATS SMART RESUME CONTENT -->
     <div id="ats-subpane-resume">
       <!-- Candidate Contact Info -->
       <div class="card" style="margin-bottom: 14px;">
@@ -1149,190 +1139,6 @@ Requirements:
       </div>
     </div>
 
-    <!-- SUB-PANE 2: GITHUB PORTFOLIO & BLUEPRINTS -->
-    <div id="ats-subpane-github" style="display: none;">
-      <div class="card" style="margin-bottom: 20px;">
-        <div class="card-header">
-          <div>
-            <div class="card-title"><i data-lucide="github" style="width: 18px; height: 18px;"></i> GitHub Profile & Code Proof</div>
-            <div class="card-description">Verify real coding evidence on GitHub and generate step-by-step project blueprints.</div>
-          </div>
-        </div>
-        <div class="card-content">
-          <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
-            <input type="text" id="github-username-input" class="field-input" placeholder="GitHub username..." value="alex_datascientist" style="flex: 1; min-width: 200px;">
-            <button id="github-scan-btn" class="btn btn-default" style="white-space: nowrap;">
-              <i data-lucide="search" style="width: 14px; height: 14px;"></i> Audit Portfolio
-            </button>
-          </div>
-
-          <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 16px; flex-wrap: wrap;">
-            <span style="font-size: 0.78rem; color: hsl(var(--muted-foreground)); font-weight: 600;">Sample Profiles:</span>
-            <button class="btn btn-outline btn-sm" onclick="loadGithubSampleUser('alex_datascientist')">👨‍💻 alex_datascientist</button>
-            <button class="btn btn-outline btn-sm" onclick="loadGithubSampleUser('jordan_fresher')">🎓 jordan_fresher</button>
-            <button class="btn btn-outline btn-sm" onclick="loadGithubSampleUser('torvalds')">🐧 torvalds</button>
-          </div>
-
-          <!-- Metric KPI Cards Row -->
-          <div class="metrics-grid" style="margin-bottom: 14px;">
-            <div class="card metric-card">
-              <div class="metric-title">Verified Skills</div>
-              <div class="metric-value" id="gh-skills-count" style="color: var(--brand-blue);">3</div>
-            </div>
-            <div class="card metric-card">
-              <div class="metric-title">Coding Quality</div>
-              <div class="metric-value" id="gh-quality-score" style="color: var(--emerald-text);">85.0%</div>
-            </div>
-            <div class="card metric-card">
-              <div class="metric-title">Readiness Tier</div>
-              <div class="metric-value" id="gh-tier-val" style="font-size: 1rem; color: #8b5cf6;">Placement Ready</div>
-            </div>
-            <div class="card metric-card">
-              <div class="metric-title">Stars & Repos</div>
-              <div class="metric-value" id="gh-repos-count" style="color: #f59e0b;">44 ⭐ (3 Repos)</div>
-            </div>
-          </div>
-
-          <!-- Verified Badges -->
-          <div style="padding: 12px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background-color: hsl(var(--muted)/0.15); margin-bottom: 16px;">
-            <div style="font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; color: var(--emerald-text);">🛡️ Verified Code-Backed Skills:</div>
-            <div id="gh-verified-badges" class="tags-wrap">
-              <span class="badge badge-emerald">✓ Python</span>
-              <span class="badge badge-emerald">✓ SQL</span>
-              <span class="badge badge-emerald">✓ PyTorch</span>
-              <span class="badge badge-emerald">✓ Docker</span>
-              <span class="badge badge-emerald">✓ FastAPI</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Segmented Sub-Tabs for GitHub View -->
-      <div class="segmented-control" style="width: 100%; margin-bottom: 16px;">
-        <button id="gh-subtab-repos" class="segment-tab active" onclick="switchGithubSubTab('repos')" style="flex: 1;">
-          📂 Audited Repositories
-        </button>
-        <button id="gh-subtab-blueprint" class="segment-tab" onclick="switchGithubSubTab('blueprint')" style="flex: 1;">
-          💡 Step-by-Step Project Blueprint
-        </button>
-      </div>
-
-      <!-- SUB-TAB 1: Repositories Table -->
-      <div id="gh-pane-repos" class="gh-tab-pane">
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title"><i data-lucide="folder-git-2" style="width: 16px; height: 16px;"></i> Audited Repositories Breakdown</div>
-            <div class="card-description">Repository inspection with library detection and engineering practice tags.</div>
-          </div>
-          <div class="card-content">
-            <div class="table-wrap">
-              <table class="shadcn-table">
-                <thead>
-                  <tr>
-                    <th>Repository</th>
-                    <th>Language</th>
-                    <th>Stars</th>
-                    <th>Detected Skills</th>
-                    <th>Tests</th>
-                    <th>Docker</th>
-                    <th>CI/CD</th>
-                  </tr>
-                </thead>
-                <tbody id="gh-repos-table-body">
-                  <!-- Rendered dynamically via JS -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SUB-TAB 2: Project Blueprint Generator -->
-      <div id="gh-pane-blueprint" class="gh-tab-pane" style="display: none;">
-        <div class="card">
-          <div class="card-header">
-            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 8px;">
-              <div>
-                <div class="card-title"><i data-lucide="compass" style="width: 16px; height: 16px;"></i> Step-by-Step Project Blueprint Generator</div>
-                <div class="card-description">Generate project plans, folder structures, and starter code tailored to your missing skills.</div>
-              </div>
-              <div style="display: flex; gap: 8px; align-items: center;">
-                <select id="blueprint-skill-select" class="select-input" style="font-size: 0.85rem; padding: 6px 12px;">
-                  <option value="Docker" selected>🐳 Missing Skill: Docker</option>
-                  <option value="FastAPI">⚡ Missing Skill: FastAPI</option>
-                  <option value="PyTorch">🔥 Missing Skill: PyTorch</option>
-                  <option value="Large Language Models (LLMs)">🤖 Missing Skill: Large Language Models (LLMs)</option>
-                  <option value="Big Data Fundamentals (Spark)">⚡ Missing Skill: Apache PySpark</option>
-                  <option value="SQL">🗄️ Missing Skill: Advanced SQL & Analytics</option>
-                </select>
-                <button id="btn-generate-blueprint" class="btn btn-default" onclick="generateProjectBlueprint()">
-                  <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i> Generate Blueprint
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="card-content">
-            <!-- Rendered Blueprint Display -->
-            <div id="blueprint-display-card" style="padding: 16px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background-color: hsl(var(--muted)/0.1);">
-              
-              <!-- Blueprint Header -->
-              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
-                <div>
-                  <span id="bp-skill-tag" class="badge badge-amber" style="margin-bottom: 4px;">Target Gap: Docker</span>
-                  <h3 id="bp-title" style="font-size: 1.15rem; font-weight: 700; margin: 2px 0;">Containerized ML Microservice with Docker & FastAPI</h3>
-                  <p id="bp-tagline" style="font-size: 0.85rem; color: hsl(var(--muted-foreground)); margin: 0;">Step-by-step project that bundles a machine learning app into a clean Docker container.</p>
-                </div>
-                <button class="btn btn-outline btn-sm" onclick="copyBlueprintFolderTree()">
-                  📋 Copy Directory Tree
-                </button>
-              </div>
-
-              <!-- Problem & Tech Stack -->
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
-                <div style="padding: 10px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background-color: hsl(var(--background));">
-                  <div style="font-size: 0.78rem; font-weight: 700; margin-bottom: 2px; color: var(--rose-text);">💼 Problem Solved:</div>
-                  <div id="bp-problem" style="font-size: 0.8rem; color: hsl(var(--foreground));">
-                    Models often run on your laptop but fail on production servers without container packaging.
-                  </div>
-                </div>
-                <div style="padding: 10px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background-color: hsl(var(--background));">
-                  <div style="font-size: 0.78rem; font-weight: 700; margin-bottom: 4px; color: var(--brand-blue);">🛠️ Recommended Tools:</div>
-                  <div id="bp-tech-stack" class="tags-wrap">
-                    <span class="badge badge-secondary">Docker</span>
-                    <span class="badge badge-secondary">Docker Compose</span>
-                    <span class="badge badge-secondary">FastAPI</span>
-                    <span class="badge badge-secondary">Scikit-Learn</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Sprints & Folder Structure -->
-              <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 14px; margin-bottom: 14px;">
-                <div>
-                  <div style="font-size: 0.82rem; font-weight: 700; margin-bottom: 8px;">📅 4-Phase Step-by-Step Sprint Plan:</div>
-                  <div id="bp-sprints-container" style="display: flex; flex-direction: column; gap: 6px;"></div>
-                </div>
-
-                <div>
-                  <div style="font-size: 0.82rem; font-weight: 700; margin-bottom: 8px;">🗂️ Clean Folder Structure:</div>
-                  <pre id="bp-folder-tree" class="code-editor-textarea" style="height: 200px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; margin: 0; padding: 10px; overflow-x: auto;"></pre>
-                </div>
-              </div>
-
-              <!-- Starter Template Files Drawer -->
-              <div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                  <span style="font-size: 0.82rem; font-weight: 700;">📄 Starter Code Files:</span>
-                  <div id="bp-starter-tabs" style="display: flex; gap: 6px;"></div>
-                </div>
-                <pre id="bp-starter-file-content" class="code-editor-textarea" style="height: 160px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin: 0; padding: 10px;"></pre>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-
     </div>
 
   </section>
@@ -1356,7 +1162,7 @@ Requirements:
       <div class="btn btn-outline" style="justify-content: flex-start;" onclick="switchNavTab('view-roadmap'); closeCommandModal();">2. 🗺️ Skill Milestones & Projects</div>
       <div class="btn btn-outline" style="justify-content: flex-start;" onclick="switchNavTab('view-market'); closeCommandModal();">3. 💰 Value of Each Skill</div>
       <div class="btn btn-outline" style="justify-content: flex-start;" onclick="switchNavTab('view-interview'); closeCommandModal();">4. 🎙️ AI Mock Interview</div>
-      <div class="btn btn-outline" style="justify-content: flex-start;" onclick="switchNavTab('view-ats'); closeCommandModal();">5. 📄 Resume & GitHub Portfolio</div>
+      <div class="btn btn-outline" style="justify-content: flex-start;" onclick="switchNavTab('view-ats'); closeCommandModal();">5. 📄 ATS Smart Resume</div>
     </div>
   </div>
 </div>

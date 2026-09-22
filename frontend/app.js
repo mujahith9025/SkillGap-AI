@@ -48,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initCommandPalette();
   initATSScorer();
   initInterviewSimulator();
-  initGitHubScanner();
   initMarketIntelligence();
   initXYZRewriter();
   initDownloadReport();
@@ -856,8 +855,8 @@ window.switchResumePortfolioTab = function(tabName) {
   if (btnResume) btnResume.classList.toggle("active", isResume);
   if (btnGithub) btnGithub.classList.toggle("active", !isResume);
 
-  if (paneResume) paneResume.style.display = isResume ? "block" : "none";
-  if (paneGithub) paneGithub.style.display = !isResume ? "block" : "none";
+  if (paneResume) paneResume.style.display = "block";
+  if (paneGithub) paneGithub.style.display = "none";
 
   initLucideIcons();
 };
@@ -2534,13 +2533,10 @@ function initGitHubScanner() {
   const btn = document.getElementById("github-scan-btn");
   if (btn) {
     btn.addEventListener("click", () => {
-      const user = document.getElementById("github-username-input").value.trim() || "alex_datascientist";
+      const user = document.getElementById("github-username-input")?.value?.trim() || "alex_datascientist";
       loadGithubProof(user);
     });
   }
-
-  // Auto-load default profile on startup
-  loadGithubProof("alex_datascientist");
 }
 
 function initVectorSearch() {
