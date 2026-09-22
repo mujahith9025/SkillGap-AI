@@ -816,23 +816,18 @@ let currentDailyCommitmentHours = 1.5;
 window.switchRoadmapMode = function(mode) {
   const btnMilestones = document.getElementById("roadmap-mode-milestones") || document.getElementById("roadmap-mode-cards");
   const btnProjects = document.getElementById("roadmap-mode-projects");
-  const btnCal = document.getElementById("roadmap-mode-calendar");
 
   const isMilestones = (mode === 'milestones' || mode === 'cards' || mode === 'dag');
   const isProjects = (mode === 'projects');
-  const isCalendar = (mode === 'calendar');
 
   if (btnMilestones) btnMilestones.classList.toggle("active", isMilestones);
   if (btnProjects) btnProjects.classList.toggle("active", isProjects);
-  if (btnCal) btnCal.classList.toggle("active", isCalendar);
 
   const paneMilestones = document.getElementById("roadmap-pane-milestones") || document.getElementById("roadmap-pane-cards");
   const paneProjects = document.getElementById("roadmap-pane-projects");
-  const paneCal = document.getElementById("roadmap-pane-calendar");
 
   if (paneMilestones) paneMilestones.style.display = isMilestones ? 'block' : 'none';
   if (paneProjects) paneProjects.style.display = isProjects ? 'block' : 'none';
-  if (paneCal) paneCal.style.display = isCalendar ? 'block' : 'none';
   
   initLucideIcons();
 };

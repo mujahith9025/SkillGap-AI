@@ -525,9 +525,6 @@
         <button id="roadmap-mode-projects" class="segment-tab" onclick="switchRoadmapMode('projects')">
           <i data-lucide="rocket" style="width: 14px; height: 14px; margin-right: 4px;"></i> 🚀 Guided Projects
         </button>
-        <button id="roadmap-mode-calendar" class="segment-tab" onclick="switchRoadmapMode('calendar')">
-          <i data-lucide="calendar" style="width: 14px; height: 14px; margin-right: 4px;"></i> 📅 Study Timetable
-        </button>
       </div>
     </div>
 
@@ -624,54 +621,6 @@
         </div>
         <div class="card-content" id="full-projects-container">
           <!-- Rendered via JS -->
-        </div>
-      </div>
-    </div>
-
-    <!-- Sub-Pane 3: Weekly Study Timetable -->
-    <div id="roadmap-pane-calendar" class="roadmap-subpane" style="display: none;">
-      <div class="card" style="margin-bottom: 20px;">
-        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-          <div>
-            <div class="card-title">Weekly Placement Timetable</div>
-            <div class="card-description">Calculates daily study commitment and syncs to your calendar.</div>
-          </div>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <button id="btn-export-ics" class="btn btn-default btn-sm" onclick="exportCalendarIcs()">
-              <i data-lucide="download" style="width: 14px; height: 14px; margin-right: 4px;"></i> 📅 Download .ics Calendar
-            </button>
-            <button id="btn-copy-notion" class="btn btn-outline btn-sm" onclick="copyNotionTemplate()">
-              <i data-lucide="copy" style="width: 14px; height: 14px; margin-right: 4px;"></i> 📝 Copy Notion Template
-            </button>
-          </div>
-        </div>
-        <div class="card-content">
-          <!-- Calendar Configuration Bar -->
-          <div class="calendar-config-bar" style="display: flex; align-items: center; gap: 16px; background: hsl(var(--muted)/0.3); padding: 10px 14px; border-radius: var(--radius); margin-bottom: 14px; flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 180px;">
-              <div style="font-size: 0.78rem; font-weight: 600; margin-bottom: 4px;">Placement Timeline:</div>
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <input type="range" id="calendar-days-slider" min="30" max="120" step="15" value="60" style="flex: 1;" oninput="updateCalendarSchedule()">
-                <b id="calendar-days-label" style="font-size: 0.85rem; min-width: 55px;">60 Days</b>
-              </div>
-            </div>
-            <div style="flex: 1; min-width: 180px;">
-              <div style="font-size: 0.78rem; font-weight: 600; margin-bottom: 4px;">Daily Study Effort:</div>
-              <div style="display: flex; gap: 4px;">
-                <button class="btn btn-outline btn-sm commitment-btn" data-hours="1.0" onclick="setDailyHours(1.0)">1.0h/day</button>
-                <button class="btn btn-outline btn-sm commitment-btn active" data-hours="1.5" onclick="setDailyHours(1.5)">1.5h/day</button>
-                <button class="btn btn-outline btn-sm commitment-btn" data-hours="2.0" onclick="setDailyHours(2.0)">2.0h/day</button>
-                <button class="btn btn-outline btn-sm commitment-btn" data-hours="3.0" onclick="setDailyHours(3.0)">3.0h/day</button>
-              </div>
-            </div>
-            <div style="border-left: 1px solid hsl(var(--border)); padding-left: 14px;">
-              <div style="font-size: 0.75rem; color: hsl(var(--muted-foreground));">Pace</div>
-              <span id="calendar-pace-badge" class="badge badge-emerald">Optimal Velocity</span>
-            </div>
-          </div>
-
-          <!-- Weekly Sprints Timeline Container -->
-          <div id="calendar-sprints-container" style="display: flex; flex-direction: column; gap: 10px;"></div>
         </div>
       </div>
     </div>
